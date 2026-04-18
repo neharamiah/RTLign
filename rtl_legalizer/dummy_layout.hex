@@ -1,0 +1,5 @@
+00000000 // Macro 1 X coordinate (32-bit hex)
+00000000 // Macro 1 Y coordinate
+00000064 // Macro 1 Width
+000000C8 // Macro 1 Height
+00000050 // Macro 2 X coordinate

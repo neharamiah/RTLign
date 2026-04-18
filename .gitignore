@@ -1,0 +1,19 @@
+# Python Environments & Cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Icarus Verilog / Simulation outputs
+*.vcd
+*.vvp
+*.out
+
+# OpenROAD & EDA Log Files
+*.log
+*.rpt
+*.err
+
+# Ignore massive DEF/LEF harvesting data
+openroad_scripts/dataset_harvesting/*.def
