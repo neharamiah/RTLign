@@ -1,5 +1,672 @@
-00000000 // Macro 1 X coordinate (32-bit hex)
-00000000 // Macro 1 Y coordinate
-00000064 // Macro 1 Width
-000000C8 // Macro 1 Height
-00000050 // Macro 2 X coordinate
+000187E0 // X coord
+00005780 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000B9F0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00013D30 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00014820 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00014820 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00015310 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00015310 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00015E00 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00015E00 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000168F0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000168F0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000173E0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000C4E0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000173E0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00017ED0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00017ED0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000189C0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000189C0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000194B0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000194B0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00019FA0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00019FA0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001AA90 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000CFD0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001AA90 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001B580 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001B580 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001C070 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001C070 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001CB60 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001CB60 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001D650 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001D650 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001E140 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000DAC0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001E140 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001EC30 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001EC30 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0001F720 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0001F720 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00020210 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00020210 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00020D00 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00020D00 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000217F0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000E5B0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000217F0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000222E0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000222E0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00022DD0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00022DD0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000238C0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000238C0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+000243B0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+000243B0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00024EA0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000F0A0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00024EA0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00025990 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00025990 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00026480 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00026480 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00026F70 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00026F70 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00027A60 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00027A60 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00028550 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000FB90 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00028550 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00029040 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00029040 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00029B30 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00029B30 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0002A620 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0002A620 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0002B110 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0002B110 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00010680 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00011170 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00011C60 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00006270 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00012750 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00013240 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00013D30 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00014820 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00015310 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00015E00 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000168F0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000173E0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00017ED0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000189C0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00006D60 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000194B0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00019FA0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001AA90 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001B580 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001C070 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001CB60 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001D650 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001E140 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001EC30 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0001F720 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00007850 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00020210 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00020D00 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000217F0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000222E0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00022DD0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000238C0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+000243B0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00024EA0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00025990 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00026480 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00008340 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00026F70 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00027A60 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00028550 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00029040 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00029B30 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0002A620 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0002B110 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00005780 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00005780 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00006270 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00008E30 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00006270 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00006D60 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00006D60 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00007850 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00007850 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00008340 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00008340 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00008E30 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00008E30 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00009920 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+00009920 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00009920 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000A410 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000A410 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000AF00 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000AF00 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000B9F0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000B9F0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000C4E0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000C4E0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000CFD0 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000A410 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000CFD0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000DAC0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000DAC0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000E5B0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000E5B0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000F0A0 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000F0A0 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+0000FB90 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+0000FB90 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00010680 // Y coord
+00000064 // Width
+00000064 // Height
+000187E0 // X coord
+0000AF00 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00010680 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00011170 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00011170 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00011C60 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00011C60 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00012750 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00012750 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00013240 // Y coord
+00000064 // Width
+00000064 // Height
+0002BF98 // X coord
+00013240 // Y coord
+00000064 // Width
+00000064 // Height
+00004EAC // X coord
+00013D30 // Y coord
+00000064 // Width
+00000064 // Height
