@@ -90,4 +90,4 @@ Reads the legalized `.hex` output and patches the coordinates back into the orig
 
 ## License
 
-Academic project — PES University.
+Academic project under IEEE Computer Sciety Bangalore Section under CS IAMPRO initiative.
