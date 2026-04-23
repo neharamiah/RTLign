@@ -1,19 +1,47 @@
-# Python Environments & Cache
+# ==========================================
+# RTLign Project .gitignore
+# ==========================================
+
+# 1. Cloud Data Folder (CRITICAL)
+# Put all your downloaded Drive data here
+data/
+datasets/
+
+# 2. OpenROAD & EDA Outputs
+*.def
+*.lef
+*.odb
+*.sdc
+*.spef
+*.gds
+*.mac
+*.rpt
+*.log
+*.err
+openroad_scripts/results/
+openroad_scripts/reports/
+
+# 3. Verilog Simulation & Synthesis
+*.hex
+*.vcd
+*.fsdb
+*.out
+csrc/
+simv
+simv.daidir/
+
+# 4. Python & ML Predictor
 __pycache__/
 *.py[cod]
-.venv/
+*$py.class
+*.so
+.Python
+env/
 venv/
-.env
+.conda/
+*.pth    # PyTorch model weights
+*.pkl    # Scikit-Learn models
 
-# Icarus Verilog / Simulation outputs
-*.vcd
-*.vvp
-*.out
-
-# OpenROAD & EDA Log Files
-*.log
-*.rpt
-*.err
-
-# Ignore massive DEF/LEF harvesting data
-openroad_scripts/dataset_harvesting/*.def
+# 5. OS Generated Files
+.DS_Store
+Thumbs.db
