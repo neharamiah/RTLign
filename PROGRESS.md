@@ -38,13 +38,13 @@ During the physical design phase of VLSI development, **macro placement** is an 
 ### Pipeline Diagram
 
 ```
-┌─────────────────┐      ┌───────────────────┐      ┌─────────────────────┐      ┌─────────────────┐
+┌──────────────────┐      ┌───────────────────┐      ┌─────────────────────┐      ┌──────────────────┐
 │    OpenROAD      │      │   ML Predictor    │      │   RTL Legalizer     │      │    OpenROAD      │
 │                  │      │                   │      │                     │      │                  │
 │  Synthesize &    │─────▶│  def_parser.py    │─────▶│  collision_check.v  │─────▶│  hex_to_def.py   │
 │  Export .def     │      │  DEF → .hex       │      │  legalizer_fsm.v    │      │  .hex → .def     │
 │                  │      │                   │      │  legalizer_tb.v     │      │  Route + STA     │
-└─────────────────┘      └───────────────────┘      └─────────────────────┘      └─────────────────┘
+└──────────────────┘      └───────────────────┘      └─────────────────────┘      └──────────────────┘
 ```
 
 ### Technology Stack
@@ -378,7 +378,7 @@ If the push would exceed the die boundary, the macro is wrapped to the opposite 
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║         RTLign Co-Design Pipeline — Master Run          ║
+║         RTLign Co-Design Pipeline — Master Run           ║
 ╚══════════════════════════════════════════════════════════╝
 
   [1/3] DEF → HEX Parser              ✅  0.02s
@@ -387,7 +387,7 @@ If the push would exceed the die boundary, the macro is wrapped to the opposite 
   [3/3] HEX → DEF Injector            ✅  0.02s
 
 ╔══════════════════════════════════════════════════════════╗
-║              Pipeline Complete!                         ║
+║              Pipeline Complete!                          ║
 ╚══════════════════════════════════════════════════════════╝
   Total time:  0.22s
 ```

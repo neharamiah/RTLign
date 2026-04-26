@@ -5,6 +5,7 @@
 # 1. Cloud Data Folder (CRITICAL)
 # Put all your downloaded Drive data here
 data/
+!data/README.md
 datasets/
 
 # 2. OpenROAD & EDA Outputs
