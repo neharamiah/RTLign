@@ -2,9 +2,10 @@
 RTLign — Master Orchestration Script
 =====================================
 Single-click execution of the full RTLign pipeline:
-  1. Parse DEF → HEX  (def_parser.py)
-  2. RTL Legalization  (iverilog + vvp)
-  3. Inject HEX → DEF  (hex_to_def.py)
+  1. Parse LEF → Dimension_Dict  (lef_parser.py)
+  2. Parse DEF → HEX with real dimensions  (def_parser.py)
+  3. RTL Legalization  (iverilog + vvp)
+  4. Inject HEX → DEF  (hex_to_def.py)
 
 Run from the RTLign project root:
     python orchestration/master_run.py
@@ -15,13 +16,17 @@ import sys
 import os
 import time
 
+# Import LEF and DEF parsers directly for dimension_dict passing
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from rtl_legalizer.lef_parser import parse_lef_files
+from ml_predictor.def_parser import parse_def_to_hex
+
 
 # ---------------------------------------------------------------------------
 # Configuration — all paths relative to the RTLign project root
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEF_PARSER   = os.path.join(PROJECT_ROOT, "ml_predictor", "def_parser.py")
 HEX_INJECTOR = os.path.join(PROJECT_ROOT, "ml_predictor", "hex_to_def.py")
 
 VERILOG_SRC  = [
@@ -31,6 +36,14 @@ VERILOG_SRC  = [
 ]
 SIM_OUTPUT   = os.path.join(PROJECT_ROOT, "rtl_legalizer", "sim.out")
 
+# LEF file paths - using ISPD 2015 mgc_matrix_mult_2 LEF for dimension dictionary
+LEF_FILES = [
+    os.path.join(PROJECT_ROOT, "data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/tech.lef"),
+    os.path.join(PROJECT_ROOT, "data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/cells.lef"),
+]
+
+# DEF file paths - using mockup_export.def (168 components) for testing
+# The ISPD 2015 benchmark has 155K components which is too large for current legalizer
 INPUT_DEF    = os.path.join(PROJECT_ROOT, "openroad_scripts", "mockup_export.def")
 INPUT_HEX    = os.path.join(PROJECT_ROOT, "rtl_legalizer", "dummy_layout.hex")
 OUTPUT_HEX   = os.path.join(PROJECT_ROOT, "rtl_legalizer", "output_layout.hex")
@@ -77,34 +90,57 @@ def main():
     t_total = time.time()
 
     # ------------------------------------------------------------------
-    # Stage 1: Parse DEF → HEX
+    # Stage 1: Parse LEF → Dimension_Dict
     # ------------------------------------------------------------------
-    run_step(
-        "[1/3] DEF → HEX Parser (Extract macro coordinates)",
-        [sys.executable, DEF_PARSER],
-    )
+    print(f"\n{'='*60}")
+    print("  [1/4] LEF Parser (Extract cell dimensions)")
+    print(f"{'='*60}")
+    
+    try:
+        dimension_dict = parse_lef_files(LEF_FILES, verbose=False)
+        print(f"  Extracted dimensions for {len(dimension_dict)} cell types")
+    except FileNotFoundError as e:
+        print(f"  ERROR: LEF file not found: {e}")
+        sys.exit(1)
+    except ValueError as e:
+        print(f"  WARNING: {e}")
+        print("  All components will use default dimensions (100×100)")
+        dimension_dict = {}
 
     # ------------------------------------------------------------------
-    # Stage 2: RTL Legalization (Compile + Simulate)
+    # Stage 2: Parse DEF → HEX (with real dimensions)
     # ------------------------------------------------------------------
-    # 2a. Compile with Icarus Verilog
+    print(f"\n{'='*60}")
+    print("  [2/4] DEF → HEX Parser (Extract macro coordinates with real dimensions)")
+    print(f"{'='*60}")
+    
+    try:
+        parse_def_to_hex(INPUT_DEF, INPUT_HEX, dimension_dict)
+    except FileNotFoundError as e:
+        print(f"  ERROR: {e}")
+        sys.exit(1)
+
+    # ------------------------------------------------------------------
+    # Stage 3: RTL Legalization (Compile + Simulate)
+    # ------------------------------------------------------------------
+    # 3a. Compile with Icarus Verilog
     run_step(
-        "[2a/3] Compile Verilog (iverilog)",
+        "[3a/4] Compile Verilog (iverilog)",
         ["iverilog", "-o", SIM_OUTPUT] + VERILOG_SRC,
     )
 
-    # 2b. Run simulation
+    # 3b. Run simulation
     run_step(
-        "[2b/3] Run RTL Legalizer (vvp)",
+        "[3b/4] Run RTL Legalizer (vvp)",
         ["vvp", SIM_OUTPUT],
         cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"),  # so $readmemh finds the .hex
     )
 
     # ------------------------------------------------------------------
-    # Stage 3: Inject legalized HEX → DEF
+    # Stage 4: Inject legalized HEX → DEF
     # ------------------------------------------------------------------
     run_step(
-        "[3/3] HEX → DEF Injector (Patch legalized coordinates)",
+        "[4/4] HEX → DEF Injector (Patch legalized coordinates)",
         [sys.executable, HEX_INJECTOR, INPUT_DEF, OUTPUT_HEX, OUTPUT_DEF],
     )
 
