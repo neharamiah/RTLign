@@ -7,11 +7,11 @@ RTLign is a hardware-software co-design tool that replaces the traditional OpenR
 ## Pipeline Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌──────────────────┐     ┌─────────────┐
+┌──────────────┐     ┌──────────────┐     ┌──────────────────┐     ┌──────────────┐
 │  OpenROAD    │     │  ML Predictor│     │  RTL Legalizer   │     │  OpenROAD    │
 │  .def export │────▶│  DEF → .hex  │────▶│  Verilog SA      │────▶│  .def import │
 │              │     │  (Python)    │     │  (iverilog/vvp)  │     │  Route + STA │
-└─────────────┘     └──────────────┘     └──────────────────┘     └─────────────┘
+└──────────────┘     └──────────────┘     └──────────────────┘     └──────────────┘
 ```
 
 ## Quick Start
@@ -90,4 +90,4 @@ Reads the legalized `.hex` output and patches the coordinates back into the orig
 
 ## License
 
-Academic project — PES University.
+Academic project under IEEE Computer Sciety Bangalore Section under CS IAMPRO initiative.
