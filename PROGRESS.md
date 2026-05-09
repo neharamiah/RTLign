@@ -467,33 +467,31 @@ If the push would exceed the die boundary, the macro is wrapped to the opposite 
 
 ## 7. Roadmap — What's Next
 
-### Phase 2: Real Dimensions & Improved Resolution (Week 2) ✅
-- **[DONE]** Write a LEF parser to extract real cell widths and heights from the FreePDK45 library
-- **[DONE]** Replace the hardcoded 100×100 with actual dimensions in the `.hex` file
-- **[DONE]** Validate that the legalizer still achieves zero overlaps with real geometry
+### Month 1: Foundations & Dataset Generation
+- **[DONE]** Build: LEF Parser & Real Dimensions (Extract real cell widths/heights, convert dimensions, fix legalizer bugs)
+- Build: Dataset Generation Pipeline (OpenROAD TCL batch script, data_generator.py, generate placements, parse benchmarks)
 
-### Phase 3: Dataset Generation & ML Predictor (Weeks 3–4)
-- Write a TCL script to automate OpenROAD placement with randomized constraints
-- Generate 10,000+ optimized `.def` layouts for supervised training
-- Train a Random Forest or lightweight neural network to predict (X, Y) per macro
-- Replace the DEF parser's extraction with ML-predicted coordinates
+### Month 2: Supervised ML Predictor & Evaluation
+- Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)
+- Build: Neural Network Predictor (optional) (Train NN, compare accuracy against RF)
 
-### Phase 4: Simulated Annealing in RTL (Weeks 5–6)
-- Add a temperature register with exponential cooling schedule
-- Implement LFSR-based pseudo-random perturbation for macro positions
-- Define a cost function: `cost = α × overlap_area + β × HPWL`
-- Implement the Metropolis acceptance criterion
-- Instantiate multiple parallel `collision_check` units
+### Month 3: Simulated Annealing in RTL
+- Build: SA Engine in Verilog (LFSR, temperature cooling, perturbation, cost function, Metropolis acceptance)
+- Build: SA Testbench & Validation (Monitor cost/temperature, verify on benchmarks, waveform analysis)
+- Build: Verilator Bridge (Verilator wrapper, Python ctypes binding, speed benchmarking)
 
-### Phase 5: OpenROAD Integration & Signoff (Weeks 7–8)
-- Write TCL scripts to import the legalized DEF back into OpenROAD
-- Run global routing, detailed routing, and STA
-- Render the legalized layout in the OpenROAD GUI for visual verification
+### Month 4: Reinforcement Learning
+- Build: RL Environment (Gymnasium env, state/action space, reward v1)
+- Build: RL Training Pipeline (PPO training loop, SML warm-start, connect Verilator legalizer, reward v2, tensorboard)
 
-### Phase 6: Benchmarking & Defense (Week 9+)
-- Calculate theoretical hardware latency at target frequency
-- Compare against OpenROAD's pure software placer
-- Prepare defense documentation and final benchmarks
+### Month 5: Integration, Scaling & Benchmarking
+- Build: RL + Legalizer Feedback Loop (Reward v3, train on larger designs, ablation studies)
+- Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)
+- Build: Visualization & Analysis (Heatmaps, training curves, waveform screenshots, comparison plots)
+
+### Month 6: Paper, Defense & Polish
+- Write: Documentation, final comprehensive progress document, and paper (Abstract, Methodology, Results)
+- Defend: Prepare slides, live demo, and presentation practice
 
 ---
 
