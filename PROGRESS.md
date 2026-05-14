@@ -70,12 +70,12 @@ RTLign/
 │   └── master_run.py              # Single-click pipeline orchestrator
 │
 ├── ml_predictor/
-│   ├── lef_parser.py              # LEF → Dimension Dictionary extractor (NEW)
-│   ├── lef_parser_test.py         # Unit tests for LEF parser (NEW)
 │   ├── def_parser.py              # DEF + LEF → HEX coordinate extractor
 │   └── hex_to_def.py              # HEX → DEF coordinate injector
 │
 ├── rtl_legalizer/
+│   ├── lef_parser.py              # LEF → Dimension Dictionary extractor (NEW)
+│   ├── lef_parser_test.py         # Unit tests for LEF parser (NEW)
 │   ├── collision_check.v          # Combinational AABB overlap detector
 │   ├── legalizer_fsm.v            # FSM-based greedy sweep legalizer
 │   ├── legalizer_tb.v             # Testbench with overlap audit
