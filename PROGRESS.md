@@ -85,7 +85,6 @@ RTLign/
 │   ├── mockup_export.def          # Baseline GCD design (FreePDK45, 482 components)
 │   └── legalized_export.def       # Output: legalized placement (generated)
 │
-├── .kiro/                         # Steering documents (Product, Structure, Tech) (NEW)
 ├── data/                          # Training datasets
 ├── README.md                      # Project README
 ├── ROADMAP.md                     # Comprehensive 6-month roadmap (NEW)
@@ -224,13 +223,15 @@ RTLign/
 - Created `lef_parser_test.py` with comprehensive unit tests for LEF parsing.
 - Updated `def_parser.py` to accept and use the dimension dictionary for accurate cell geometries, replacing the hardcoded 100x100 placeholder. This enables physically accurate collision detection for non-square cells.
 - Updated `master_run.py` to orchestrate parsing LEF files before DEF parsing.
-- Added comprehensive learning-based roadmap (`ROADMAP.md`) and Kiro steering documents (`.kiro/`).
+- Added comprehensive learning-based roadmap (`ROADMAP.md`).
 
 **Commits:**
 | Hash | Description |
 |:---|:---|
 | `b97ae8d` | feat(lef-parser): add LEF parser for real cell dimensions |
 | `af11957` | added learning based roadmap |
+
+**Status:** ✅ Completed and verified — all 47 tests (integration, CLI, unit, and property-based) pass. Real ISPD 2015 benchmarks are successfully parsed and processed.
 
 ## 4. Component Deep-Dives
 
