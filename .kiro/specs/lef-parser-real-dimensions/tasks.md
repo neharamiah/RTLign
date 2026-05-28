@@ -142,7 +142,7 @@ This implementation adds a LEF parser module to extract real cell dimensions fro
   - Run all unit tests and property tests
   - Ensure tests pass, ask the user if questions arise.
 
-- [-] 10. Modify DEF parser to accept dimension dictionary
+- [x] 10. Modify DEF parser to accept dimension dictionary
   - [x] 10.1 Update `parse_def_to_hex()` function signature
     - Add `dimension_dict: Optional[Dimension_Dict] = None` parameter
     - Extract cell type from COMPONENT line using regex
@@ -169,7 +169,7 @@ This implementation adds a LEF parser module to extract real cell dimensions fro
     - Test backward compatibility with None dimension_dict
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 11. Add round-trip verification properties
+- [x] 11. Add round-trip verification properties
   - [ ]* 11.1 Write property test for dimension dict matches source
     - **Property 14: Dimension Dict Matches Source**
     - **Validates: Requirements 8.1**
@@ -178,12 +178,12 @@ This implementation adds a LEF parser module to extract real cell dimensions fro
     - **Property 15: Round-Trip Parsing**
     - **Validates: Requirements 8.2**
 
-- [ ] 12. Add extreme aspect ratio handling
+- [x] 12. Add extreme aspect ratio handling
   - [ ]* 12.1 Write property test for extreme aspect ratio preservation
     - **Property 13: Extreme Aspect Ratio Preservation**
     - **Validates: Requirements 7.1**
 
-- [-] 13. Update pipeline orchestration
+- [ ] 13. Update pipeline orchestration
   - [x] 13.1 Add LEF parsing stage to `master_run.py`
     - Import `parse_lef_files` from `rtl_legalizer.lef_parser`
     - Define LEF file paths (tech.lef, cells.lef)
@@ -200,8 +200,8 @@ This implementation adds a LEF parser module to extract real cell dimensions fro
     - Test pipeline continues with warning on empty result
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 14. Implement CLI interface for standalone use
-  - [ ] 14.1 Add argparse CLI to `lef_parser.py`
+- [x] 14. Implement CLI interface for standalone use
+  - [x] 14.1 Add argparse CLI to `lef_parser.py`
     - Add `__main__` block with argparse setup
     - Support positional LEF file arguments (one or more)
     - Support `--output` flag for JSON file output
