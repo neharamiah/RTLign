@@ -69,9 +69,7 @@ RTLign/
 │   ├── legalizer_fsm.v        # FSM-based greedy sweep legalizer
 │   ├── legalizer_tb.v         # Testbench with overlap audit
 │   └── dummy_layout.hex       # Input macro layout (generated)
-├── openroad_scripts/
-│   └── mockup_export.def      # Baseline GCD design on FreePDK45
-├── .kiro/                     # Steering documents (Product, Structure, Tech)
+├── openroad_scripts/          # OpenROAD DEF files and TCL scripts
 ├── ROADMAP.md                 # 6-Month Comprehensive Roadmap
 ├── PROGRESS.md                # Project Progress Document
 └── data/                      # Training datasets (gitignored)
