@@ -7,20 +7,22 @@ from concurrent.futures import ThreadPoolExecutor
 def run_openroad_placement(tcl_script, design, tech_lef, cells_lef, input_def, output_def, seed, density):
     """Runs a single OpenROAD placement job via subprocess."""
     cmd = [
-        "openroad", "-no_init", "-exit", tcl_script,
-        "-design_name", design,
-        "-tech_lef", tech_lef,
-        "-cells_lef", cells_lef,
-        "-input_def", input_def,
-        "-output_def", output_def,
-        "-seed", str(seed),
-        "-target_density", str(density)
+        "openroad", "-no_init", "-exit", tcl_script
     ]
+    
+    env = os.environ.copy()
+    env["DESIGN_NAME"] = design
+    env["TECH_LEF"] = tech_lef
+    env["CELLS_LEF"] = cells_lef
+    env["INPUT_DEF"] = input_def
+    env["OUTPUT_DEF"] = output_def
+    env["SEED"] = str(seed)
+    env["TARGET_DENSITY"] = str(density)
     
     print(f"Running: {design} | Seed: {seed} | Density: {density}")
     try:
         # Run subprocess, suppress standard output for clean logs, capture stderr for errors
-        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, env=env)
         if result.returncode != 0:
             print(f"[ERROR] Failed to place {design} (Seed: {seed}, Density: {density})")
             print(result.stderr)

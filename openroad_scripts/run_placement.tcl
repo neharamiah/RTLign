@@ -47,10 +47,8 @@
 #    Supports being called with -<var> <val> flags OR with variables preset
 # ---------------------------------------------------------------------------
 
-# Parse command-line arguments passed by data_generator.py
-# OpenROAD TCL does not have a built-in argparse, so we use argv
+# Parse arguments from environment variables (passed by data_generator.py)
 proc parse_args {} {
-    global argc argv
     global design_name tech_lef cells_lef input_def output_def seed target_density
 
     # Defaults (safe fallback for interactive testing)
@@ -62,21 +60,13 @@ proc parse_args {} {
     set seed           42
     set target_density 0.70
 
-    set i 0
-    while {$i < $argc} {
-        set flag [lindex $argv $i]
-        set val  [lindex $argv [expr {$i + 1}]]
-        switch -exact -- $flag {
-            -design_name    { set design_name    $val; incr i 2 }
-            -tech_lef       { set tech_lef       $val; incr i 2 }
-            -cells_lef      { set cells_lef      $val; incr i 2 }
-            -input_def      { set input_def      $val; incr i 2 }
-            -output_def     { set output_def     $val; incr i 2 }
-            -seed           { set seed           $val; incr i 2 }
-            -target_density { set target_density $val; incr i 2 }
-            default         { incr i }
-        }
-    }
+    if {[info exists ::env(DESIGN_NAME)]}    { set design_name    $::env(DESIGN_NAME) }
+    if {[info exists ::env(TECH_LEF)]}       { set tech_lef       $::env(TECH_LEF) }
+    if {[info exists ::env(CELLS_LEF)]}      { set cells_lef      $::env(CELLS_LEF) }
+    if {[info exists ::env(INPUT_DEF)]}      { set input_def      $::env(INPUT_DEF) }
+    if {[info exists ::env(OUTPUT_DEF)]}     { set output_def     $::env(OUTPUT_DEF) }
+    if {[info exists ::env(SEED)]}           { set seed           $::env(SEED) }
+    if {[info exists ::env(TARGET_DENSITY)]} { set target_density $::env(TARGET_DENSITY) }
 }
 
 parse_args
@@ -182,8 +172,7 @@ if {[catch {
     global_placement \
         -density         $target_density \
         -pad_left        0               \
-        -pad_right       0               \
-        -seed            $seed
+        -pad_right       0
 } err]} {
     log "ERROR during global placement: $err"
     exit 1
