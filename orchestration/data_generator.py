@@ -1,0 +1,173 @@
+import os
+import subprocess
+import argparse
+import itertools
+import csv
+from concurrent.futures import ThreadPoolExecutor
+
+def extract_metrics_from_log(log_path):
+    metrics = {
+        "status": "Failed",
+        "hpwl": "N/A"
+    }
+    if not os.path.exists(log_path):
+        return metrics
+    try:
+        with open(log_path, 'r') as f:
+            for line in f:
+                if "Placement is legal" in line:
+                    metrics["status"] = "Legal"
+                elif "Placement legality check failed" in line:
+                    metrics["status"] = "Illegal"
+                elif "METRIC hpwl" in line:
+                    parts = line.strip().split()
+                    if len(parts) >= 1:
+                        metrics["hpwl"] = parts[-1]
+    except Exception as e:
+        pass
+    return metrics
+
+def run_openroad_placement(tcl_script, design, tech_lef, cells_lef, input_def, output_def, aspect_ratio, utilization, density):
+    """Runs a single OpenROAD placement job via subprocess."""
+    cmd = [
+        "openroad", "-no_init", "-exit", tcl_script
+    ]
+    
+    env = os.environ.copy()
+    env["DESIGN_NAME"] = design
+    env["TECH_LEF"] = tech_lef
+    env["CELLS_LEF"] = cells_lef
+    env["INPUT_DEF"] = input_def
+    env["OUTPUT_DEF"] = output_def
+    env["ASPECT_RATIO"] = str(aspect_ratio)
+    env["CORE_UTILIZATION"] = str(utilization)
+    env["TARGET_DENSITY"] = str(density)
+    
+    print(f"Running: {design} | AR: {aspect_ratio} | Util: {utilization} | Density: {density}")
+    try:
+        # Run subprocess, suppress standard output for clean logs, capture stderr for errors
+        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, env=env)
+        if result.returncode != 0:
+            print(f"[ERROR] Failed to place {design} (AR: {aspect_ratio}, Util: {utilization}, Density: {density})")
+            print(result.stderr)
+            return False
+        return True
+    except FileNotFoundError:
+        print("[ERROR] 'openroad' executable not found. Ensure it is installed and in your PATH.")
+        return False
+    except Exception as e:
+        print(f"[ERROR] Exception during execution: {e}")
+        return False
+
+def find_benchmarks(base_dir):
+    benchmarks = []
+    for root, dirs, files in os.walk(base_dir):
+        if 'tech.lef' in files and 'cells.lef' in files:
+            def_files = [f for f in files if f.endswith('.def')]
+            if def_files:
+                # Prefer floorplan.def if it exists, otherwise use the first one
+                input_def = 'floorplan.def' if 'floorplan.def' in def_files else def_files[0]
+                benchmarks.append({
+                    'design': os.path.basename(root),
+                    'tech_lef': os.path.join(root, 'tech.lef'),
+                    'cells_lef': os.path.join(root, 'cells.lef'),
+                    'input_def': os.path.join(root, input_def)
+                })
+    return benchmarks
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate layout placements by varying physical constraints.")
+    parser.add_argument("--all_benchmarks", action="store_true", help="Automatically discover and run all benchmarks in the benchmarks directory")
+    parser.add_argument("--benchmarks_dir", default="data/ispd_benchmarks", help="Directory containing benchmark designs")
+    
+    parser.add_argument("--design", help="Name of the design (e.g., mgc_matrix_mult_1)")
+    parser.add_argument("--tech_lef", help="Path to tech LEF file")
+    parser.add_argument("--cells_lef", help="Path to cells LEF file")
+    parser.add_argument("--input_def", help="Path to input floorplan DEF file")
+    
+    parser.add_argument("--out_dir", default="data/generated_defs", help="Directory to save generated DEFs")
+    parser.add_argument("--aspect_ratios", type=float, nargs="+", default=[1.0, 0.66, 1.5], help="List of floorplan aspect ratios")
+    parser.add_argument("--utilizations", type=float, nargs="+", default=[60, 70, 80], help="List of core utilizations (percent)")
+    parser.add_argument("--densities", type=float, nargs="+", default=[0.6, 0.65, 0.7, 0.75], help="List of target densities")
+    parser.add_argument("--workers", type=int, default=4, help="Number of parallel OpenROAD workers")
+    parser.add_argument("--tcl_script", default="openroad_scripts/run_placement.tcl", help="Path to OpenROAD TCL script")
+
+    args = parser.parse_args()
+
+    if args.all_benchmarks:
+        benchmarks = find_benchmarks(args.benchmarks_dir)
+        print(f"Found {len(benchmarks)} benchmarks in {args.benchmarks_dir}.")
+    else:
+        if not all([args.design, args.tech_lef, args.cells_lef, args.input_def]):
+            print("[ERROR] Must provide --design, --tech_lef, --cells_lef, and --input_def if not using --all_benchmarks")
+            return
+        benchmarks = [{
+            'design': args.design,
+            'tech_lef': args.tech_lef,
+            'cells_lef': args.cells_lef,
+            'input_def': args.input_def
+        }]
+
+    # Create combinations of parameters
+    combinations = list(itertools.product(args.aspect_ratios, args.utilizations, args.densities))
+    
+    print(f"Starting generation...")
+    print(f"Total constraint combinations per design: {len(combinations)}")
+    print(f"Total jobs: {len(benchmarks) * len(combinations)}")
+
+    success_count = 0
+    total_jobs = 0
+    
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = []
+        for benchmark in benchmarks:
+            design_out_dir = os.path.join(args.out_dir, benchmark['design'])
+            os.makedirs(design_out_dir, exist_ok=True)
+            
+            for ar, util, density in combinations:
+                # Name output file with parameters
+                output_def = os.path.join(design_out_dir, f"{benchmark['design']}_ar{ar}_u{util}_d{density}.def")
+                futures.append(
+                    executor.submit(
+                        run_openroad_placement,
+                        args.tcl_script, benchmark['design'], benchmark['tech_lef'], benchmark['cells_lef'], benchmark['input_def'], output_def, ar, util, density
+                    )
+                )
+                total_jobs += 1
+
+        for future in futures:
+            if future.result():
+                success_count += 1
+
+    print(f"\\nGeneration complete! Successfully generated {success_count}/{total_jobs} DEF files.")
+
+    # Generate summary report
+    summary_path = os.path.join(args.out_dir, "dataset_summary.csv")
+    print(f"Writing dataset metrics summary to {summary_path}...")
+    with open(summary_path, 'w', newline='') as csvfile:
+        fieldnames = ['design', 'aspect_ratio', 'utilization', 'density', 'status', 'hpwl', 'def_path']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        for benchmark in benchmarks:
+            design_out_dir = os.path.join(args.out_dir, benchmark['design'])
+            for ar, util, density in combinations:
+                log_name = f"place_{benchmark['design']}_ar{ar}_u{util}_d{density}.log"
+                def_name = f"{benchmark['design']}_ar{ar}_u{util}_d{density}.def"
+                log_path = os.path.join(design_out_dir, log_name)
+                def_path = os.path.join(design_out_dir, def_name)
+                
+                metrics = extract_metrics_from_log(log_path)
+                
+                writer.writerow({
+                    'design': benchmark['design'],
+                    'aspect_ratio': ar,
+                    'utilization': util,
+                    'density': density,
+                    'status': metrics['status'],
+                    'hpwl': metrics['hpwl'],
+                    'def_path': def_path
+                })
+
+if __name__ == "__main__":
+    main()
