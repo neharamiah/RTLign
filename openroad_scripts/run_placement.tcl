@@ -14,7 +14,6 @@
 #     -cells_lef   <path>  \
 #     -input_def   <path>  \
 #     -output_def  <path>  \
-#     -seed        <int>   \
 #     -target_density <float>
 #
 # USAGE (manual / testing):
@@ -37,7 +36,6 @@
 #   cells_lef      - Path to cell library LEF (MACRO SIZE statements)
 #   input_def      - Path to floorplan DEF (post-floorplan, pre-placement)
 #   output_def     - Path where placed DEF will be written
-#   seed           - Random seed for placement (integer, e.g. 42)
 #   target_density - Target cell density fraction (e.g. 0.70 for 70%)
 #
 ###############################################################################
@@ -49,7 +47,7 @@
 
 # Parse arguments from environment variables (passed by data_generator.py)
 proc parse_args {} {
-    global design_name tech_lef cells_lef input_def output_def seed target_density
+    global design_name tech_lef cells_lef input_def output_def aspect_ratio core_utilization target_density
 
     # Defaults (safe fallback for interactive testing)
     set design_name    "gcd"
@@ -57,7 +55,8 @@ proc parse_args {} {
     set cells_lef      ""
     set input_def      ""
     set output_def     ""
-    set seed           42
+    set aspect_ratio   1.0
+    set core_utilization 60.0
     set target_density 0.70
 
     if {[info exists ::env(DESIGN_NAME)]}    { set design_name    $::env(DESIGN_NAME) }
@@ -65,7 +64,8 @@ proc parse_args {} {
     if {[info exists ::env(CELLS_LEF)]}      { set cells_lef      $::env(CELLS_LEF) }
     if {[info exists ::env(INPUT_DEF)]}      { set input_def      $::env(INPUT_DEF) }
     if {[info exists ::env(OUTPUT_DEF)]}     { set output_def     $::env(OUTPUT_DEF) }
-    if {[info exists ::env(SEED)]}           { set seed           $::env(SEED) }
+    if {[info exists ::env(ASPECT_RATIO)]}   { set aspect_ratio   $::env(ASPECT_RATIO) }
+    if {[info exists ::env(CORE_UTILIZATION)]} { set core_utilization $::env(CORE_UTILIZATION) }
     if {[info exists ::env(TARGET_DENSITY)]} { set target_density $::env(TARGET_DENSITY) }
 }
 
@@ -98,7 +98,7 @@ require_nonempty output_def
 set output_dir [file dirname $output_def]
 file mkdir $output_dir
 
-set log_file [file join $output_dir "place_${design_name}_seed${seed}.log"]
+set log_file [file join $output_dir "place_${design_name}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.log"]
 set log_fh   [open $log_file w]
 
 proc log {msg} {
@@ -117,7 +117,8 @@ log "  tech_lef    : $tech_lef"
 log "  cells_lef   : $cells_lef"
 log "  input_def   : $input_def"
 log "  output_def  : $output_def"
-log "  seed        : $seed"
+log "  aspect_ratio: $aspect_ratio"
+log "  utilization : $core_utilization%"
 log "  density     : $target_density"
 log "============================================================"
 
@@ -144,11 +145,32 @@ if {[catch {read_def $input_def} err]} {
     exit 1
 }
 
-log "Design loaded. Reporting die area..."
+log "Design loaded."
+
+# ---------------------------------------------------------------------------
+# 3.5 RE-INITIALIZE FLOORPLAN
+#     Allows varying the die aspect ratio and core utilization
+# ---------------------------------------------------------------------------
+
+log "Re-initializing floorplan (utilization=$core_utilization%, aspect_ratio=$aspect_ratio)..."
 if {[catch {
-    set die   [ord::get_db_die]
-    set block [ord::get_db_block]
-    set bbox  [$die getDieArea]
+    initialize_floorplan -utilization $core_utilization -aspect_ratio $aspect_ratio -core_space 10 -site core
+} err]} {
+    log "ERROR during initialize_floorplan: $err"
+    exit 1
+}
+
+log "Placing pins..."
+if {[catch {
+    place_pins -hor_layers metal3 -ver_layers metal4
+} err]} {
+    log "WARNING: Pin placement failed: $err"
+}
+
+if {[catch {
+    set db [ord::get_db]
+    set block [[$db getChip] getBlock]
+    set bbox [$block getDieArea]
     log "  Die area    : [$bbox xMin] [$bbox yMin] -> [$bbox xMax] [$bbox yMax]"
     log "  Components  : [llength [$block getInsts]] instances"
 } err]} {
@@ -160,13 +182,12 @@ if {[catch {
 # 4. GLOBAL PLACEMENT
 #    Uses OpenROAD's RePlAce engine via the place_design command.
 #    Key parameters:
-#      -seed           : reproducible placement (varies per training example)
 #      -density        : target utilisation (0.0–1.0)
 #      -timing_driven  : disabled — we only care about wirelength, not slack
 #      -routability_driven: disabled — pure placement, no routing awareness
 # ---------------------------------------------------------------------------
 
-log "Starting global placement (seed=$seed, density=$target_density)..."
+log "Starting global placement (density=$target_density)..."
 
 if {[catch {
     global_placement \
@@ -223,11 +244,23 @@ if {[catch {check_placement -verbose} err]} {
 log "--- Placement Metrics ---"
 
 if {[catch {
-    set hpwl [sta::format_time [rsz::hpwl] 1]
-    log "METRIC hpwl $hpwl"
+    set temp_wl_file [file join $output_dir "wl_temp_${design_name}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.rpt"]
+    report_wire_length -file $temp_wl_file -summary
+    
+    set fp [open $temp_wl_file r]
+    set wl_data [read $fp]
+    close $fp
+    file delete $temp_wl_file
+
+    foreach line [split $wl_data "\n"] {
+        if {[string match "*Total wire length:*" $line]} {
+            # Format: Total wire length: 123456 um
+            set wl_val [lindex $line 3]
+            log "METRIC hpwl $wl_val"
+        }
+    }
 } err]} {
-    # HPWL may not be available without the timing engine loaded
-    log "METRIC hpwl N/A (timing engine not loaded)"
+    log "METRIC hpwl N/A ($err)"
 }
 
 if {[catch {
@@ -252,7 +285,7 @@ if {[catch {write_def $output_def} err]} {
 
 log "Output DEF written successfully."
 log "============================================================"
-log "Run complete: $design_name | seed=$seed | density=$target_density"
+log "Run complete: $design_name | AR=$aspect_ratio | Util=$core_utilization | density=$target_density"
 log "============================================================"
 
 close $log_fh
