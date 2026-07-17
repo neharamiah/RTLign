@@ -3,7 +3,7 @@
 **Project:** ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement  
 **Team:** P124 — K Sahana, Ratik Agrawal, Neha Ramiah  
 **Mentor:** Dr. Krupa Rasane  
-**Last Updated:** 7 May 2026
+**Last Updated:** 17 July 2026
 
 ---
 
@@ -20,6 +20,8 @@
    - 4.5 [Legalizer Testbench](#45-legalizer-testbench-legalizer_tbv)
    - 4.6 [HEX → DEF Injector](#46-hex--def-injector-hex_to_defpy)
    - 4.7 [Master Orchestrator](#47-master-orchestrator-master_runpy)
+   - 4.8 [Testing Suite](#48-testing-suite-tests-and-property-tests)
+   - 4.9 [OpenROAD Placement Script](#49-openroad-placement-script-openroad_scriptsrun_placementtcl)
 5. [Simulation Results](#5-simulation-results)
 6. [Known Limitations](#6-known-limitations)
 7. [Roadmap — What's Next](#7-roadmap--whats-next)
@@ -74,8 +76,9 @@ RTLign/
 │   └── hex_to_def.py              # HEX → DEF coordinate injector
 │
 ├── rtl_legalizer/
-│   ├── lef_parser.py              # LEF → Dimension Dictionary extractor (NEW)
-│   ├── lef_parser_test.py         # Unit tests for LEF parser (NEW)
+│   ├── lef_parser.py              # LEF → Dimension Dictionary extractor
+│   ├── lef_parser_test.py         # Unit tests for LEF parser
+│   ├── lef_parser_property_test.py # Property-based tests for LEF parser (NEW)
 │   ├── collision_check.v          # Combinational AABB overlap detector
 │   ├── legalizer_fsm.v            # FSM-based greedy sweep legalizer
 │   ├── legalizer_tb.v             # Testbench with overlap audit
@@ -83,13 +86,22 @@ RTLign/
 │
 ├── openroad_scripts/
 │   ├── mockup_export.def          # Baseline GCD design (FreePDK45, 482 components)
-│   └── legalized_export.def       # Output: legalized placement (generated)
+│   ├── legalized_export.def       # Output: legalized placement (generated)
+│   └── run_placement.tcl          # OpenROAD placement flow script for dataset generation (NEW)
+│
+├── tests/                         # Integration and CLI testing suite (NEW)
+│   ├── __init__.py
+│   ├── test_ispd2015_integration.py # Integration testing on real benchmarks (NEW)
+│   └── test_lef_parser_cli.py     # Command Line Interface tests (NEW)
 │
 ├── data/                          # Training datasets
 ├── README.md                      # Project README
-├── ROADMAP.md                     # Comprehensive 6-month roadmap (NEW)
+├── ROADMAP.md                     # Comprehensive 6-month roadmap
 ├── PROGRESS.md                    # This document
 ├── Project_Readiness_Note.md      # Original project proposal
+├── Project_Readiness_Note.docx    # Proposal Word document format
+├── AGENTS.md                      # Steering context & guidelines for AI agents (NEW)
+├── Monthly_Report_Formatted.md    # Formatted monthly report (NEW)
 └── .gitignore                     # Ignores EDA outputs, datasets, sim artifacts
 ```
 
@@ -231,7 +243,27 @@ RTLign/
 | `b97ae8d` | feat(lef-parser): add LEF parser for real cell dimensions |
 | `af11957` | added learning based roadmap |
 
-**Status:** ✅ Completed and verified — all 47 tests (integration, CLI, unit, and property-based) pass. Real ISPD 2015 benchmarks are successfully parsed and processed.
+**Status:** ✅ Completed.
+
+---
+
+### Phase 3: Robust Testing & Dataset Preparation (Commits `ba8af81` → `ee64e51`)
+
+**What was done:**
+- **Robust Testing Infrastructure:** Added property-based tests via Hypothesis (`rtl_legalizer/lef_parser_property_test.py`) to verify dimension parsing properties. Created CLI tests (`tests/test_lef_parser_cli.py`) and full integration tests (`tests/test_ispd2015_integration.py`) to run the entire parsing and simulation pipeline on actual ISPD 2015 benchmarks.
+- **OpenROAD Batch Placement Script:** Developed `openroad_scripts/run_placement.tcl` to drive OpenROAD's RePlAce global placement and detailed legalization engines with custom seeds and densities. This serves as the engine for dataset generation.
+- **Documentation & Agent Guidance:** Added `AGENTS.md` containing strict guidelines and architectural rules for AI agent collaboration. Cleaned up the repository by removing obsolete `.kiro/` steering specifications.
+- **Reporting:** Created the structured `Monthly_Report_Formatted.md` for project milestones tracking.
+
+**Commits:**
+| Hash | Description |
+|:---|:---|
+| `ee64e51` | made run_placement.md to generate dataset |
+| `ab19cec` | updated documentation, added AGENTS.md and removed .kiro to remove confusion |
+| `4114433` | updated tasks.ms in .kiro |
+| `ba8af81` | updated parser (property tests & integration tests) |
+
+**Status:** ✅ Completed and verified — all 47 tests (integration, CLI, unit, and property-based) pass successfully.
 
 ## 4. Component Deep-Dives
 
@@ -411,6 +443,42 @@ If the push would exceed the die boundary, the macro is wrapped to the opposite 
 
 ---
 
+### 4.8 Testing Suite (`tests/` & Property Tests)
+
+**Purpose:** Comprehensive verification of parsers, CLI boundaries, and full integration flow on real benchmarks under randomized inputs.
+
+- **Unit & Property-based Testing (`rtl_legalizer/lef_parser_property_test.py`):** Uses the `Hypothesis` framework to run randomized property checks on the LEF parser. Validates round-trips, aspect-ratio preservation under scaling, and dictionary mapping stability.
+- **CLI Testing (`tests/test_lef_parser_cli.py`):** Tests the command line interface options of `lef_parser.py` including help outputs, stdout routing, direct file writing, verbosity settings, handling of multiple files, and error bounds on missing assets.
+- **Integration Testing (`tests/test_ispd2015_integration.py`):** Runs the end-to-end flow on real ISPD 2015 benchmarks (e.g. `mgc_matrix_mult_2`), validating tech/cells LEF parsing, DEF parsing, Verilog compilation, simulator execution, and successful injection back into the output DEF without deadlock.
+
+---
+
+### 4.9 OpenROAD Placement Script (`openroad_scripts/run_placement.tcl`)
+
+**Purpose:** Runs OpenROAD placement (global placement using RePlAce and detailed legalization) programmatically to export placed `.def` files for dataset generation.
+
+**Interface:**
+```tcl
+openroad -no_init -exit run_placement.tcl \
+  -design_name <name>  \
+  -tech_lef    <path>  \
+  -cells_lef   <path>  \
+  -input_def   <path>  \
+  -output_def  <path>  \
+  -seed        <int>   \
+  -target_density <float>
+```
+
+**Key Steps:**
+1. Parses flags for design coordinates, PDK paths, seed, and density.
+2. Loads technology and cell library LEFs, followed by the target floorplanned DEF.
+3. Invokes `global_placement` (RePlAce engine) parameterized by seed and target cell density.
+4. Invokes `detailed_placement` (legalization) with allowed displacements.
+5. Performs physical design checks via `check_placement` and extracts quality metrics (such as HPWL).
+6. Writes the finished placed DEF to the target destination.
+
+---
+
 ## 5. Simulation Results
 
 ### Full Pipeline Run
@@ -470,7 +538,7 @@ If the push would exceed the die boundary, the macro is wrapped to the opposite 
 
 ### Month 1: Foundations & Dataset Generation
 - **[DONE]** Build: LEF Parser & Real Dimensions (Extract real cell widths/heights, convert dimensions, fix legalizer bugs)
-- Build: Dataset Generation Pipeline (OpenROAD TCL batch script, data_generator.py, generate placements, parse benchmarks)
+- **[PARTIAL]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script completed; dataset generator wrapper logic remaining)
 
 ### Month 2: Supervised ML Predictor & Evaluation
 - Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)
