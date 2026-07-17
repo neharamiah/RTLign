@@ -34,7 +34,6 @@ def run_openroad_placement(tcl_script, design, tech_lef, cells_lef, input_def, o
         return False
 
 def main():
-    parser = argparse.add_argument_group("Dataset Generator")
     parser = argparse.ArgumentParser(description="Generate layout placements by varying seed and density.")
     parser.add_argument("--design", required=True, help="Name of the design (e.g., gcd, picorv32)")
     parser.add_argument("--tech_lef", required=True, help="Path to tech LEF file")
