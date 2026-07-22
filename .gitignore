@@ -46,3 +46,10 @@ venv/
 # 5. OS Generated Files
 .DS_Store
 Thumbs.db
+
+# 6. Local Synthesis Tools & Temp Scripts
+oss-cad-suite/
+merge_lefs.py
+temp.tcl
+openroad_debug.log
+.ua/

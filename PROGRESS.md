@@ -538,7 +538,7 @@ openroad -no_init -exit run_placement.tcl \
 
 ### Month 1: Foundations & Dataset Generation
 - **[DONE]** Build: LEF Parser & Real Dimensions (Extract real cell widths/heights, convert dimensions, fix legalizer bugs)
-- **[PARTIAL]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script completed; dataset generator wrapper logic remaining)
+- **[DONE]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script and `data_generator.py` wrapper completed)
 
 ### Month 2: Supervised ML Predictor & Evaluation
 - Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)
