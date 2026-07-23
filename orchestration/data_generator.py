@@ -50,14 +50,14 @@ def run_openroad_placement(tcl_script, design, tech_lef, cells_lef, input_def, o
         if result.returncode != 0:
             print(f"[ERROR] Failed to place {design} (AR: {aspect_ratio}, Util: {utilization}, Density: {density})")
             print(result.stderr)
-            return False
-        return True
+            return False, design, aspect_ratio, utilization, density
+        return True, design, aspect_ratio, utilization, density
     except FileNotFoundError:
         print("[ERROR] 'openroad' executable not found. Ensure it is installed and in your PATH.")
-        return False
+        return False, design, aspect_ratio, utilization, density
     except Exception as e:
         print(f"[ERROR] Exception during execution: {e}")
-        return False
+        return False, design, aspect_ratio, utilization, density
 
 def find_benchmarks(base_dir):
     benchmarks = []
@@ -172,9 +172,23 @@ def main():
 
         if futures:
             print(f"Waiting for {len(futures)} active placement jobs...")
+            completed_counter = success_count
+            total_target = len(futures) + success_count
+            
             for future in as_completed(futures):
-                if future.result():
+                res, design, ar, util, density = future.result()
+                completed_counter += 1
+                if res:
                     success_count += 1
+                
+                pct = (completed_counter / total_target) * 100
+                bar_len = 30
+                filled_len = int(bar_len * completed_counter // total_target)
+                bar = '=' * filled_len + '>' + '.' * (bar_len - filled_len - 1) if filled_len < bar_len else '=' * bar_len
+                
+                status_str = "SUCCESS" if res else "FAILED"
+                print(f"[{bar}] {completed_counter}/{total_target} ({pct:.1f}%) | {design} (AR:{ar}, U:{util}, D:{density}) -> {status_str}", flush=True)
+                
                 # Update CSV incrementally on every completed job
                 write_summary_report(args.out_dir, benchmarks, combinations)
 
