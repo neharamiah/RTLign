@@ -1,0 +1,12 @@
+services:
+  rtlign:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rtlign:latest
+    container_name: rtlign-env
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true

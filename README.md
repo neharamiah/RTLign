@@ -16,13 +16,44 @@ RTLign is a hardware-software co-design tool that replaces the traditional OpenR
 
 ## Quick Start
 
-### Prerequisites
+### Option A: Running with Docker (Recommended for Windows / Teammates)
 
+Using Docker ensures all EDA tools (OpenROAD, Icarus Verilog via OSS CAD Suite) and Python dependencies are isolated and identical across all systems (Windows & Linux).
+
+#### Prerequisites:
+- **Windows:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ensure WSL 2 backend is enabled).
+- **Linux:** Install `docker.io` and `docker-compose-v2` (`sudo apt-get install docker.io docker-compose-v2`).
+
+#### Usage:
+1. Open the repository in **Antigravity**.
+2. **Build the Docker container** (first time only):
+   ```bash
+   docker compose build
+   ```
+3. **Run the full pipeline inside Docker:**
+   ```bash
+   docker compose run --rm rtlign python orchestration/master_run.py
+   ```
+4. **Run an interactive bash session inside Docker:**
+   ```bash
+   docker compose run --rm rtlign bash
+   ```
+5. **Run tests inside Docker:**
+   ```bash
+   docker compose run --rm rtlign pytest tests/ rtl_legalizer/
+   ```
+*Note: Any edits you make in Antigravity on your host system are instantly reflected inside the container.*
+
+---
+
+### Option B: Local Environment Setup
+
+#### Prerequisites
 - **Python 3.x**
 - **Icarus Verilog** (`iverilog`, `vvp`)
 - **OpenROAD** (optional, for GUI visualization and signoff)
 
-### Run the Full Pipeline
+#### Run the Full Pipeline
 
 ```bash
 # From the RTLign project root
