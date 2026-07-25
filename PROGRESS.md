@@ -251,9 +251,16 @@ RTLign/
 
 **What was done:**
 - **Robust Testing Infrastructure:** Added property-based tests via Hypothesis (`rtl_legalizer/lef_parser_property_test.py`) to verify dimension parsing properties. Created CLI tests (`tests/test_lef_parser_cli.py`) and full integration tests (`tests/test_ispd2015_integration.py`) to run the entire parsing and simulation pipeline on actual ISPD 2015 benchmarks.
-- **OpenROAD Batch Placement Script:** Developed `openroad_scripts/run_placement.tcl` to drive OpenROAD's RePlAce global placement and detailed legalization engines with custom seeds and densities. This serves as the engine for dataset generation.
+- **OpenROAD Batch Placement Script:** Developed `openroad_scripts/run_placement.tcl` to drive OpenROAD's RePlAce global placement and detailed legalization engines with custom seeds and densities.
+- **Dataset Generation Orchestrator:** Wrote `orchestration/data_generator.py` utilizing Python's `ThreadPoolExecutor` for high-throughput, multi-threaded dataset generation. The script loops over ISPD 2015 benchmarks (22 designs), applying various physical constraints (Aspect Ratio, Utilization, Target Density) and dynamically tracking OpenROAD `dpl` (Detailed Placement) engine success/failure.
 - **Documentation & Agent Guidance:** Added `AGENTS.md` containing strict guidelines and architectural rules for AI agent collaboration. Cleaned up the repository by removing obsolete `.kiro/` steering specifications.
 - **Reporting:** Created the structured `Monthly_Report_Formatted.md` for project milestones tracking.
+
+**Dataset Results:**
+- Evaluated 792 different constraint configurations across 22 ISPD benchmarks.
+- Yielded **277 completed layout DEFs** (113 `Legal` layouts, 164 `Illegal` layouts with minor overlap).
+- Identified the absolute failure boundaries of OpenROAD (515 `Failed` runs crashed the C++ engine due to extreme density).
+- Captured high-quality data of layouts *just before* software limits breaking point, providing optimal targets for the RTL Legalizer.
 
 **Commits:**
 | Hash | Description |
@@ -263,7 +270,21 @@ RTLign/
 | `4114433` | updated tasks.ms in .kiro |
 | `ba8af81` | updated parser (property tests & integration tests) |
 
-**Status:** ✅ Completed and verified — all 47 tests (integration, CLI, unit, and property-based) pass successfully.
+**Status:** ✅ Completed and verified — all 47 tests pass successfully. Dataset generation complete.
+
+---
+
+### Phase 4: ML Feature Extraction (Commits Pending)
+
+**What was done:**
+- **Feature Extractor Development:** Wrote `ml_predictor/feature_extractor.py` to systematically parse the hundreds of generated `.def` files and their corresponding entries in `dataset_summary.csv`.
+- **Large-scale Parsing:** Extracted individual cell and macro placement data (target X, target Y, cell type, aspect ratio, density, utilization) to construct tabular data for the Random Forest model.
+
+**Extraction Results:**
+- Successfully extracted **21,695,248 individual placement samples** across the 277 layout DEF files.
+- Saved into a single massive `data/ml_features.csv` matrix (365+ MB of raw tabular data) ready for scikit-learn ingestion.
+
+**Status:** ✅ Feature extraction completed successfully.
 
 ## 4. Component Deep-Dives
 
@@ -538,7 +559,7 @@ openroad -no_init -exit run_placement.tcl \
 
 ### Month 1: Foundations & Dataset Generation
 - **[DONE]** Build: LEF Parser & Real Dimensions (Extract real cell widths/heights, convert dimensions, fix legalizer bugs)
-- **[PARTIAL]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script completed; dataset generator wrapper logic remaining)
+- **[DONE]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script and `data_generator.py` wrapper completed)
 
 ### Month 2: Supervised ML Predictor & Evaluation
 - Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)

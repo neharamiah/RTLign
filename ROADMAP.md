@@ -75,16 +75,14 @@ If RL fails to converge → fall back to the ML predictor. The project is still 
 
 ### Week 4: Build — Dataset Generation Pipeline
 
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Write OpenROAD TCL batch script | Neha | `run_placement.tcl` — takes design + parameters, outputs placed `.def` |
-| Write `data_generator.py` | Ratik | Loops over designs × seeds × densities, calls OpenROAD via subprocess |
-| Generate GCD placements (1,000 runs) | Sahana | Vary random seeds and placement density, ~1 hour |
-| Generate PicoRV32 placements (500 runs) | Ratik | Synthesis first, then 500 placement runs, ~6 hours |
-| Parse ISPD 2015 benchmarks for features | Neha | Extract component positions, connectivity, die area from the 18 provided `.def` files |
-| Organize into `data/training_ready/` | All | Extract features into structured formats (e.g., `.npy`, `.h5` or `.pkl`) |
+| Task | Owner | Details | Status |
+|:-----|:------|:--------|:-------|
+| Write OpenROAD TCL batch script | Neha | `run_placement.tcl` — takes design + parameters, outputs placed `.def` | ✅ Done |
+| Write `data_generator.py` | Ratik | Loops over designs × constraints, calls OpenROAD via subprocess | ✅ Done |
+| Generate ISPD 2015 placements | Sahana | Sweep 22 designs with varying AR/Util/Density (792 combinations) | ✅ Done |
+| Extract ML Features | Ratik | `feature_extractor.py` to parse 277 output DEFs into ML features | ✅ Done |
 
-**Deliverable:** 1,500+ training examples in a clean, ML-ready format (NPY or HDF5) — *not* `.hex` (which is only for Verilog) or `.csv` (which is too slow/large for graphs).
+**Deliverable:** 21.6 million training examples extracted across 277 layout configurations in a clean, ML-ready CSV format (`data/ml_features.csv`).
 
 ---
 

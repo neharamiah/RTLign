@@ -152,19 +152,36 @@ log "Design loaded."
 #     Allows varying the die aspect ratio and core utilization
 # ---------------------------------------------------------------------------
 
-log "Re-initializing floorplan (utilization=$core_utilization%, aspect_ratio=$aspect_ratio)..."
+set site_name "unithd"
+if {[info exists ::env(SITE_NAME)]} { set site_name $::env(SITE_NAME) }
+
+log "Re-initializing floorplan (utilization=$core_utilization%, aspect_ratio=$aspect_ratio, site=$site_name)..."
 if {[catch {
-    initialize_floorplan -utilization $core_utilization -aspect_ratio $aspect_ratio -core_space 10 -site core
+    initialize_floorplan -utilization $core_utilization -aspect_ratio $aspect_ratio -core_space 10 -site $site_name
 } err]} {
-    log "ERROR during initialize_floorplan: $err"
-    exit 1
+    log "WARNING: initialize_floorplan failed with site=$site_name ($err). Retrying with site=core..."
+    if {[catch {
+        initialize_floorplan -utilization $core_utilization -aspect_ratio $aspect_ratio -core_space 10 -site core
+    } err2]} {
+        log "ERROR during initialize_floorplan: $err2"
+        exit 1
+    }
+}
+if {[catch { make_tracks } err]} {
+    log "WARNING: make_tracks failed: $err"
 }
 
 log "Placing pins..."
 if {[catch {
-    place_pins -hor_layers metal3 -ver_layers metal4
+    place_pins -hor_layers {met3 met5} -ver_layers {met2 met4}
 } err]} {
-    log "WARNING: Pin placement failed: $err"
+    log "WARNING: Pin placement with met3/met5 met2/met4 failed ($err). Retrying with met3 met4..."
+    if {[catch {
+        place_pins -hor_layers met3 -ver_layers met4
+    } err2]} {
+        log "ERROR during pin placement: $err2"
+        exit 1
+    }
 }
 
 if {[catch {

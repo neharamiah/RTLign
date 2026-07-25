@@ -16,13 +16,44 @@ RTLign is a hardware-software co-design tool that replaces the traditional OpenR
 
 ## Quick Start
 
-### Prerequisites
+### Option A: Running with Docker (Recommended for Windows / Teammates)
 
+Using Docker ensures all EDA tools (OpenROAD, Icarus Verilog via OSS CAD Suite) and Python dependencies are isolated and identical across all systems (Windows & Linux).
+
+#### Prerequisites:
+- **Windows:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ensure WSL 2 backend is enabled).
+- **Linux:** Install `docker.io` and `docker-compose-v2` (`sudo apt-get install docker.io docker-compose-v2`).
+
+#### Usage:
+1. Open the repository in **Antigravity**.
+2. **Build the Docker container** (first time only):
+   ```bash
+   docker compose build
+   ```
+3. **Run the full pipeline inside Docker:**
+   ```bash
+   docker compose run --rm rtlign python orchestration/master_run.py
+   ```
+4. **Run an interactive bash session inside Docker:**
+   ```bash
+   docker compose run --rm rtlign bash
+   ```
+5. **Run tests inside Docker:**
+   ```bash
+   docker compose run --rm rtlign pytest tests/ rtl_legalizer/
+   ```
+*Note: Any edits you make in Antigravity on your host system are instantly reflected inside the container.*
+
+---
+
+### Option B: Local Environment Setup
+
+#### Prerequisites
 - **Python 3.x**
 - **Icarus Verilog** (`iverilog`, `vvp`)
 - **OpenROAD** (optional, for GUI visualization and signoff)
 
-### Run the Full Pipeline
+#### Run the Full Pipeline
 
 ```bash
 # From the RTLign project root
@@ -58,10 +89,12 @@ python ml_predictor/hex_to_def.py
 ```
 RTLign/
 ├── orchestration/
-│   └── master_run.py          # Single-click pipeline orchestrator
+│   ├── master_run.py          # Single-click pipeline orchestrator
+│   └── data_generator.py      # Automated OpenROAD placement dataset generator
 ├── ml_predictor/
 │   ├── def_parser.py          # DEF + LEF → HEX coordinate extractor
-│   └── hex_to_def.py          # HEX → DEF coordinate injector
+│   ├── hex_to_def.py          # HEX → DEF coordinate injector
+│   └── feature_extractor.py   # Extracts 21.6M features for Random Forest training
 ├── rtl_legalizer/
 │   ├── lef_parser.py          # LEF → Dimension Dictionary extractor
 │   ├── lef_parser_test.py     # Unit tests for LEF parser
@@ -80,13 +113,19 @@ RTLign/
 ### 1. LEF Parser (`lef_parser.py`)
 Extracts actual macro dimensions (Width, Height) from an OpenROAD `.lef` library file, converting from microns to DEF database units to enable accurate collision detection for non-square geometries.
 
-### 2. DEF Parser (`def_parser.py`)
+### 2. Dataset Generator (`data_generator.py`)
+Automates OpenROAD (`run_placement.tcl`) to sweep through physical design constraints (e.g., Target Density, Core Utilization, Aspect Ratio). Generates hundreds of `Legal`, `Illegal`, and `Failed` layout variations for machine learning training.
+
+### 3. DEF Parser (`def_parser.py`)
 Extracts macro placement coordinates from an OpenROAD `.def` file, matches them with actual LEF dimensions, and converts them to a flat `.hex` memory file. Each macro is represented as 4 × 32-bit hex values: `X, Y, Width, Height`.
 
-### 3. RTL Legalizer (`legalizer_fsm.v`)
+### 4. Feature Extractor (`feature_extractor.py`)
+Parses hundreds of generated DEF layouts to extract millions of individual macro and cell coordinate constraints into a massive tabular dataset (`ml_features.csv`), used to train the ML predictor.
+
+### 5. RTL Legalizer (`legalizer_fsm.v`)
 A Mealy FSM that iterates over all macro pairs, detects AABB overlaps via the `collision_check` module, and resolves them by pushing the later macro along the axis of minimum overlap. Die-boundary clamping prevents macros from leaving the chip area.
 
-### 4. HEX → DEF Injector (`hex_to_def.py`)
+### 6. HEX → DEF Injector (`hex_to_def.py`)
 Reads the legalized `.hex` output and patches the coordinates back into the original `.def` file, preserving all other physical design data (pins, nets, routing, special nets).
 
 ## Team P124

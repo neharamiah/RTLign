@@ -3,7 +3,7 @@ import subprocess
 import argparse
 import itertools
 import csv
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def extract_metrics_from_log(log_path):
     metrics = {
@@ -50,14 +50,14 @@ def run_openroad_placement(tcl_script, design, tech_lef, cells_lef, input_def, o
         if result.returncode != 0:
             print(f"[ERROR] Failed to place {design} (AR: {aspect_ratio}, Util: {utilization}, Density: {density})")
             print(result.stderr)
-            return False
-        return True
+            return False, design, aspect_ratio, utilization, density
+        return True, design, aspect_ratio, utilization, density
     except FileNotFoundError:
         print("[ERROR] 'openroad' executable not found. Ensure it is installed and in your PATH.")
-        return False
+        return False, design, aspect_ratio, utilization, density
     except Exception as e:
         print(f"[ERROR] Exception during execution: {e}")
-        return False
+        return False, design, aspect_ratio, utilization, density
 
 def find_benchmarks(base_dir):
     benchmarks = []
@@ -74,6 +74,33 @@ def find_benchmarks(base_dir):
                     'input_def': os.path.join(root, input_def)
                 })
     return benchmarks
+
+def write_summary_report(out_dir, benchmarks, combinations):
+    summary_path = os.path.join(out_dir, "dataset_summary.csv")
+    with open(summary_path, 'w', newline='') as csvfile:
+        fieldnames = ['design', 'aspect_ratio', 'utilization', 'density', 'status', 'hpwl', 'def_path']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        for benchmark in benchmarks:
+            design_out_dir = os.path.join(out_dir, benchmark['design'])
+            for ar, util, density in combinations:
+                log_name = f"place_{benchmark['design']}_ar{ar}_u{util}_d{density}.log"
+                def_name = f"{benchmark['design']}_ar{ar}_u{util}_d{density}.def"
+                log_path = os.path.join(design_out_dir, log_name)
+                def_path = os.path.join(design_out_dir, def_name)
+                
+                metrics = extract_metrics_from_log(log_path)
+                
+                writer.writerow({
+                    'design': benchmark['design'],
+                    'aspect_ratio': ar,
+                    'utilization': util,
+                    'density': density,
+                    'status': metrics['status'],
+                    'hpwl': metrics['hpwl'],
+                    'def_path': def_path
+                })
 
 def main():
     parser = argparse.ArgumentParser(description="Generate layout placements by varying physical constraints.")
@@ -127,47 +154,47 @@ def main():
             for ar, util, density in combinations:
                 # Name output file with parameters
                 output_def = os.path.join(design_out_dir, f"{benchmark['design']}_ar{ar}_u{util}_d{density}.def")
+                total_jobs += 1
+                
+                if os.path.exists(output_def):
+                    success_count += 1
+                    continue
+                    
                 futures.append(
                     executor.submit(
                         run_openroad_placement,
                         args.tcl_script, benchmark['design'], benchmark['tech_lef'], benchmark['cells_lef'], benchmark['input_def'], output_def, ar, util, density
                     )
                 )
-                total_jobs += 1
 
-        for future in futures:
-            if future.result():
-                success_count += 1
+        # Initial write to populate pre-existing completed runs
+        write_summary_report(args.out_dir, benchmarks, combinations)
 
-    print(f"\\nGeneration complete! Successfully generated {success_count}/{total_jobs} DEF files.")
-
-    # Generate summary report
-    summary_path = os.path.join(args.out_dir, "dataset_summary.csv")
-    print(f"Writing dataset metrics summary to {summary_path}...")
-    with open(summary_path, 'w', newline='') as csvfile:
-        fieldnames = ['design', 'aspect_ratio', 'utilization', 'density', 'status', 'hpwl', 'def_path']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        
-        for benchmark in benchmarks:
-            design_out_dir = os.path.join(args.out_dir, benchmark['design'])
-            for ar, util, density in combinations:
-                log_name = f"place_{benchmark['design']}_ar{ar}_u{util}_d{density}.log"
-                def_name = f"{benchmark['design']}_ar{ar}_u{util}_d{density}.def"
-                log_path = os.path.join(design_out_dir, log_name)
-                def_path = os.path.join(design_out_dir, def_name)
+        if futures:
+            print(f"Waiting for {len(futures)} active placement jobs...")
+            completed_counter = success_count
+            total_target = len(futures) + success_count
+            
+            for future in as_completed(futures):
+                res, design, ar, util, density = future.result()
+                completed_counter += 1
+                if res:
+                    success_count += 1
                 
-                metrics = extract_metrics_from_log(log_path)
+                pct = (completed_counter / total_target) * 100
+                bar_len = 30
+                filled_len = int(bar_len * completed_counter // total_target)
+                bar = '=' * filled_len + '>' + '.' * (bar_len - filled_len - 1) if filled_len < bar_len else '=' * bar_len
                 
-                writer.writerow({
-                    'design': benchmark['design'],
-                    'aspect_ratio': ar,
-                    'utilization': util,
-                    'density': density,
-                    'status': metrics['status'],
-                    'hpwl': metrics['hpwl'],
-                    'def_path': def_path
-                })
+                status_str = "SUCCESS" if res else "FAILED"
+                print(f"[{bar}] {completed_counter}/{total_target} ({pct:.1f}%) | {design} (AR:{ar}, U:{util}, D:{density}) -> {status_str}", flush=True)
+                
+                # Update CSV incrementally on every completed job
+                write_summary_report(args.out_dir, benchmarks, combinations)
+
+    print(f"\nGeneration complete! Successfully generated {success_count}/{total_jobs} DEF files.")
+    # Final write to ensure all metrics are flushed and correct
+    write_summary_report(args.out_dir, benchmarks, combinations)
 
 if __name__ == "__main__":
     main()
