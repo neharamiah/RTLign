@@ -47,7 +47,7 @@
 
 # Parse arguments from environment variables (passed by data_generator.py)
 proc parse_args {} {
-    global design_name tech_lef cells_lef input_def output_def aspect_ratio core_utilization target_density
+    global design_name tech_lef cells_lef input_def output_def aspect_ratio core_utilization target_density seed snapshot_threshold
 
     # Defaults (safe fallback for interactive testing)
     set design_name    "gcd"
@@ -58,6 +58,8 @@ proc parse_args {} {
     set aspect_ratio   1.0
     set core_utilization 60.0
     set target_density 0.70
+    set seed           1
+    set snapshot_threshold 0.6
 
     if {[info exists ::env(DESIGN_NAME)]}    { set design_name    $::env(DESIGN_NAME) }
     if {[info exists ::env(TECH_LEF)]}       { set tech_lef       $::env(TECH_LEF) }
@@ -67,6 +69,8 @@ proc parse_args {} {
     if {[info exists ::env(ASPECT_RATIO)]}   { set aspect_ratio   $::env(ASPECT_RATIO) }
     if {[info exists ::env(CORE_UTILIZATION)]} { set core_utilization $::env(CORE_UTILIZATION) }
     if {[info exists ::env(TARGET_DENSITY)]} { set target_density $::env(TARGET_DENSITY) }
+    if {[info exists ::env(SEED)]}           { set seed           $::env(SEED) }
+    if {[info exists ::env(SNAPSHOT_THRESHOLD)]} { set snapshot_threshold $::env(SNAPSHOT_THRESHOLD) }
 }
 
 parse_args
@@ -98,7 +102,7 @@ require_nonempty output_def
 set output_dir [file dirname $output_def]
 file mkdir $output_dir
 
-set log_file [file join $output_dir "place_${design_name}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.log"]
+set log_file [file join $output_dir "place_${design_name}_s${seed}_t${snapshot_threshold}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.log"]
 set log_fh   [open $log_file w]
 
 proc log {msg} {
@@ -120,6 +124,8 @@ log "  output_def  : $output_def"
 log "  aspect_ratio: $aspect_ratio"
 log "  utilization : $core_utilization%"
 log "  density     : $target_density"
+log "  seed        : $seed"
+log "  snapshot    : $snapshot_threshold"
 log "============================================================"
 
 
@@ -204,13 +210,16 @@ if {[catch {
 #      -routability_driven: disabled — pure placement, no routing awareness
 # ---------------------------------------------------------------------------
 
-log "Starting global placement (density=$target_density)..."
+log "Starting global placement (density=$target_density, seed=$seed, snapshot=$snapshot_threshold)..."
 
 if {[catch {
     global_placement \
-        -density         $target_density \
-        -pad_left        0               \
-        -pad_right       0
+        -density                         $target_density    \
+        -pad_left                        0                  \
+        -pad_right                       0                  \
+        -routability_driven                                 \
+        -random_seed                     $seed              \
+        -routability_snapshot_overflow   $snapshot_threshold
 } err]} {
     log "ERROR during global placement: $err"
     exit 1
@@ -261,7 +270,7 @@ if {[catch {check_placement -verbose} err]} {
 log "--- Placement Metrics ---"
 
 if {[catch {
-    set temp_wl_file [file join $output_dir "wl_temp_${design_name}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.rpt"]
+    set temp_wl_file [file join $output_dir "wl_temp_${design_name}_s${seed}_t${snapshot_threshold}_ar${aspect_ratio}_u${core_utilization}_d${target_density}.rpt"]
     report_wire_length -file $temp_wl_file -summary
     
     set fp [open $temp_wl_file r]
@@ -302,7 +311,7 @@ if {[catch {write_def $output_def} err]} {
 
 log "Output DEF written successfully."
 log "============================================================"
-log "Run complete: $design_name | AR=$aspect_ratio | Util=$core_utilization | density=$target_density"
+log "Run complete: $design_name | Seed=$seed | Snap=$snapshot_threshold | AR=$aspect_ratio | Util=$core_utilization | density=$target_density"
 log "============================================================"
 
 close $log_fh
