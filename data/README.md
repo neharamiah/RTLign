@@ -30,16 +30,6 @@ data/
 │
 ├── ispd_benchmarks/
 │   │
-│   ├── ispd2011/                 8 superblue designs (Bookshelf format)
-│   │   ├── superblue1/           847,441 nodes
-│   │   ├── superblue2/           1,014,029 nodes
-│   │   ├── superblue4/           600,220 nodes
-│   │   ├── superblue5/           772,457 nodes
-│   │   ├── superblue10/          1,129,144 nodes
-│   │   ├── superblue12/          1,293,433 nodes
-│   │   ├── superblue15/          1,123,963 nodes
-│   │   └── superblue18/          483,452 nodes
-│   │
 │   ├── ispd2015/                 22 designs (18 public + 4 hidden, DEF + LEF format)
 │   │   ├── mgc_fft_1/            32,281 components
 │   │   ├── mgc_fft_2/            32,281 components
@@ -59,15 +49,7 @@ data/
 │   │   ├── mgc_superblue11_a/    927,074 components
 │   │   ├── mgc_superblue12/      1,287,037 components
 │   │   └── mgc_superblue16_a/    680,869 components
-│   │
-│   └── ispd2023/                 6 crypto designs (DEF format, ASAP7 library)
-│       └── benchmarks/_release/_final/
-│           ├── aes/              310,868 components
-│           ├── camellia/         11,721 components
-│           ├── cast/             30,430 components
-│           ├── misty/            12,508 components
-│           ├── seed/             20,214 components
-│           └── sha256/           12,183 components
+
 │
 ├── openroad_configs/             Per-design OpenROAD flow configs & scripts
 │
@@ -108,21 +90,6 @@ We have generated **1,299 DEF files** across ISPD 2015 benchmarks and synthesize
 ---
 
 ## Benchmark Summary
-
-### ISPD 2011 — Routability-Driven Placement (Bookshelf Format)
-
-| Design | Nodes | Format | Size |
-|:---|---:|:---|---:|
-| superblue18 | 483,452 | Bookshelf (.aux, .nodes, .nets, .pl, .scl) | 120 MB |
-| superblue4 | 600,220 | Bookshelf | 170 MB |
-| superblue5 | 772,457 | Bookshelf | 220 MB |
-| superblue10 | 1,129,144 | Bookshelf | 310 MB |
-| superblue1 | 847,441 | Bookshelf | 240 MB |
-| superblue2 | 1,014,029 | Bookshelf | 280 MB |
-| superblue15 | 1,123,963 | Bookshelf | 320 MB |
-| superblue12 | 1,293,433 | Bookshelf | 380 MB |
-
----
 
 ### ISPD 2015 — Detailed Routing-Driven Placement (DEF + LEF)
 
