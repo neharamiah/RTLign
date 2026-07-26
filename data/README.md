@@ -85,6 +85,7 @@ We have generated **1,299 DEF files** across ISPD 2015 benchmarks and synthesize
 | **RTL — OpenTitan** | Synthesized & Placed | **324 DEFs** | Swept over 3 seeds (10, 42, 100), 3 snapshot thresholds (0.4, 0.6, 0.8), 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **7.6 GB** |
 | **RTL — PicoRV32** | Synthesized & Placed | **324 DEFs** | Swept over 3 seeds, 3 snapshot thresholds, 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **417 MB** |
 | **RTL — Ibex** | Synthesized & Placed | **324 DEFs** | Floorplanned with 14,463 instances; swept over 3 seeds, 3 snapshot thresholds, 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **1.8 GB** |
+| **RTL — SweRV EH1** | Synthesized & Floorplanned | **0 DEFs** | Synthesized & floorplanned (2.1M instances; excluded from large parameter sweeps). | **-** |
 | **Total** | | **1,299 DEFs** | Tracked in `data/generated_defs/dataset_summary.csv` | **~14.0 GB** |
 
 ---
