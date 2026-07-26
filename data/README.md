@@ -3,7 +3,7 @@
 This directory contains all RTL sources, placement benchmarks, and generated training data
 for the RTLign ML predictor. **This entire directory is gitignored** — share via Google Drive: https://drive.google.com/drive/folders/11rk3iiRVHchWg8NOZXbroGBBM0-_1Dg5
 
-**Total size: ~14.0 GB | Total Generated Layout DEFs: 1,299**
+**Total size: ~41.0 GB | Total Generated Layout DEFs: 1,327**
 
 ---
 
@@ -64,7 +64,8 @@ data/
 │   ├── picorv32/                 (tech.lef, cells.lef, floorplan.def)
 │   ├── opentitan_blocks/         (tech.lef, cells.lef, floorplan.def)
 │   ├── ibex/                     (tech.lef, cells.lef, floorplan.def - 14,463 instances)
-│   └── swerv/                    (tech.lef, cells.lef, floorplan.def)
+│   ├── swerv/                    (tech.lef, cells.lef, floorplan.def - 2.1M instances)
+│   └── dataset/swerv/            (28 generated DEFs, 27 GB)
 │
 ├── sky130_pdk/                   SkyWater 130nm PDK standard cell libraries & tech LEFs
 │
@@ -77,7 +78,7 @@ data/
 
 ## Generated Dataset Summary
 
-We have generated **1,299 DEF files** across ISPD 2015 benchmarks and synthesized RTL designs:
+We have generated **1,327 DEF files** across ISPD 2015 benchmarks and synthesized RTL designs:
 
 | Source | Category | Generated DEF Files | Details / Constraints Swept | Storage |
 |:---|:---|---:|:---|---:|
@@ -85,8 +86,8 @@ We have generated **1,299 DEF files** across ISPD 2015 benchmarks and synthesize
 | **RTL — OpenTitan** | Synthesized & Placed | **324 DEFs** | Swept over 3 seeds (10, 42, 100), 3 snapshot thresholds (0.4, 0.6, 0.8), 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **7.6 GB** |
 | **RTL — PicoRV32** | Synthesized & Placed | **324 DEFs** | Swept over 3 seeds, 3 snapshot thresholds, 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **417 MB** |
 | **RTL — Ibex** | Synthesized & Placed | **324 DEFs** | Floorplanned with 14,463 instances; swept over 3 seeds, 3 snapshot thresholds, 3 aspect ratios, 3 utilizations, and 4 densities (324/324 100% success). | **1.8 GB** |
-| **RTL — SweRV EH1** | Floorplanned | **1 Initial DEF** (0 Swept Placements) | Initial synthesized `floorplan.def` (927 MB, 2.1M instances) in `generated_rtl_dataset/swerv/`; excluded from parameter sweeps due to memory/time scale. | **927 MB** |
-| **Total** | | **1,299 DEFs** | Tracked in `data/generated_defs/dataset_summary.csv` | **~14.0 GB** |
+| **RTL — SweRV EH1** | Synthesized & Placed | **28 DEFs** | Swept over aspect ratios (0.66, 1.0, 1.5), core utilizations (60%, 70%, 80%), and target densities (2.1M instances; stored in `data/generated_rtl_dataset/dataset/swerv/`). | **27.0 GB** |
+| **Total** | | **1,327 DEFs** | Tracked in `dataset_summary.csv` manifests | **~41.0 GB** |
 
 ---
 
@@ -126,7 +127,7 @@ Each design directory contains: `tech.lef`, `cells.lef`, `floorplan.def`, `desig
 | PicoRV32 | 1 `.v` file | 93 KB | ✅ Synthesized & Placed (324 DEFs) |
 | OpenTitan blocks | 242 `.sv` files | 6.8 MB | ✅ Synthesized & Placed (324 DEFs) |
 | Ibex | 30 `.sv` files | 50 MB | ✅ Floorplanned (14,463 insts) & Placed (324 DEFs) |
-| SweRV EH1 | 47 `.sv` files | 3.8 MB | ✅ Synthesized & Floorplanned (2.1M insts, excluded from large sweep) |
+| SweRV EH1 | 47 `.sv` files | 3.8 MB | ✅ Synthesized, Floorplanned & Placed (28 DEFs, 2.1M insts) |
 | **Total** | **320 RTL files** | **~61 MB** | |
 
 ---
