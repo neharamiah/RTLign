@@ -218,7 +218,6 @@ if {[catch {
         -pad_left                        0                  \
         -pad_right                       0                  \
         -routability_driven                                 \
-        -random_seed                     $seed              \
         -routability_snapshot_overflow   $snapshot_threshold
 } err]} {
     log "ERROR during global placement: $err"

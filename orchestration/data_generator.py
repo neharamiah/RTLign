@@ -119,6 +119,7 @@ def main():
     parser.add_argument("--benchmarks_dir", default="data/ispd_benchmarks", help="Directory containing benchmark designs")
     parser.add_argument("--rtl_benchmarks_dir", default="data/generated_rtl_dataset", help="Directory containing RTL benchmark designs")
     parser.add_argument("--exclude_designs", nargs="+", default=["swerv"], help="List of design names to exclude from processing")
+    parser.add_argument("--only_designs", nargs="+", help="Explicit list of design names to include (filtering discovered benchmarks)")
     
     parser.add_argument("--design", help="Name of the design (e.g., mgc_matrix_mult_1)")
     parser.add_argument("--tech_lef", help="Path to tech LEF file")
@@ -141,6 +142,8 @@ def main():
         if os.path.exists(args.rtl_benchmarks_dir):
             rtl_benchmarks = find_benchmarks(args.rtl_benchmarks_dir, exclude_designs=args.exclude_designs)
             benchmarks.extend(rtl_benchmarks)
+        if args.only_designs:
+            benchmarks = [b for b in benchmarks if b['design'] in args.only_designs]
         print(f"Found {len(benchmarks)} benchmarks.")
     else:
         if not all([args.design, args.tech_lef, args.cells_lef, args.input_def]):
