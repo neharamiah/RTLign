@@ -58,3 +58,6 @@ openroad_debug.log
 .pytest_cache/
 .hypothesis/
 .venv/
+
+# 7. Reports
+*Report*.md
