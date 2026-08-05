@@ -90,11 +90,13 @@ python ml_predictor/hex_to_def.py
 RTLign/
 ├── orchestration/
 │   ├── master_run.py          # Single-click pipeline orchestrator
-│   └── data_generator.py      # Automated OpenROAD placement dataset generator
+│   ├── data_generator.py      # Automated OpenROAD placement dataset generator
+│   ├── generate_rtl_dataset.py # Generates gate-level netlists for RTL designs
+│   └── rtl_to_def.py          # Converts RTL to floorplanned DEFs
 ├── ml_predictor/
 │   ├── def_parser.py          # DEF + LEF → HEX coordinate extractor
 │   ├── hex_to_def.py          # HEX → DEF coordinate injector
-│   └── feature_extractor.py   # Extracts 21.6M features for Random Forest training
+│   └── feature_extractor.py   # Extracts features and GNN edge indices to Parquet
 ├── rtl_legalizer/
 │   ├── lef_parser.py          # LEF → Dimension Dictionary extractor
 │   ├── lef_parser_test.py     # Unit tests for LEF parser
@@ -120,7 +122,7 @@ Automates OpenROAD (`run_placement.tcl`) to sweep through physical design constr
 Extracts macro placement coordinates from an OpenROAD `.def` file, matches them with actual LEF dimensions, and converts them to a flat `.hex` memory file. Each macro is represented as 4 × 32-bit hex values: `X, Y, Width, Height`.
 
 ### 4. Feature Extractor (`feature_extractor.py`)
-Parses hundreds of generated DEF layouts to extract millions of individual macro and cell coordinate constraints into a massive tabular dataset (`ml_features.csv`), used to train the ML predictor.
+Parses generated DEF layouts to extract macro coordinates and connectivity data. The script exports node features and graph edge indices as Parquet files. These files train the Graph Neural Network (GNN) model.
 
 ### 5. RTL Legalizer (`legalizer_fsm.v`)
 A Mealy FSM that iterates over all macro pairs, detects AABB overlaps via the `collision_check` module, and resolves them by pushing the later macro along the axis of minimum overlap. Die-boundary clamping prevents macros from leaving the chip area.

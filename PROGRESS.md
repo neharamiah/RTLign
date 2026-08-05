@@ -274,7 +274,7 @@ RTLign/
 
 ---
 
-### Phase 4: ML Feature Extraction (Commits Pending)
+### Phase 4: ML Feature Extraction (Completed)
 
 **What was done:**
 - **Feature Extractor Development:** Wrote `ml_predictor/feature_extractor.py` to systematically parse the hundreds of generated `.def` files and their corresponding entries in `dataset_summary.csv`.

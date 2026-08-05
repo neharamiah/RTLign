@@ -29,7 +29,7 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 **Current Status**
 - Phase 1 complete: End-to-end pipeline with greedy sweep legalizer
 - Phase 2 complete: Real cell dimension extraction via LEF parser
-- Phase 3 in progress: Dataset Generation Pipeline
+- Phase 3 complete: Dataset Generation Pipeline and Parquet feature extraction
 - Phase 4-6 planned: ML predictor, simulated annealing, RL agent, benchmarking
 
 ---
@@ -80,8 +80,8 @@ RTLign/
 
 **Module Organization**
 - **orchestration/**: `master_run.py` - Single-click pipeline orchestrator.
-- **ml_predictor/**: `def_parser.py`, `hex_to_def.py`, `lef_parser.py` (parsers and coordinate mapping). Planned: feature extractors and training scripts.
-- **rtl_legalizer/**: `collision_check.v`, `legalizer_fsm.v`, `legalizer_tb.v`. Generated: `dummy_layout.hex`, `output_layout.hex`, `sim.out`, `legalizer.vcd`. Key params: `NUM_LINES`=672, `DIE_WIDTH`=200260, `DIE_HEIGHT`=201600.
+- **ml_predictor/**: `def_parser.py`, `hex_to_def.py`, `feature_extractor.py` (parsers, coordinate mapping, and Parquet/GNN feature extraction).
+- **rtl_legalizer/**: `collision_check.v`, `legalizer_fsm.v`, `legalizer_tb.v`, `lef_parser.py`. Generated: `dummy_layout.hex`, `output_layout.hex`, `sim.out`, `legalizer.vcd`. Key params: `NUM_LINES`=672, `DIE_WIDTH`=200260, `DIE_HEIGHT`=201600.
 - **openroad_scripts/**: `mockup_export.def` (Baseline GCD design), `legalized_export.def` (Final output).
 - **data/**: Training datasets and benchmarks.
 
