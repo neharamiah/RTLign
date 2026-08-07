@@ -12,7 +12,7 @@ RTLign is an ML-assisted simulated annealing tool for VLSI macro placement that 
 **Core Value Proposition**
 Traditional macro placement is an NP-hard optimization bottleneck in VLSI physical design. RTLign addresses this by:
 - Using ML to predict approximate macro coordinates
-- Resolving overlaps in parallel hardware (Verilog FSM) instead of sequential CPU calculations
+- Resolving overlaps in parallel hardware (Verilog Simulated Annealing engine) instead of sequential CPU calculations
 - Maintaining physical design rule compliance through deterministic RTL legalization
 
 **Pipeline Architecture**
@@ -23,14 +23,14 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 1. **DEF Parser** - Extracts macro placements from OpenROAD `.def` files
 2. **LEF Parser** - Extracts real cell dimensions from library `.lef` files  
 3. **ML Predictor** - Predicts wirelength-optimized coordinates (planned)
-4. **RTL Legalizer** - Custom Verilog FSM with AABB collision detection and greedy sweep resolution
+4. **RTL Legalizer** - Custom Verilog Simulated Annealing engine for parallel overlap resolution
 5. **HEX→DEF Injector** - Patches legalized coordinates back into DEF files
 
 **Current Status**
-- Phase 1 complete: End-to-end pipeline with greedy sweep legalizer
+- Phase 1 complete: End-to-end pipeline with temporary greedy sweep legalizer
 - Phase 2 complete: Real cell dimension extraction via LEF parser
 - Phase 3 complete: Dataset Generation Pipeline and Parquet feature extraction
-- Phase 4-6 planned: ML predictor, simulated annealing, RL agent, benchmarking
+- Phase 4-6 planned: ML predictor, Verilog Simulated Annealing engine (RTL legalizer upgrade), RL agent, benchmarking
 
 ---
 
@@ -38,7 +38,7 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 
 **Languages**
 - **Python 3.x** - Pipeline orchestration, parsing, ML predictor (planned)
-- **Verilog HDL** - RTL legalizer hardware (collision detection, FSM)
+- **Verilog HDL** - RTL legalizer hardware (Simulated Annealing engine)
 - **TCL** - OpenROAD automation scripts (planned)
 
 **Tools & Frameworks**
