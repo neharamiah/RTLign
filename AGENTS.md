@@ -12,7 +12,7 @@ RTLign is an ML-assisted simulated annealing tool for VLSI macro placement that 
 **Core Value Proposition**
 Traditional macro placement is an NP-hard optimization bottleneck in VLSI physical design. RTLign addresses this by:
 - Using ML to predict approximate macro coordinates
-- Resolving overlaps in parallel hardware (Verilog FSM) instead of sequential CPU calculations
+- Resolving overlaps in parallel hardware (Verilog Simulated Annealing engine) instead of sequential CPU calculations
 - Maintaining physical design rule compliance through deterministic RTL legalization
 
 **Pipeline Architecture**
@@ -23,14 +23,14 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 1. **DEF Parser** - Extracts macro placements from OpenROAD `.def` files
 2. **LEF Parser** - Extracts real cell dimensions from library `.lef` files  
 3. **ML Predictor** - Predicts wirelength-optimized coordinates (planned)
-4. **RTL Legalizer** - Custom Verilog FSM with AABB collision detection and greedy sweep resolution
+4. **RTL Legalizer** - Custom Verilog Simulated Annealing engine for parallel overlap resolution
 5. **HEX→DEF Injector** - Patches legalized coordinates back into DEF files
 
 **Current Status**
-- Phase 1 complete: End-to-end pipeline with greedy sweep legalizer
+- Phase 1 complete: End-to-end pipeline with temporary greedy sweep legalizer
 - Phase 2 complete: Real cell dimension extraction via LEF parser
-- Phase 3 in progress: Dataset Generation Pipeline
-- Phase 4-6 planned: ML predictor, simulated annealing, RL agent, benchmarking
+- Phase 3 complete: Dataset Generation Pipeline and Parquet feature extraction
+- Phase 4-6 planned: ML predictor, Verilog Simulated Annealing engine (RTL legalizer upgrade), RL agent, benchmarking
 
 ---
 
@@ -38,7 +38,7 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 
 **Languages**
 - **Python 3.x** - Pipeline orchestration, parsing, ML predictor (planned)
-- **Verilog HDL** - RTL legalizer hardware (collision detection, FSM)
+- **Verilog HDL** - RTL legalizer hardware (Simulated Annealing engine)
 - **TCL** - OpenROAD automation scripts (planned)
 
 **Tools & Frameworks**
@@ -80,8 +80,8 @@ RTLign/
 
 **Module Organization**
 - **orchestration/**: `master_run.py` - Single-click pipeline orchestrator.
-- **ml_predictor/**: `def_parser.py`, `hex_to_def.py`, `lef_parser.py` (parsers and coordinate mapping). Planned: feature extractors and training scripts.
-- **rtl_legalizer/**: `collision_check.v`, `legalizer_fsm.v`, `legalizer_tb.v`. Generated: `dummy_layout.hex`, `output_layout.hex`, `sim.out`, `legalizer.vcd`. Key params: `NUM_LINES`=672, `DIE_WIDTH`=200260, `DIE_HEIGHT`=201600.
+- **ml_predictor/**: `def_parser.py`, `hex_to_def.py`, `feature_extractor.py` (parsers, coordinate mapping, and Parquet/GNN feature extraction).
+- **rtl_legalizer/**: `collision_check.v`, `legalizer_fsm.v`, `legalizer_tb.v`, `lef_parser.py`. Generated: `dummy_layout.hex`, `output_layout.hex`, `sim.out`, `legalizer.vcd`. Key params: `NUM_LINES`=672, `DIE_WIDTH`=200260, `DIE_HEIGHT`=201600.
 - **openroad_scripts/**: `mockup_export.def` (Baseline GCD design), `legalized_export.def` (Final output).
 - **data/**: Training datasets and benchmarks.
 
@@ -109,3 +109,51 @@ DEF → def_parser.py → HEX → legalizer_fsm.v → HEX → hex_to_def.py → 
 1. **Test Before Committing:** Always run the full test suite (`pytest tests/ rtl_legalizer/ -v`) to ensure no regressions.
 2. **Reproducibility:** Ensure `master_run.py` works seamlessly from the project root after pipeline modifications.
 3. **Data Integrity:** Do not check in large `.def`, `.lef`, or output files unless explicitly meant for versioned mocking or openroad integration scripts.
+4. **ASD-STE100 Communication Standard:** Use ASD-STE100 (Simplified Technical English) rules for all responses, implementation plans, and documentation (active voice, simple tenses, short sentences ≤ 25 words, no jargon without definition).
+5. **Karpathy Coding Guidelines:**
+
+### 1. Think Before Coding
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+**Minimum code that solves the problem. Nothing speculative.**
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+### 3. Surgical Changes
+**Touch only what you must. Clean up only your own mess.**
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+The test: Every changed line should trace directly to the user's request.
+
+### 4. Goal-Driven Execution
+**Define success criteria. Loop until verified.**
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+
+
