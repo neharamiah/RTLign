@@ -216,7 +216,7 @@ INIT ──► PERTURB ──► FETCH ──► EVALUATE_COST ──► ACCEPT/
 |:-----|:------|:--------|
 | Write `rl_agent/placement_env.py` | Ratik | Gymnasium environment class |
 | Define state space | All | Canvas grid (die area discretized) + netlist adjacency + already-placed mask |
-| Define action space | All | (X, Y) continuous coordinates for the next macro |
+| Define action space | All | Topological relative relationships (L-flows) for the next macro |
 | Define reward v1 | All | `r = -HPWL_normalized` (keep it simple initially) |
 | Implement `step()` | Ratik | Place one macro, compute HPWL delta, check episode done |
 | Implement `reset()` | Neha | Shuffle macro order, clear placement |
@@ -229,7 +229,7 @@ class PlacementEnv(gymnasium.Env):
     """
     State:  (N × 4) array — for each macro: [placed?, x, y, cell_type_id]
             + flattened adjacency features
-    Action: (x, y) — continuous coordinates for the next macro to place
+    Action: (L-flows) — topological relative relationships for the next macro
     Reward: computed after ALL macros placed + legalization
     Done:   when all macros are placed
     """

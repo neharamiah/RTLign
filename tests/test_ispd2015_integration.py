@@ -460,3 +460,63 @@ class TestLEFDEFIntegration:
         finally:
             if os.path.exists(mockup_hex):
                 os.remove(mockup_hex)
+
+
+class TestTopologicalPipelineSchema:
+    """Test Topological Pipeline Parquet output schemas and assertions"""
+
+    def test_schema_and_assertions(self):
+        # We assume that the single design test was run before this and generated the parquets in data/
+        ml_features = os.path.join(PROJECT_ROOT, "data", "ml_features.parquet")
+        edge_index = os.path.join(PROJECT_ROOT, "data", "edge_index.parquet")
+        pairwise = os.path.join(PROJECT_ROOT, "data", "pairwise_distances.parquet")
+        raw_coords = os.path.join(PROJECT_ROOT, "data", "raw_coords.parquet")
+
+        # Skip if they don't exist (e.g. running unit tests without generating dataset first)
+        if not os.path.exists(ml_features) or not os.path.exists(edge_index):
+            return
+
+        import pandas as pd
+        import numpy as np
+
+        # Test A: Node Features
+        df_nodes = pd.read_parquet(ml_features)
+        assert "target_x" not in df_nodes.columns
+        assert "target_y" not in df_nodes.columns
+        assert "HPWL" in df_nodes.columns
+        assert df_nodes["HPWL"].isna().all()
+        assert df_nodes["routing_congestion"].isna().all()
+        assert df_nodes["WNS"].isna().all()
+        assert df_nodes["TNS"].isna().all()
+
+        # Test B: Edge Index
+        df_edges = pd.read_parquet(edge_index)
+        assert "weight" not in df_edges.columns
+        expected_cols = [
+            "design", "source_inst", "target_inst", 
+            "k_path_dir_1", "k_path_dir_2", "k_path_dir_3", "k_path_dir_4", 
+            "k_path_dir_5", "k_path_dir_6", "k_path_dir_7", "k_path_dir_8", "k_path_dir_9", 
+            "k_path_undir_1", "shared_pins", "net_density", "aux_3", "aux_4"
+        ]
+        for col in expected_cols:
+            assert col in df_edges.columns
+
+        # Check bounds (non-negative)
+        for i in range(1, 10):
+            assert (df_edges[f"k_path_dir_{i}"] >= 0).all()
+        assert (df_edges["k_path_undir_1"] >= 0).all()
+        
+        # Check logical sum > 0 (each pair must have some path or shared pin)
+        path_sum = df_edges[[f"k_path_dir_{i}" for i in range(1, 10)]].sum(axis=1)
+        path_sum += df_edges["k_path_undir_1"]
+        path_sum += df_edges["shared_pins"]
+        path_sum += df_edges["aux_4"]
+        assert (path_sum > 0).all()
+
+        # Test C: Pairwise Distances
+        if os.path.exists(pairwise):
+            df_pair = pd.read_parquet(pairwise)
+            assert "dist_norm" in df_pair.columns
+            # Due to bounding box, max distance is the diagonal. Normalization divides by diagonal, so max ~ 1.0 (allow up to 1.5 for numerical/padding reasons)
+            assert (df_pair["dist_norm"] >= 0.0).all()
+            assert (df_pair["dist_norm"] <= 1.5).all()

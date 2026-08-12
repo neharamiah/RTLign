@@ -34,7 +34,7 @@ During the physical design phase of VLSI development, **macro placement** is an 
 
 **RTLign** addresses this by acting as a drop-in heterogeneous accelerator. We hijack the standard EDA flow, replacing the traditional software macro placer with:
 
-1. **A high-speed ML Predictor** — predicts approximate macro coordinates from a `.def` file
+1. **A high-speed ML Predictor (GNN)** — infers relative topological relationships (L-flows) from a `.def` file
 2. **A deterministic RTL Hardware Legalizer** — resolves overlaps in custom Verilog hardware using parallel AABB collision detection
 3. **A Python orchestrator** — wires everything together and reinjects results into OpenROAD
 
@@ -548,7 +548,7 @@ openroad -no_init -exit run_placement.tcl \
 | # | Limitation | Impact | Planned Fix |
 |:---|:---|:---|:---|
 | 1 | **Greedy sweep, not Simulated Annealing** | No temperature schedule, random perturbation, or cost function — just push-apart | Phase 4: SA engine in Verilog |
-| 2 | **No ML Predictor** | Coordinates come from OpenROAD's own placement, not an ML model | Phase 3: Train supervised model |
+| 2 | **No ML Predictor** | Topologies come from OpenROAD's own placement, not an ML model | Phase 3: Train supervised model |
 | 3 | **No wirelength optimization** | The legalizer only eliminates overlaps; it does not minimize HPWL | Phase 4: Cost function in SA |
 | 4 | **Sequential pair iteration** | The FSM checks one pair at a time (N²/2 iterations) | Phase 4: Parallel collision units |
 | 5 | **No OpenROAD re-import tested** | The legalized DEF has not been loaded back into OpenROAD for routing/STA | Phase 5: TCL scripts |

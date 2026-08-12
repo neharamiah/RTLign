@@ -11,8 +11,8 @@ RTLign is an ML-assisted simulated annealing tool for VLSI macro placement that 
 
 **Core Value Proposition**
 Traditional macro placement is an NP-hard optimization bottleneck in VLSI physical design. RTLign addresses this by:
-- Using ML to predict approximate macro coordinates
-- Resolving overlaps in parallel hardware (Verilog Simulated Annealing engine) instead of sequential CPU calculations
+- Using a GNN to predict relative topological relationships (L-flows) between macros
+- Resolving these topologies into exact coordinates in parallel hardware (SystemVerilog Simulated Annealing engine via a single-cycle combinational DAG-Solver) instead of sequential CPU calculations
 - Maintaining physical design rule compliance through deterministic RTL legalization
 
 **Pipeline Architecture**
@@ -22,8 +22,8 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 ```
 1. **DEF Parser** - Extracts macro placements from OpenROAD `.def` files
 2. **LEF Parser** - Extracts real cell dimensions from library `.lef` files  
-3. **ML Predictor** - Predicts wirelength-optimized coordinates (planned)
-4. **RTL Legalizer** - Custom Verilog Simulated Annealing engine for parallel overlap resolution
+3. **ML Predictor** - GNN predicts relative topological relationships (L-flows) (planned)
+4. **RTL Legalizer** - Custom SystemVerilog Simulated Annealing engine for parallel L-flow resolution via combinational DAG-Solver
 5. **HEX→DEF Injector** - Patches legalized coordinates back into DEF files
 
 **Current Status**
