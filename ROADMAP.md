@@ -61,13 +61,13 @@ If RL fails to converge → fall back to the ML predictor. The project is still 
 
 | Day | Study Topic | Resource | Duration |
 |:----|:------------|:---------|:---------|
-| 1 | ML basics refresher: supervised learning, Random Forest, neural nets | Andrew Ng's ML course (relevant sections) or StatQuest YouTube | 3 hours |
-| 2 | Feature engineering for tabular data | Kaggle's feature engineering micro-course | 2 hours |
+| 1 | ML basics refresher: PyTorch, Graph Neural Networks | PyTorch official tutorials | 3 hours |
+| 2 | Feature engineering for PyTorch Geometric | PyTorch Geometric documentation | 2 hours |
 | 3 | Read: "Machine Learning for EDA" survey paper | Paper: Huang et al., "Machine Learning for Electronic Design Automation: A Survey," ACM TODAES 2021 | 3 hours |
 | 4 | Graph Neural Networks — what they are, why they matter for netlists | PyTorch Geometric intro tutorial | 3 hours |
 | 5 | Read: Google's chip placement paper (Nature 2021) — focus on Section 2 (Methods) | "A Graph Placement Methodology for Fast Chip Design" | 3 hours |
-| 6 | Read: MaskPlace paper (NeurIPS 2022) — simpler RL formulation | "MaskPlace: Fast Chip Placement via RL with Visual Representation" | 2 hours |
-| 7 | Read: ChiPFormer (ICML 2023) — offline RL for placement | "ChiPFormer: Transferable Chip Placement via Offline RL" | 2 hours |
+| 6 | Read: DREAMPlace paper | "DREAMPlace: Deep Learning Toolkit-Enabled GPU Acceleration for Modern VLSI Placement" | 2 hours |
+| 7 | Read: Pytorch Geometric for graph classification | "PyTorch Geometric documentation" | 2 hours |
 
 **Deliverable:** Team understands supervised ML, GNNs, and has read the 3 key placement papers.
 
@@ -90,38 +90,38 @@ If RL fails to converge → fall back to the ML predictor. The project is still 
 
 > **Goal:** Build a working ML predictor that generates approximate placements. This is your safety net.
 
-### Week 5: Study — Scikit-Learn & Feature Engineering
+### Week 5: Study — PyTorch Geometric & Parquet
 
 | Day | Study Topic | Resource | Duration |
 |:----|:------------|:---------|:---------|
-| 1–2 | scikit-learn: Random Forest, cross-validation, GridSearchCV | scikit-learn official tutorials | 4 hours |
+| 1–2 | PyTorch Geometric: Dataset creation, Message Passing, GraphSAGE | PyTorch Geometric official tutorials | 4 hours |
 | 3 | HPWL computation — how to measure wirelength from a placement | Implement it from scratch in Python | 2 hours |
-| 4 | Feature design: what inputs predict good placement? | Brainstorm session — cell type, degree, die area, cluster membership | 2 hours |
+| 4 | Topological L-flow design: what edge structures predict relative placement? | Brainstorm session — bounding boxes, spanning trees | 2 hours |
 
 ---
 
-### Week 6: Build — Random Forest Baseline
+### Week 6: Build — GNN Baseline
 
 | Task | Owner | Details |
 |:-----|:------|:--------|
-| Write `ml_predictor/feature_extractor.py` | Neha | Extract features from `.def`: cell type (one-hot), connectivity degree, die dimensions, cell dimensions |
-| Write `ml_predictor/train_rf.py` | Sahana | Train Random Forest regressor: features → (X, Y), 5-fold cross-validation |
-| Write `ml_predictor/predict.py` | Ratik | Load trained model, predict coordinates for a new design, output `.hex` |
-| Evaluate: predicted placement → legalizer → HPWL | All | Compare against OpenROAD's own placement |
+| Write `ml_predictor/feature_extractor.py` | Neha | Extract features from `.def` into Parquet: node features, raw coordinates, 14-channel edge connectivity |
+| Write `ml_predictor/train_nn.py` | Sahana | Train PyTorch Geometric GNN: features → L-flows |
+| Write `ml_predictor/predict.py` | Ratik | Load trained model, predict L-flows for a new design, output `.hex` topologies |
+| Evaluate: predicted topologies → legalizer → HPWL | All | Compare against OpenROAD's own placement |
 | Write `ml_predictor/evaluate.py` | Neha | HPWL calculator + overlap counter + visualization |
 
-**Deliverable:** Random Forest model that predicts placements. Measured HPWL vs OpenROAD baseline.
+**Deliverable:** GNN model that infers L-flows. Measured HPWL vs OpenROAD baseline.
 
 ---
 
-### Week 7: Build — Neural Network (optional improvement)
+### Week 7: Build — Advanced Architecture (optional improvement)
 
 | Task | Owner | Details |
 |:-----|:------|:--------|
-| Write `ml_predictor/train_nn.py` | Ratik | Simple feedforward: 200 → 512 → 256 → 2, PyTorch |
+| Write advanced pooling in `ml_predictor/model.py` | Ratik | Add multi-head attention over graphs |
 | Train on A100 | Ratik | Should take ~30 min for 10K samples |
-| Compare RF vs NN accuracy | Sahana | MAE on (X, Y) predictions, HPWL after legalization |
-| Decision point: is NN significantly better? | All | If not, stick with RF for simplicity |
+| Compare Base vs Advanced accuracy | Sahana | MAE on L-flows, HPWL after legalization |
+| Decision point: is it significantly better? | All | If not, stick with basic GNN for simplicity |
 
 ---
 
@@ -193,99 +193,11 @@ INIT ──► PERTURB ──► FETCH ──► EVALUATE_COST ──► ACCEPT/
 
 ---
 
-## Month 4: Reinforcement Learning
+## Month 4: Integration, Scaling & Benchmarking
 
-> **Goal:** Build an RL agent that learns to place macros, using the SA legalizer as environment feedback.
+> **Goal:** Scale to larger designs, close the feedback loop, and produce benchmark numbers.
 
-### Week 13: Study — Reinforcement Learning
-
-| Day | Study Topic | Resource | Duration |
-|:----|:------------|:---------|:---------|
-| 1–2 | RL fundamentals: MDP, rewards, policies, value functions | OpenAI Spinning Up — Key Concepts section | 4 hours |
-| 3 | Policy gradient methods: REINFORCE, PPO | Spinning Up — PPO section | 3 hours |
-| 4 | Hands-on: solve CartPole and LunarLander with Stable-Baselines3 | SB3 quickstart tutorial | 3 hours |
-| 5 | Multi-environment training: SubprocVecEnv | SB3 documentation | 1.5 hours |
-| 6 | Reward shaping — the art of designing reward functions | Blog: "Reward Shaping in RL" + Spinning Up section on reward hacking | 2 hours |
-| 7 | Study Google's RL placement code: state, action, reward design | Their open-source Circuit Training repo on GitHub | 3 hours |
-
----
-
-### Week 14: Build — RL Environment (Gymnasium)
-
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Write `rl_agent/placement_env.py` | Ratik | Gymnasium environment class |
-| Define state space | All | Canvas grid (die area discretized) + netlist adjacency + already-placed mask |
-| Define action space | All | Topological relative relationships (L-flows) for the next macro |
-| Define reward v1 | All | `r = -HPWL_normalized` (keep it simple initially) |
-| Implement `step()` | Ratik | Place one macro, compute HPWL delta, check episode done |
-| Implement `reset()` | Neha | Shuffle macro order, clear placement |
-| Test with random agent | Sahana | Verify env runs, episodes complete, rewards are finite |
-
-**Environment design:**
-
-```python
-class PlacementEnv(gymnasium.Env):
-    """
-    State:  (N × 4) array — for each macro: [placed?, x, y, cell_type_id]
-            + flattened adjacency features
-    Action: (L-flows) — topological relative relationships for the next macro
-    Reward: computed after ALL macros placed + legalization
-    Done:   when all macros are placed
-    """
-```
-
----
-
-### Week 15–16: Build — RL Training Pipeline
-
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Write `rl_agent/train.py` | Ratik | PPO training loop using Stable-Baselines3 |
-| Implement SML warm-start | Sahana | Initialize policy network weights from supervised pre-training |
-| Connect Verilator legalizer to env | Neha | After all macros placed, run SA legalizer, compute displacement |
-| Reward v2 | All | `r = -α·HPWL - β·displacement - γ·density_variance` |
-| Train on GCD (small, fast) | All | 16 parallel envs on A100, train overnight |
-| Monitor with TensorBoard | Sahana | Track: mean reward, HPWL, displacement, acceptance rate |
-| Checkpoint management | Neha | Save best model every 10K steps |
-
-**Training config:**
-
-```python
-model = PPO(
-    "MlpPolicy",           # or custom GNN policy
-    vec_env,                # 16–32 parallel environments
-    learning_rate=3e-4,
-    n_steps=2048,
-    batch_size=256,
-    n_epochs=10,
-    gamma=0.99,
-    device="cuda",          # A100
-    tensorboard_log="./tb_logs/",
-)
-model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
-```
-
-**Deliverable:** RL agent that places GCD macros with lower HPWL than random placement.
-
----
-
-## Month 5: Integration, Scaling & Benchmarking
-
-> **Goal:** Scale to larger designs, close the RL-legalizer feedback loop, and produce benchmark numbers.
-
-### Week 17–18: Build — RL + Legalizer Feedback Loop
-
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Reward v3: add legalizer displacement penalty | All | RL learns to produce near-legal placements that the SA engine barely modifies |
-| Train on PicoRV32 (~3K macros) | Ratik | Bigger design, longer episodes, more training needed |
-| Experiment: RL with vs without warm-start | Sahana | Measure convergence speed difference |
-| Experiment: reward ablation study | Neha | Remove one reward term at a time, measure impact |
-
----
-
-### Week 19–20: Build — Full Benchmarking Suite
+### Week 13–14: Build — Full Benchmarking Suite
 
 | Task | Owner | Details |
 |:-----|:------|:--------|
@@ -302,43 +214,43 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 | Routed Wirelength | OpenROAD global router output |
 | Worst Negative Slack (WNS) | OpenROAD STA after routing |
 | Total Negative Slack (TNS) | OpenROAD STA |
-| Placement Runtime | Wall-clock time for ML/RL prediction + legalization |
+| Placement Runtime | Wall-clock time for ML prediction + legalization |
 | Legalization Cycles | Clock cycles in Verilog simulation |
 | Legalizer Displacement | Total Manhattan distance macros were moved by SA |
-| Overlap Count (pre-legalization) | How many overlaps the ML/RL output had before SA |
+| Overlap Count (pre-legalization) | How many overlaps the ML output had before SA |
 | Theoretical HW Latency | Legalization cycles ÷ target frequency |
 
 ---
 
-### Week 21: Build — Visualization & Analysis
+### Week 15: Build — Visualization & Analysis
 
 | Task | Owner | Details |
 |:-----|:------|:--------|
 | Placement heatmap visualization | Neha | Python matplotlib: color-coded macro positions before/after legalization |
-| RL training curves | Sahana | Reward, HPWL, displacement over training steps (TensorBoard screenshots) |
+| Training curves | Sahana | Loss and HPWL over training steps |
 | Waveform analysis | Ratik | GTKWave screenshots of SA convergence (temp, cost, acceptance) |
 | Generate comparison plots | All | Bar charts: HPWL comparison, runtime comparison, scatter plots |
 
 ---
 
-## Month 6: Paper, Defense & Polish
+## Month 5: Paper, Defense & Polish
 
 > **Goal:** Document everything, prepare defense, write a paper-quality report.
 
-### Week 22–23: Write
+### Week 16–17: Write
 
 | Deliverable | Owner | Content |
 |:------------|:------|:--------|
 | Abstract + Introduction | Ratik | Problem statement, motivation, key results |
-| Related Work | Neha | Google's paper, MaskPlace, ChiPFormer, traditional SA placers |
-| Methodology | All | Pipeline architecture, ML/RL design, SA engine, Verilog implementation |
+| Related Work | Neha | Google's paper, traditional SA placers |
+| Methodology | All | Pipeline architecture, ML design, SA engine, Verilog implementation |
 | Results | Sahana | All benchmark tables, comparison charts, training curves |
 | Discussion | All | What worked, what didn't, limitations, future work |
 | Update PROGRESS.md | All | Final comprehensive progress document |
 
 ---
 
-### Week 24: Defend
+### Week 18: Defend
 
 | Task | Owner | Details |
 |:-----|:------|:--------|
@@ -352,10 +264,9 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 | Question | Your Answer |
 |:---------|:------------|
 | "Why not just use OpenROAD's built-in placer?" | "Our goal is to accelerate legalization in hardware. OpenROAD runs entirely on CPU." |
-| "Does your RL agent beat OpenROAD?" | "On HPWL, [your result]. The key contribution is the hardware-accelerated legalization loop." |
+| "Does your GNN beat OpenROAD?" | "On HPWL, [your result]. The key contribution is the hardware-accelerated legalization loop." |
 | "Have you synthesized to FPGA?" | "We report theoretical latency based on cycle-accurate simulation. FPGA synthesis is future work." |
 | "Why SA and not just greedy?" | "SA explores the solution space and can escape local minima. Greedy only pushes apart." |
-| "Why RL over supervised ML?" | "RL learns to cooperate with the hardware legalizer. SML only mimics OpenROAD's strategy." |
 | "What's your cost function?" | "α·HPWL + β·overlap_area, with Metropolis acceptance at temperature T." |
 
 ---
@@ -364,8 +275,8 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 
 | Member | Primary Ownership | Secondary |
 |:-------|:------------------|:----------|
-| **Ratik** | Verilog RTL (SA engine, FSM), Verilator bridge, RL training pipeline | Pipeline orchestration |
-| **Sahana** | ML predictor (RF, NN), RL environment, benchmarking | Testbench & verification |
+| **Ratik** | Verilog RTL (SA engine, FSM), Verilator bridge | Pipeline orchestration |
+| **Sahana** | ML predictor (GNN), benchmarking | Testbench & verification |
 | **Neha** | Data pipeline (parsers, feature extraction), OpenROAD scripts, visualization | Documentation & paper |
 
 ---
@@ -375,11 +286,10 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 | Date | Milestone | Go/No-Go |
 |:-----|:----------|:---------|
 | End of Month 1 | Pipeline with real dimensions, 1,500+ training examples | Must pass: pipeline works with real LEF dimensions |
-| End of Month 2 | SML predictor with measured HPWL | Must pass: model predicts better than random |
+| End of Month 2 | ML predictor with measured HPWL | Must pass: model predicts better than random |
 | End of Month 3 | SA engine in Verilog with HPWL improvement over greedy | Must pass: SA reduces HPWL compared to greedy sweep |
-| End of Month 4 | RL agent beats random placement | Decision point: if RL doesn't converge, double down on SML + SA |
-| End of Month 5 | Benchmark numbers on ISPD designs | Must have: at least 3 designs benchmarked with full metrics |
-| End of Month 6 | Defense ready | Must have: slides, demo, paper |
+| End of Month 4 | Benchmark numbers on ISPD designs | Must have: at least 3 designs benchmarked with full metrics |
+| End of Month 5 | Defense ready | Must have: slides, demo, paper |
 
 ---
 
@@ -387,12 +297,12 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 
 | Risk | Probability | Impact | Mitigation |
 |:-----|:------------|:-------|:-----------|
-| RL doesn't converge | Medium | High | SML fallback is always ready. RL failure itself is a valid result to present. |
+| GNN doesn't converge well | Medium | High | Revert to simpler node feature learning or heuristic features. |
 | SA in Verilog has bugs | Medium | High | Extensive testbench. Compare SA output against Python SA implementation. |
 | OpenROAD batch runs are slow/broken | Medium | Medium | Use ISPD 2015 benchmarks directly — they already have placed DEFs. |
-| A100 access gets delayed | Low | Medium | SML + SA work entirely on laptop. RL training can start on RTX 2050 (slower). |
+| A100 access gets delayed | Low | Medium | GNN + SA work entirely on laptop. |
 | Real dimensions break legalizer | High | Low | Already anticipated. Week 2 is dedicated to fixing this. |
-| ISPD benchmarks too large for RL | Medium | Medium | Start with small designs (28K components). Scale up only if time permits. |
+| ISPD benchmarks too large for GNN | Medium | Medium | Start with small designs (28K components). Scale up only if time permits. |
 
 ---
 
@@ -404,19 +314,14 @@ model.learn(total_timesteps=2_000_000)  # ~6–12 hours on A100
 
 ### Key Papers
 3. **Google Nature 2021:** "A Graph Placement Methodology for Fast Chip Design" — Mirhoseini et al.
-4. **MaskPlace (NeurIPS 2022):** "Fast Chip Placement via RL with Visual Representation" — Lai et al.
-5. **ChiPFormer (ICML 2023):** "Transferable Chip Placement via Offline RL" — Lai et al.
-6. **Critique:** "On the Reality of Google's Chip Placement" — Cheng et al., 2023
-7. **ML for EDA Survey:** "Machine Learning for EDA: A Survey" — Huang et al., ACM TODAES 2021
-8. **TimberWolf:** "The TimberWolf Placement and Routing Package" — Sechen, 1986
-9. **DREAMPlace:** "DREAMPlace: Deep Learning Toolkit-Enabled GPU Acceleration for Modern VLSI Placement" — Lin et al., DAC 2019
+4. **Critique:** "On the Reality of Google's Chip Placement" — Cheng et al., 2023
+5. **ML for EDA Survey:** "Machine Learning for EDA: A Survey" — Huang et al., ACM TODAES 2021
+6. **TimberWolf:** "The TimberWolf Placement and Routing Package" — Sechen, 1986
+7. **DREAMPlace:** "DREAMPlace: Deep Learning Toolkit-Enabled GPU Acceleration for Modern VLSI Placement" — Lin et al., DAC 2019
 
 ### Online Courses & Tutorials
-10. **OpenAI Spinning Up in Deep RL** — `spinningup.openai.com`
-11. **Stable-Baselines3 Documentation** — `stable-baselines3.readthedocs.io`
-12. **PyTorch Geometric Tutorials** — `pytorch-geometric.readthedocs.io`
-13. **Andrew Kahng's Lectures** — YouTube
-14. **David Silver's RL Course** — YouTube (UCL/DeepMind, 10 lectures)
+8. **PyTorch Geometric Tutorials** — `pytorch-geometric.readthedocs.io`
+9. **Andrew Kahng's Lectures** — YouTube
 
 ---
 

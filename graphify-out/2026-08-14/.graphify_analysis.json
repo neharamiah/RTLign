@@ -1,0 +1,412 @@
+{
+  "communities": {
+    "0": [
+      "given",
+      "rtl_legalizer_lef_parser",
+      "rtl_legalizer_lef_parser_convert_to_db_units",
+      "rtl_legalizer_lef_parser_extract_database_units",
+      "rtl_legalizer_lef_parser_extract_macro_dimensions",
+      "rtl_legalizer_lef_parser_parse_lef_file",
+      "rtl_legalizer_lef_parser_parse_lef_files",
+      "rtl_legalizer_lef_parser_property_test",
+      "rtl_legalizer_lef_parser_property_test_extreme_aspect_ratio_strategy",
+      "rtl_legalizer_lef_parser_property_test_rationale_1",
+      "rtl_legalizer_lef_parser_property_test_rationale_176",
+      "rtl_legalizer_lef_parser_property_test_rationale_254",
+      "rtl_legalizer_lef_parser_property_test_rationale_40",
+      "rtl_legalizer_lef_parser_property_test_rationale_66",
+      "rtl_legalizer_lef_parser_property_test_test_dimension_dict_matches_source",
+      "rtl_legalizer_lef_parser_property_test_test_extreme_aspect_ratio_preservation",
+      "rtl_legalizer_lef_parser_property_test_test_round_trip_parsing",
+      "rtl_legalizer_lef_parser_py_dimension_dict",
+      "rtl_legalizer_lef_parser_rationale_1",
+      "rtl_legalizer_lef_parser_rationale_102",
+      "rtl_legalizer_lef_parser_rationale_144",
+      "rtl_legalizer_lef_parser_rationale_217",
+      "rtl_legalizer_lef_parser_rationale_235",
+      "rtl_legalizer_lef_parser_rationale_27",
+      "rtl_legalizer_lef_parser_rationale_66",
+      "rtl_legalizer_lef_parser_test",
+      "rtl_legalizer_lef_parser_test_rationale_1",
+      "rtl_legalizer_lef_parser_validate_dimension",
+      "settings"
+    ],
+    "1": [
+      "any",
+      "digraph",
+      "ml_predictor_feature_extractor",
+      "ml_predictor_feature_extractor_featureextractor",
+      "ml_predictor_feature_extractor_featureextractor_discover_all_defs",
+      "ml_predictor_feature_extractor_featureextractor_extract_all",
+      "ml_predictor_feature_extractor_featureextractor_find_lef_file",
+      "ml_predictor_feature_extractor_featureextractor_init",
+      "ml_predictor_feature_extractor_featureextractor_load_macro_data",
+      "ml_predictor_feature_extractor_featureextractor_parse_def_components",
+      "ml_predictor_feature_extractor_featureextractor_parse_def_filename",
+      "ml_predictor_feature_extractor_featureextractor_parse_def_nets_kpath",
+      "ml_predictor_feature_extractor_featureextractor_rebuild_summary_csv",
+      "ml_predictor_feature_extractor_featureextractor_resolve_def_path",
+      "ml_predictor_feature_extractor_get_die_diagonal",
+      "ml_predictor_feature_extractor_rationale_171",
+      "ml_predictor_feature_extractor_rationale_271",
+      "ml_predictor_feature_extractor_rationale_34",
+      "ml_predictor_predict",
+      "ml_predictor_predict_break_cycles_dfs",
+      "ml_predictor_predict_build_pyg_graph",
+      "ml_predictor_predict_extract_features",
+      "ml_predictor_predict_rationale_1",
+      "ml_predictor_predict_rationale_146",
+      "ml_predictor_predict_rationale_189",
+      "ml_predictor_predict_rationale_50",
+      "ml_predictor_predict_run_prediction"
+    ],
+    "2": [
+      "tests_test_ispd2015_integration",
+      "tests_test_ispd2015_integration_rationale_1",
+      "tests_test_ispd2015_integration_rationale_145",
+      "tests_test_ispd2015_integration_rationale_148",
+      "tests_test_ispd2015_integration_rationale_184",
+      "tests_test_ispd2015_integration_rationale_252",
+      "tests_test_ispd2015_integration_rationale_255",
+      "tests_test_ispd2015_integration_rationale_292",
+      "tests_test_ispd2015_integration_rationale_466",
+      "tests_test_ispd2015_integration_testerrorscenarios",
+      "tests_test_ispd2015_integration_testerrorscenarios_test_invalid_lef_file_path_aborts_pipeline",
+      "tests_test_ispd2015_integration_testerrorscenarios_test_lef_with_no_macros_proceeds_with_warning",
+      "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions",
+      "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_full_pipeline_completes_without_deadlock",
+      "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_output_hex_contains_non_uniform_dimensions",
+      "tests_test_ispd2015_integration_testtopologicalpipelineschema",
+      "tests_test_ispd2015_integration_testtopologicalpipelineschema_test_schema_and_assertions"
+    ],
+    "3": [
+      "inmemorydataset",
+      "ml_predictor_dataset",
+      "ml_predictor_dataset_topologicalmacrodataset",
+      "ml_predictor_dataset_topologicalmacrodataset_download",
+      "ml_predictor_dataset_topologicalmacrodataset_init",
+      "ml_predictor_dataset_topologicalmacrodataset_process",
+      "ml_predictor_dataset_topologicalmacrodataset_processed_file_names",
+      "ml_predictor_dataset_topologicalmacrodataset_raw_file_names",
+      "ml_predictor_model",
+      "ml_predictor_model_rationale_43",
+      "ml_predictor_model_topologicalmacrognn",
+      "ml_predictor_model_topologicalmacrognn_forward",
+      "ml_predictor_model_topologicalmacrognn_init",
+      "ml_predictor_train_nn",
+      "ml_predictor_train_nn_check_dependencies",
+      "ml_predictor_train_nn_train"
+    ],
+    "4": [
+      "rtl_legalizer_lef_parser_test_rationale_26",
+      "rtl_legalizer_lef_parser_test_rationale_29",
+      "rtl_legalizer_lef_parser_test_rationale_45",
+      "rtl_legalizer_lef_parser_test_rationale_55",
+      "rtl_legalizer_lef_parser_test_rationale_66",
+      "rtl_legalizer_lef_parser_test_rationale_76",
+      "rtl_legalizer_lef_parser_test_rationale_86",
+      "rtl_legalizer_lef_parser_test_rationale_96",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_case_insensitive",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_different_multiplier",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_database_microns",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_units_block",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_real_lef_format",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_standard_units_block",
+      "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_whitespace_variations"
+    ],
+    "5": [
+      "ml_predictor_def_parser",
+      "ml_predictor_def_parser_parse_def_to_hex",
+      "ml_predictor_def_parser_py_dimension_dict",
+      "ml_predictor_def_parser_rationale_17",
+      "orchestration_master_run",
+      "orchestration_master_run_main",
+      "orchestration_master_run_rationale_1",
+      "orchestration_master_run_rationale_54",
+      "orchestration_master_run_run_step",
+      "tests_test_ispd2015_integration_rationale_357",
+      "tests_test_ispd2015_integration_rationale_360",
+      "tests_test_ispd2015_integration_rationale_409",
+      "tests_test_ispd2015_integration_testlefdefintegration",
+      "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_fallback_for_unknown_cell_type",
+      "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_uses_real_dimensions"
+    ],
+    "6": [
+      "rtl_legalizer_lef_parser_test_rationale_241",
+      "rtl_legalizer_lef_parser_test_rationale_244",
+      "rtl_legalizer_lef_parser_test_rationale_267",
+      "rtl_legalizer_lef_parser_test_rationale_272",
+      "rtl_legalizer_lef_parser_test_rationale_293",
+      "rtl_legalizer_lef_parser_test_rationale_325",
+      "rtl_legalizer_lef_parser_test_rationale_351",
+      "rtl_legalizer_lef_parser_test_testparseleffile",
+      "rtl_legalizer_lef_parser_test_testparseleffile_test_file_not_found",
+      "rtl_legalizer_lef_parser_test_testparseleffile_test_lef_without_units",
+      "rtl_legalizer_lef_parser_test_testparseleffile_test_valid_lef_file",
+      "rtl_legalizer_lef_parser_test_testparseleffiles",
+      "rtl_legalizer_lef_parser_test_testparseleffiles_test_duplicate_first_wins",
+      "rtl_legalizer_lef_parser_test_testparseleffiles_test_merge_multiple_files",
+      "rtl_legalizer_lef_parser_test_testparseleffiles_test_no_macros_raises_error"
+    ],
+    "7": [
+      "tests_test_lef_parser_cli",
+      "tests_test_lef_parser_cli_rationale_1",
+      "tests_test_lef_parser_cli_rationale_107",
+      "tests_test_lef_parser_cli_rationale_124",
+      "tests_test_lef_parser_cli_rationale_19",
+      "tests_test_lef_parser_cli_rationale_34",
+      "tests_test_lef_parser_cli_rationale_56",
+      "tests_test_lef_parser_cli_rationale_86",
+      "tests_test_lef_parser_cli_test_error_on_missing_file",
+      "tests_test_lef_parser_cli_test_help_displays_usage",
+      "tests_test_lef_parser_cli_test_json_output_to_stdout",
+      "tests_test_lef_parser_cli_test_multiple_lef_files",
+      "tests_test_lef_parser_cli_test_output_writes_to_file",
+      "tests_test_lef_parser_cli_test_verbose_logs_each_macro"
+    ],
+    "8": [
+      "rtl_legalizer_lef_parser_test_rationale_114",
+      "rtl_legalizer_lef_parser_test_rationale_117",
+      "rtl_legalizer_lef_parser_test_rationale_122",
+      "rtl_legalizer_lef_parser_test_rationale_127",
+      "rtl_legalizer_lef_parser_test_rationale_132",
+      "rtl_legalizer_lef_parser_test_rationale_138",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits_test_basic_conversion",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits_test_default_multiplier",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits_test_different_multipliers",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits_test_fractional_values",
+      "rtl_legalizer_lef_parser_test_testconverttodbunits_test_rounding"
+    ],
+    "9": [
+      "rtl_legalizer_lef_parser_test_rationale_144",
+      "rtl_legalizer_lef_parser_test_rationale_147",
+      "rtl_legalizer_lef_parser_test_rationale_152",
+      "rtl_legalizer_lef_parser_test_rationale_157",
+      "rtl_legalizer_lef_parser_test_rationale_162",
+      "rtl_legalizer_lef_parser_test_rationale_167",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension_test_accept_max_32bit_value",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_32bit_overflow",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_negative",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_zero",
+      "rtl_legalizer_lef_parser_test_testvalidatedimension_test_valid_positive_value"
+    ],
+    "10": [
+      "rtl_legalizer_lef_parser_test_rationale_173",
+      "rtl_legalizer_lef_parser_test_rationale_176",
+      "rtl_legalizer_lef_parser_test_rationale_189",
+      "rtl_legalizer_lef_parser_test_rationale_205",
+      "rtl_legalizer_lef_parser_test_rationale_215",
+      "rtl_legalizer_lef_parser_test_rationale_225",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_case_insensitive",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_invalid_dimension_skipped",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_macro_without_size",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_multiple_macros",
+      "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_single_macro"
+    ],
+    "11": [
+      "tests_test_ispd2015_integration_rationale_109",
+      "tests_test_ispd2015_integration_rationale_29",
+      "tests_test_ispd2015_integration_rationale_32",
+      "tests_test_ispd2015_integration_rationale_51",
+      "tests_test_ispd2015_integration_rationale_74",
+      "tests_test_ispd2015_integration_testispd2015lefparsing",
+      "tests_test_ispd2015_integration_testispd2015lefparsing_test_extract_at_least_100_cell_types",
+      "tests_test_ispd2015_integration_testispd2015lefparsing_test_parse_tech_and_cells_lef_successfully",
+      "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_extreme_aspect_ratio_cells",
+      "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_specific_known_dimensions"
+    ],
+    "12": [
+      "ml_predictor_hex_to_def",
+      "ml_predictor_hex_to_def_inject_coords_into_def",
+      "ml_predictor_hex_to_def_main",
+      "ml_predictor_hex_to_def_rationale_1",
+      "ml_predictor_hex_to_def_rationale_24",
+      "ml_predictor_hex_to_def_rationale_51",
+      "ml_predictor_hex_to_def_read_hex_coordinates"
+    ],
+    "13": [
+      "orchestration_data_generator",
+      "orchestration_data_generator_extract_metrics_from_log",
+      "orchestration_data_generator_find_benchmarks",
+      "orchestration_data_generator_main",
+      "orchestration_data_generator_rationale_31",
+      "orchestration_data_generator_run_openroad_placement",
+      "orchestration_data_generator_write_summary_report"
+    ],
+    "14": [
+      "orchestration_rtl_to_def",
+      "orchestration_rtl_to_def_find_rtl_files",
+      "orchestration_rtl_to_def_main",
+      "orchestration_rtl_to_def_rationale_16",
+      "orchestration_rtl_to_def_run_pipeline"
+    ],
+    "15": [
+      "legalizer_fsm",
+      "rtl_legalizer_legalizer_tb",
+      "rtl_legalizer_legalizer_tb_legalizer_tb",
+      "rtl_legalizer_legalizer_tb_legalizer_tb_run_overlap_audit"
+    ],
+    "16": [
+      "run_predict",
+      "run_predict_find_first_file",
+      "run_predict_main",
+      "run_predict_rationale_8"
+    ],
+    "17": [
+      "collision_check",
+      "rtl_legalizer_legalizer_fsm",
+      "rtl_legalizer_legalizer_fsm_legalizer_fsm"
+    ],
+    "18": [
+      "orchestration_generate_rtl_dataset",
+      "orchestration_generate_rtl_dataset_main"
+    ],
+    "19": [
+      "rtl_legalizer_collision_check",
+      "rtl_legalizer_collision_check_collision_check"
+    ],
+    "20": [
+      "tests_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1330049261083744,
+    "1": 0.1282051282051282,
+    "2": 0.11764705882352941,
+    "3": 0.15833333333333333,
+    "4": 0.125,
+    "5": 0.17142857142857143,
+    "6": 0.13333333333333333,
+    "7": 0.14285714285714285,
+    "8": 0.16666666666666666,
+    "9": 0.16666666666666666,
+    "10": 0.16666666666666666,
+    "11": 0.2,
+    "12": 0.38095238095238093,
+    "13": 0.47619047619047616,
+    "14": 0.6,
+    "15": 0.5,
+    "16": 0.6666666666666666,
+    "17": 0.6666666666666666,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0
+  },
+  "gods": [
+    {
+      "id": "rtl_legalizer_lef_parser_parse_lef_file",
+      "label": "parse_lef_file()",
+      "degree": 14
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_extract_macro_dimensions",
+      "label": "extract_macro_dimensions()",
+      "degree": 13
+    },
+    {
+      "id": "ml_predictor_feature_extractor_featureextractor",
+      "label": "FeatureExtractor",
+      "degree": 12
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_convert_to_db_units",
+      "label": "convert_to_db_units()",
+      "degree": 12
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_extract_database_units",
+      "label": "extract_database_units()",
+      "degree": 11
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_parse_lef_files",
+      "label": "parse_lef_files()",
+      "degree": 11
+    },
+    {
+      "id": "ml_predictor_dataset_topologicalmacrodataset",
+      "label": "TopologicalMacroDataset",
+      "degree": 9
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits",
+      "label": "TestExtractDatabaseUnits",
+      "degree": 9
+    },
+    {
+      "id": "rtl_legalizer_lef_parser_validate_dimension",
+      "label": "validate_dimension()",
+      "degree": 9
+    },
+    {
+      "id": "ml_predictor_model_topologicalmacrognn",
+      "label": "TopologicalMacroGNN",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "parse_lef_files()",
+      "source_files": [
+        "orchestration/master_run.py",
+        "rtl_legalizer/lef_parser.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "parse_def_to_hex()",
+      "source_files": [
+        "orchestration/master_run.py",
+        "ml_predictor/def_parser.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "run_prediction()",
+      "target": "TopologicalMacroGNN",
+      "source_files": [
+        "ml_predictor/predict.py",
+        "ml_predictor/model.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "train()",
+      "target": "TopologicalMacroDataset",
+      "source_files": [
+        "ml_predictor/train_nn.py",
+        "ml_predictor/dataset.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "train()",
+      "target": "TopologicalMacroGNN",
+      "source_files": [
+        "ml_predictor/train_nn.py",
+        "ml_predictor/model.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

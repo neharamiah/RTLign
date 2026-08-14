@@ -1,0 +1,13 @@
+/home/ratik/Projects/RTLign/AGENTS.md
+/home/ratik/Projects/RTLign/PROGRESS.md
+/home/ratik/Projects/RTLign/Project_Readiness_Note.md
+/home/ratik/Projects/RTLign/README.md
+/home/ratik/Projects/RTLign/ROADMAP.md
+/home/ratik/Projects/RTLign/data/README.md
+/home/ratik/Projects/RTLign/docker-compose.yml
+/home/ratik/Projects/RTLign/ml_predictor/README.md
+/home/ratik/Projects/RTLign/openroad_scripts/README.md
+/home/ratik/Projects/RTLign/orchestration/README.md
+/home/ratik/Projects/RTLign/requirements.txt
+/home/ratik/Projects/RTLign/rtl_legalizer/README.md
+/home/ratik/Projects/RTLign/gnn_prediction_visualization.png

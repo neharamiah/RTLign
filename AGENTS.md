@@ -30,7 +30,7 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 - Phase 1 complete: End-to-end pipeline with temporary greedy sweep legalizer
 - Phase 2 complete: Real cell dimension extraction via LEF parser
 - Phase 3 complete: Dataset Generation Pipeline and Parquet feature extraction
-- Phase 4-6 planned: ML predictor, Verilog Simulated Annealing engine (RTL legalizer upgrade), RL agent, benchmarking
+- Phase 4-6 planned: ML predictor, Verilog Simulated Annealing engine (RTL legalizer upgrade), benchmarking
 
 ---
 
@@ -44,7 +44,7 @@ OpenROAD DEF → ML Predictor → RTL Legalizer → OpenROAD Import
 **Tools & Frameworks**
 - **RTL Simulation:** Icarus Verilog (`iverilog`, `vvp`) - Verilog compilation and simulation. Used for legalizer FSM simulation and VCD waveform output for debugging.
 - **EDA Tools:** OpenROAD - Physical design suite (GUI, routing, STA). DEF/LEF file import/export, placement visualization, signoff analysis.
-- **ML/AI (Planned):** scikit-learn (Random Forest baseline), PyTorch (NN models, RL agent), Stable-Baselines3 (PPO training), PyTorch Geometric (GNNs).
+- **ML/AI (Planned):** scikit-learn, PyTorch (NN models), PyTorch Geometric (GNNs).
 - **Testing:** pytest (Unit and integration tests), Hypothesis (Property-based testing).
 
 **Build & Run Commands**

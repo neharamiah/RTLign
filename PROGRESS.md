@@ -278,11 +278,11 @@ RTLign/
 
 **What was done:**
 - **Feature Extractor Development:** Wrote `ml_predictor/feature_extractor.py` to systematically parse the hundreds of generated `.def` files and their corresponding entries in `dataset_summary.csv`.
-- **Large-scale Parsing:** Extracted individual cell and macro placement data (target X, target Y, cell type, aspect ratio, density, utilization) to construct tabular data for the Random Forest model.
+- **Large-scale Parsing:** Extracted node features, raw coordinates, 14-channel edge connectivity, and pairwise distances to construct data for the PyTorch Geometric model predicting topological L-flows.
 
 **Extraction Results:**
 - Successfully extracted **21,695,248 individual placement samples** across the 277 layout DEF files.
-- Saved into a single massive `data/ml_features.csv` matrix (365+ MB of raw tabular data) ready for scikit-learn ingestion.
+- Saved into 4 snappy-compressed Parquet datasets (`ml_features.parquet`, `raw_coords.parquet`, `edge_index.parquet`, `pairwise_distances.parquet`) ready for PyTorch ingestion.
 
 **Status:** ✅ Feature extraction completed successfully.
 
@@ -562,24 +562,19 @@ openroad -no_init -exit run_placement.tcl \
 - **[DONE]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script and `data_generator.py` wrapper completed)
 
 ### Month 2: Supervised ML Predictor & Evaluation
-- Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)
-- Build: Neural Network Predictor (optional) (Train NN, compare accuracy against RF)
+- Build: GNN Topological Predictor Baseline (Feature extraction, train GNN, infer L-flows, evaluate HPWL)
+- Build: Advanced GNN Predictor (optional) (Add multi-head attention, compare accuracy)
 
 ### Month 3: Simulated Annealing in RTL
 - Build: SA Engine in Verilog (LFSR, temperature cooling, perturbation, cost function, Metropolis acceptance)
 - Build: SA Testbench & Validation (Monitor cost/temperature, verify on benchmarks, waveform analysis)
 - Build: Verilator Bridge (Verilator wrapper, Python ctypes binding, speed benchmarking)
 
-### Month 4: Reinforcement Learning
-- Build: RL Environment (Gymnasium env, state/action space, reward v1)
-- Build: RL Training Pipeline (PPO training loop, SML warm-start, connect Verilator legalizer, reward v2, tensorboard)
-
-### Month 5: Integration, Scaling & Benchmarking
-- Build: RL + Legalizer Feedback Loop (Reward v3, train on larger designs, ablation studies)
+### Month 4: Integration, Scaling & Benchmarking
 - Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)
 - Build: Visualization & Analysis (Heatmaps, training curves, waveform screenshots, comparison plots)
 
-### Month 6: Paper, Defense & Polish
+### Month 5: Paper, Defense & Polish
 - Write: Documentation, final comprehensive progress document, and paper (Abstract, Methodology, Results)
 - Defend: Prepare slides, live demo, and presentation practice
 

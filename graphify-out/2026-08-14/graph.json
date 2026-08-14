@@ -13,8 +13,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "topologicalmacrodataset",
-      "id": "ml_predictor_dataset_topologicalmacrodataset",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset"
     },
     {
       "label": "TopologicalMacroGNN",
@@ -26,8 +25,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "topologicalmacrognn",
-      "id": "ml_predictor_model_topologicalmacrognn",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_model_topologicalmacrognn"
     },
     {
       "label": "TestISPD2015LEFParsing",
@@ -39,8 +37,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "testispd2015lefparsing",
-      "id": "tests_test_ispd2015_integration_testispd2015lefparsing",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_testispd2015lefparsing"
     },
     {
       "label": "TestParseLefFile",
@@ -52,8 +49,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "testparseleffile",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffile",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffile"
     },
     {
       "label": "TestParseLefFiles",
@@ -65,8 +61,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "testparseleffiles",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffiles",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffiles"
     },
     {
       "label": "TestErrorScenarios",
@@ -78,8 +73,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "testerrorscenarios",
-      "id": "tests_test_ispd2015_integration_testerrorscenarios",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testerrorscenarios"
     },
     {
       "label": "TestFullPipelineWithRealDimensions",
@@ -91,8 +85,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "testfullpipelinewithrealdimensions",
-      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions"
     },
     {
       "label": "TestTopologicalPipelineSchema",
@@ -104,8 +97,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "testtopologicalpipelineschema",
-      "id": "tests_test_ispd2015_integration_testtopologicalpipelineschema",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testtopologicalpipelineschema"
     },
     {
       "label": "TestExtractDatabaseUnits",
@@ -117,8 +109,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "testextractdatabaseunits",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits"
     },
     {
       "label": "TestLEFDEFIntegration",
@@ -130,8 +121,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "testlefdefintegration",
-      "id": "tests_test_ispd2015_integration_testlefdefintegration",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_testlefdefintegration"
     },
     {
       "label": "FeatureExtractor",
@@ -143,8 +133,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "featureextractor",
-      "id": "ml_predictor_feature_extractor_featureextractor",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor"
     },
     {
       "label": "TestConvertToDbUnits",
@@ -156,8 +145,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "testconverttodbunits",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits"
     },
     {
       "label": "TestValidateDimension",
@@ -169,8 +157,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "testvalidatedimension",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension"
     },
     {
       "label": "TestExtractMacroDimensions",
@@ -182,8 +169,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "testextractmacrodimensions",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions"
     },
     {
       "label": ".download()",
@@ -194,8 +180,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".download()",
-      "id": "ml_predictor_dataset_topologicalmacrodataset_download",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset_download"
     },
     {
       "label": ".__init__()",
@@ -206,8 +191,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".__init__()",
-      "id": "ml_predictor_dataset_topologicalmacrodataset_init",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset_init"
     },
     {
       "label": ".process()",
@@ -218,8 +202,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".process()",
-      "id": "ml_predictor_dataset_topologicalmacrodataset_process",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset_process"
     },
     {
       "label": ".processed_file_names()",
@@ -230,8 +213,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".processed_file_names()",
-      "id": "ml_predictor_dataset_topologicalmacrodataset_processed_file_names",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset_processed_file_names"
     },
     {
       "label": ".raw_file_names()",
@@ -242,8 +224,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".raw_file_names()",
-      "id": "ml_predictor_dataset_topologicalmacrodataset_raw_file_names",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset_topologicalmacrodataset_raw_file_names"
     },
     {
       "label": "get_die_diagonal()",
@@ -254,8 +235,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "get_die_diagonal()",
-      "id": "ml_predictor_feature_extractor_get_die_diagonal",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_get_die_diagonal"
     },
     {
       "label": ".forward()",
@@ -266,8 +246,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".forward()",
-      "id": "ml_predictor_model_topologicalmacrognn_forward",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_model_topologicalmacrognn_forward"
     },
     {
       "label": ".__init__()",
@@ -278,8 +257,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": ".__init__()",
-      "id": "ml_predictor_model_topologicalmacrognn_init",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_model_topologicalmacrognn_init"
     },
     {
       "label": "break_cycles_dfs()",
@@ -290,8 +268,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "break_cycles_dfs()",
-      "id": "ml_predictor_predict_break_cycles_dfs",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_break_cycles_dfs"
     },
     {
       "label": "build_pyg_graph()",
@@ -302,8 +279,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "build_pyg_graph()",
-      "id": "ml_predictor_predict_build_pyg_graph",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_build_pyg_graph"
     },
     {
       "label": "extract_features()",
@@ -314,8 +290,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "extract_features()",
-      "id": "ml_predictor_predict_extract_features",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_extract_features"
     },
     {
       "label": "run_prediction()",
@@ -326,8 +301,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "run_prediction()",
-      "id": "ml_predictor_predict_run_prediction",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_run_prediction"
     },
     {
       "label": "check_dependencies()",
@@ -338,8 +312,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "check_dependencies()",
-      "id": "ml_predictor_train_nn_check_dependencies",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_train_nn_check_dependencies"
     },
     {
       "label": "train()",
@@ -350,8 +323,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "train()",
-      "id": "ml_predictor_train_nn_train",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_train_nn_train"
     },
     {
       "label": "convert_to_db_units()",
@@ -362,8 +334,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "convert_to_db_units()",
-      "id": "rtl_legalizer_lef_parser_convert_to_db_units",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_convert_to_db_units"
     },
     {
       "label": "extract_database_units()",
@@ -374,8 +345,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "extract_database_units()",
-      "id": "rtl_legalizer_lef_parser_extract_database_units",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_extract_database_units"
     },
     {
       "label": "extract_macro_dimensions()",
@@ -386,8 +356,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "extract_macro_dimensions()",
-      "id": "rtl_legalizer_lef_parser_extract_macro_dimensions",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_extract_macro_dimensions"
     },
     {
       "label": "parse_lef_file()",
@@ -398,8 +367,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "parse_lef_file()",
-      "id": "rtl_legalizer_lef_parser_parse_lef_file",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_parse_lef_file"
     },
     {
       "label": "parse_lef_files()",
@@ -410,8 +378,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "parse_lef_files()",
-      "id": "rtl_legalizer_lef_parser_parse_lef_files",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_parse_lef_files"
     },
     {
       "label": "extreme_aspect_ratio_strategy()",
@@ -422,8 +389,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "extreme_aspect_ratio_strategy()",
-      "id": "rtl_legalizer_lef_parser_property_test_extreme_aspect_ratio_strategy",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_extreme_aspect_ratio_strategy"
     },
     {
       "label": "test_dimension_dict_matches_source()",
@@ -434,8 +400,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "test_dimension_dict_matches_source()",
-      "id": "rtl_legalizer_lef_parser_property_test_test_dimension_dict_matches_source",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_test_dimension_dict_matches_source"
     },
     {
       "label": "test_extreme_aspect_ratio_preservation()",
@@ -446,8 +411,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "test_extreme_aspect_ratio_preservation()",
-      "id": "rtl_legalizer_lef_parser_property_test_test_extreme_aspect_ratio_preservation",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_test_extreme_aspect_ratio_preservation"
     },
     {
       "label": "test_round_trip_parsing()",
@@ -458,8 +422,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "test_round_trip_parsing()",
-      "id": "rtl_legalizer_lef_parser_property_test_test_round_trip_parsing",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_test_round_trip_parsing"
     },
     {
       "label": "validate_dimension()",
@@ -470,8 +433,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "validate_dimension()",
-      "id": "rtl_legalizer_lef_parser_validate_dimension",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_validate_dimension"
     },
     {
       "label": ".test_extract_at_least_100_cell_types()",
@@ -482,8 +444,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": ".test_extract_at_least_100_cell_types()",
-      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_extract_at_least_100_cell_types",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_extract_at_least_100_cell_types"
     },
     {
       "label": ".test_parse_tech_and_cells_lef_successfully()",
@@ -494,8 +455,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": ".test_parse_tech_and_cells_lef_successfully()",
-      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_parse_tech_and_cells_lef_successfully",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_parse_tech_and_cells_lef_successfully"
     },
     {
       "label": ".test_verify_extreme_aspect_ratio_cells()",
@@ -506,8 +466,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": ".test_verify_extreme_aspect_ratio_cells()",
-      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_extreme_aspect_ratio_cells",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_extreme_aspect_ratio_cells"
     },
     {
       "label": ".test_verify_specific_known_dimensions()",
@@ -518,8 +477,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": ".test_verify_specific_known_dimensions()",
-      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_specific_known_dimensions",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_testispd2015lefparsing_test_verify_specific_known_dimensions"
     },
     {
       "label": ".test_file_not_found()",
@@ -530,8 +488,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_file_not_found()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_file_not_found",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_file_not_found"
     },
     {
       "label": ".test_lef_without_units()",
@@ -542,8 +499,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_lef_without_units()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_lef_without_units",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_lef_without_units"
     },
     {
       "label": ".test_valid_lef_file()",
@@ -554,8 +510,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_valid_lef_file()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_valid_lef_file",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffile_test_valid_lef_file"
     },
     {
       "label": ".test_duplicate_first_wins()",
@@ -566,8 +521,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_duplicate_first_wins()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_duplicate_first_wins",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_duplicate_first_wins"
     },
     {
       "label": ".test_merge_multiple_files()",
@@ -578,8 +532,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_merge_multiple_files()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_merge_multiple_files",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_merge_multiple_files"
     },
     {
       "label": ".test_no_macros_raises_error()",
@@ -590,8 +543,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": ".test_no_macros_raises_error()",
-      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_no_macros_raises_error",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_testparseleffiles_test_no_macros_raises_error"
     },
     {
       "label": "inject_coords_into_def()",
@@ -602,8 +554,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "inject_coords_into_def()",
-      "id": "ml_predictor_hex_to_def_inject_coords_into_def",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_inject_coords_into_def"
     },
     {
       "label": "main()",
@@ -614,8 +565,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "main()",
-      "id": "ml_predictor_hex_to_def_main",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_main"
     },
     {
       "label": "read_hex_coordinates()",
@@ -626,8 +576,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "read_hex_coordinates()",
-      "id": "ml_predictor_hex_to_def_read_hex_coordinates",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_read_hex_coordinates"
     },
     {
       "label": "extract_metrics_from_log()",
@@ -638,8 +587,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "extract_metrics_from_log()",
-      "id": "orchestration_data_generator_extract_metrics_from_log",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_extract_metrics_from_log"
     },
     {
       "label": "find_benchmarks()",
@@ -650,8 +598,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "find_benchmarks()",
-      "id": "orchestration_data_generator_find_benchmarks",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_find_benchmarks"
     },
     {
       "label": "main()",
@@ -662,8 +609,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "main()",
-      "id": "orchestration_data_generator_main",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_main"
     },
     {
       "label": "run_openroad_placement()",
@@ -674,8 +620,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "run_openroad_placement()",
-      "id": "orchestration_data_generator_run_openroad_placement",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_run_openroad_placement"
     },
     {
       "label": "write_summary_report()",
@@ -686,8 +631,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "write_summary_report()",
-      "id": "orchestration_data_generator_write_summary_report",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_write_summary_report"
     },
     {
       "label": "find_rtl_files()",
@@ -698,8 +642,7 @@
       "_origin": "ast",
       "community": 14,
       "norm_label": "find_rtl_files()",
-      "id": "orchestration_rtl_to_def_find_rtl_files",
-      "community_name": "rtl_to_def.py"
+      "id": "orchestration_rtl_to_def_find_rtl_files"
     },
     {
       "label": "main()",
@@ -710,8 +653,7 @@
       "_origin": "ast",
       "community": 14,
       "norm_label": "main()",
-      "id": "orchestration_rtl_to_def_main",
-      "community_name": "rtl_to_def.py"
+      "id": "orchestration_rtl_to_def_main"
     },
     {
       "label": "run_pipeline()",
@@ -722,8 +664,7 @@
       "_origin": "ast",
       "community": 14,
       "norm_label": "run_pipeline()",
-      "id": "orchestration_rtl_to_def_run_pipeline",
-      "community_name": "rtl_to_def.py"
+      "id": "orchestration_rtl_to_def_run_pipeline"
     },
     {
       "label": "find_first_file()",
@@ -734,8 +675,7 @@
       "_origin": "ast",
       "community": 16,
       "norm_label": "find_first_file()",
-      "id": "run_predict_find_first_file",
-      "community_name": "find_first_file"
+      "id": "run_predict_find_first_file"
     },
     {
       "label": "main()",
@@ -746,8 +686,7 @@
       "_origin": "ast",
       "community": 16,
       "norm_label": "main()",
-      "id": "run_predict_main",
-      "community_name": "find_first_file"
+      "id": "run_predict_main"
     },
     {
       "label": "main()",
@@ -758,8 +697,7 @@
       "_origin": "ast",
       "community": 18,
       "norm_label": "main()",
-      "id": "orchestration_generate_rtl_dataset_main",
-      "community_name": "generate_rtl_dataset.py"
+      "id": "orchestration_generate_rtl_dataset_main"
     },
     {
       "label": ".test_invalid_lef_file_path_aborts_pipeline()",
@@ -770,8 +708,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": ".test_invalid_lef_file_path_aborts_pipeline()",
-      "id": "tests_test_ispd2015_integration_testerrorscenarios_test_invalid_lef_file_path_aborts_pipeline",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testerrorscenarios_test_invalid_lef_file_path_aborts_pipeline"
     },
     {
       "label": ".test_lef_with_no_macros_proceeds_with_warning()",
@@ -782,8 +719,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": ".test_lef_with_no_macros_proceeds_with_warning()",
-      "id": "tests_test_ispd2015_integration_testerrorscenarios_test_lef_with_no_macros_proceeds_with_warning",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testerrorscenarios_test_lef_with_no_macros_proceeds_with_warning"
     },
     {
       "label": ".test_full_pipeline_completes_without_deadlock()",
@@ -794,8 +730,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": ".test_full_pipeline_completes_without_deadlock()",
-      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_full_pipeline_completes_without_deadlock",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_full_pipeline_completes_without_deadlock"
     },
     {
       "label": ".test_output_hex_contains_non_uniform_dimensions()",
@@ -806,8 +741,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": ".test_output_hex_contains_non_uniform_dimensions()",
-      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_output_hex_contains_non_uniform_dimensions",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testfullpipelinewithrealdimensions_test_output_hex_contains_non_uniform_dimensions"
     },
     {
       "label": ".test_schema_and_assertions()",
@@ -818,8 +752,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": ".test_schema_and_assertions()",
-      "id": "tests_test_ispd2015_integration_testtopologicalpipelineschema_test_schema_and_assertions",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_testtopologicalpipelineschema_test_schema_and_assertions"
     },
     {
       "label": ".test_case_insensitive()",
@@ -830,8 +763,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_case_insensitive()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_case_insensitive",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_case_insensitive"
     },
     {
       "label": ".test_different_multiplier()",
@@ -842,8 +774,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_different_multiplier()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_different_multiplier",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_different_multiplier"
     },
     {
       "label": ".test_missing_database_microns()",
@@ -854,8 +785,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_missing_database_microns()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_database_microns",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_database_microns"
     },
     {
       "label": ".test_missing_units_block()",
@@ -866,8 +796,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_missing_units_block()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_units_block",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_missing_units_block"
     },
     {
       "label": ".test_real_lef_format()",
@@ -878,8 +807,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_real_lef_format()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_real_lef_format",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_real_lef_format"
     },
     {
       "label": ".test_standard_units_block()",
@@ -890,8 +818,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_standard_units_block()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_standard_units_block",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_standard_units_block"
     },
     {
       "label": ".test_whitespace_variations()",
@@ -902,8 +829,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": ".test_whitespace_variations()",
-      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_whitespace_variations",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_testextractdatabaseunits_test_whitespace_variations"
     },
     {
       "label": "parse_def_to_hex()",
@@ -914,8 +840,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "parse_def_to_hex()",
-      "id": "ml_predictor_def_parser_parse_def_to_hex",
-      "community_name": "parse_def_to_hex"
+      "id": "ml_predictor_def_parser_parse_def_to_hex"
     },
     {
       "label": "main()",
@@ -926,8 +851,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "main()",
-      "id": "orchestration_master_run_main",
-      "community_name": "parse_def_to_hex"
+      "id": "orchestration_master_run_main"
     },
     {
       "label": "run_step()",
@@ -938,8 +862,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "run_step()",
-      "id": "orchestration_master_run_run_step",
-      "community_name": "parse_def_to_hex"
+      "id": "orchestration_master_run_run_step"
     },
     {
       "label": ".test_def_parser_fallback_for_unknown_cell_type()",
@@ -950,8 +873,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": ".test_def_parser_fallback_for_unknown_cell_type()",
-      "id": "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_fallback_for_unknown_cell_type",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_fallback_for_unknown_cell_type"
     },
     {
       "label": ".test_def_parser_uses_real_dimensions()",
@@ -962,8 +884,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": ".test_def_parser_uses_real_dimensions()",
-      "id": "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_uses_real_dimensions",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_testlefdefintegration_test_def_parser_uses_real_dimensions"
     },
     {
       "label": ".discover_all_defs()",
@@ -974,8 +895,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".discover_all_defs()",
-      "id": "ml_predictor_feature_extractor_featureextractor_discover_all_defs",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_discover_all_defs"
     },
     {
       "label": ".extract_all()",
@@ -986,8 +906,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".extract_all()",
-      "id": "ml_predictor_feature_extractor_featureextractor_extract_all",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_extract_all"
     },
     {
       "label": ".find_lef_file()",
@@ -998,8 +917,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".find_lef_file()",
-      "id": "ml_predictor_feature_extractor_featureextractor_find_lef_file",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_find_lef_file"
     },
     {
       "label": ".__init__()",
@@ -1010,8 +928,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".__init__()",
-      "id": "ml_predictor_feature_extractor_featureextractor_init",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_init"
     },
     {
       "label": ".load_macro_data()",
@@ -1022,8 +939,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".load_macro_data()",
-      "id": "ml_predictor_feature_extractor_featureextractor_load_macro_data",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_load_macro_data"
     },
     {
       "label": ".parse_def_components()",
@@ -1034,8 +950,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".parse_def_components()",
-      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_components",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_components"
     },
     {
       "label": ".parse_def_filename()",
@@ -1046,8 +961,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".parse_def_filename()",
-      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_filename",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_filename"
     },
     {
       "label": ".parse_def_nets_kpath()",
@@ -1058,8 +972,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".parse_def_nets_kpath()",
-      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_nets_kpath",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_parse_def_nets_kpath"
     },
     {
       "label": ".rebuild_summary_csv()",
@@ -1070,8 +983,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": ".rebuild_summary_csv()",
-      "id": "ml_predictor_feature_extractor_featureextractor_rebuild_summary_csv",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_rebuild_summary_csv"
     },
     {
       "label": "._resolve_def_path()",
@@ -1082,8 +994,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "._resolve_def_path()",
-      "id": "ml_predictor_feature_extractor_featureextractor_resolve_def_path",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_featureextractor_resolve_def_path"
     },
     {
       "label": "test_error_on_missing_file()",
@@ -1094,8 +1005,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_error_on_missing_file()",
-      "id": "tests_test_lef_parser_cli_test_error_on_missing_file",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_error_on_missing_file"
     },
     {
       "label": "test_help_displays_usage()",
@@ -1106,8 +1016,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_help_displays_usage()",
-      "id": "tests_test_lef_parser_cli_test_help_displays_usage",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_help_displays_usage"
     },
     {
       "label": "test_json_output_to_stdout()",
@@ -1118,8 +1027,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_json_output_to_stdout()",
-      "id": "tests_test_lef_parser_cli_test_json_output_to_stdout",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_json_output_to_stdout"
     },
     {
       "label": "test_multiple_lef_files()",
@@ -1130,8 +1038,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_multiple_lef_files()",
-      "id": "tests_test_lef_parser_cli_test_multiple_lef_files",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_multiple_lef_files"
     },
     {
       "label": "test_output_writes_to_file()",
@@ -1142,8 +1049,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_output_writes_to_file()",
-      "id": "tests_test_lef_parser_cli_test_output_writes_to_file",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_output_writes_to_file"
     },
     {
       "label": "test_verbose_logs_each_macro()",
@@ -1154,8 +1060,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_verbose_logs_each_macro()",
-      "id": "tests_test_lef_parser_cli_test_verbose_logs_each_macro",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_test_verbose_logs_each_macro"
     },
     {
       "label": ".test_basic_conversion()",
@@ -1166,8 +1071,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": ".test_basic_conversion()",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_basic_conversion",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_basic_conversion"
     },
     {
       "label": ".test_default_multiplier()",
@@ -1178,8 +1082,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": ".test_default_multiplier()",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_default_multiplier",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_default_multiplier"
     },
     {
       "label": ".test_different_multipliers()",
@@ -1190,8 +1093,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": ".test_different_multipliers()",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_different_multipliers",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_different_multipliers"
     },
     {
       "label": ".test_fractional_values()",
@@ -1202,8 +1104,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": ".test_fractional_values()",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_fractional_values",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_fractional_values"
     },
     {
       "label": ".test_rounding()",
@@ -1214,8 +1115,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": ".test_rounding()",
-      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_rounding",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_testconverttodbunits_test_rounding"
     },
     {
       "label": ".test_accept_max_32bit_value()",
@@ -1226,8 +1126,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": ".test_accept_max_32bit_value()",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_accept_max_32bit_value",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_accept_max_32bit_value"
     },
     {
       "label": ".test_reject_32bit_overflow()",
@@ -1238,8 +1137,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": ".test_reject_32bit_overflow()",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_32bit_overflow",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_32bit_overflow"
     },
     {
       "label": ".test_reject_negative()",
@@ -1250,8 +1148,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": ".test_reject_negative()",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_negative",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_negative"
     },
     {
       "label": ".test_reject_zero()",
@@ -1262,8 +1159,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": ".test_reject_zero()",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_zero",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_reject_zero"
     },
     {
       "label": ".test_valid_positive_value()",
@@ -1274,8 +1170,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": ".test_valid_positive_value()",
-      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_valid_positive_value",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_testvalidatedimension_test_valid_positive_value"
     },
     {
       "label": ".test_case_insensitive()",
@@ -1286,8 +1181,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": ".test_case_insensitive()",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_case_insensitive",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_case_insensitive"
     },
     {
       "label": ".test_invalid_dimension_skipped()",
@@ -1298,8 +1192,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": ".test_invalid_dimension_skipped()",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_invalid_dimension_skipped",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_invalid_dimension_skipped"
     },
     {
       "label": ".test_macro_without_size()",
@@ -1310,8 +1203,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": ".test_macro_without_size()",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_macro_without_size",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_macro_without_size"
     },
     {
       "label": ".test_multiple_macros()",
@@ -1322,8 +1214,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": ".test_multiple_macros()",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_multiple_macros",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_multiple_macros"
     },
     {
       "label": ".test_single_macro()",
@@ -1334,8 +1225,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": ".test_single_macro()",
-      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_single_macro",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_single_macro"
     },
     {
       "label": "DiGraph",
@@ -1345,8 +1235,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "digraph",
-      "id": "digraph",
-      "community_name": "FeatureExtractor"
+      "id": "digraph"
     },
     {
       "label": "InMemoryDataset",
@@ -1356,8 +1245,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "inmemorydataset",
-      "id": "inmemorydataset",
-      "community_name": "TopologicalMacroDataset"
+      "id": "inmemorydataset"
     },
     {
       "label": "dataset.py",
@@ -1367,8 +1255,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "dataset.py",
-      "id": "ml_predictor_dataset",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_dataset"
     },
     {
       "label": "feature_extractor.py",
@@ -1378,8 +1265,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "feature_extractor.py",
-      "id": "ml_predictor_feature_extractor",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor"
     },
     {
       "label": "model.py",
@@ -1389,8 +1275,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "model.py",
-      "id": "ml_predictor_model",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_model"
     },
     {
       "label": "predict.py",
@@ -1400,8 +1285,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "predict.py",
-      "id": "ml_predictor_predict",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict"
     },
     {
       "label": "train_nn.py",
@@ -1411,8 +1295,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "train_nn.py",
-      "id": "ml_predictor_train_nn",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_train_nn"
     },
     {
       "label": "Safely extracts DIEAREA to compute the bounding box diagonal.",
@@ -1422,8 +1305,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "safely extracts diearea to compute the bounding box diagonal.",
-      "id": "ml_predictor_feature_extractor_rationale_34",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_rationale_34"
     },
     {
       "label": "x: [N, node_in_channels] edge_index: [2, E] edge_attr: [E, edge_in_channels]",
@@ -1433,8 +1315,7 @@
       "_origin": "ast",
       "community": 3,
       "norm_label": "x: [n, node_in_channels] edge_index: [2, e] edge_attr: [e, edge_in_channels]",
-      "id": "ml_predictor_model_rationale_43",
-      "community_name": "TopologicalMacroDataset"
+      "id": "ml_predictor_model_rationale_43"
     },
     {
       "label": "predict.py \u2014 RTLign Hardware Handoff Bridge Loads a trained\u2026",
@@ -1444,8 +1325,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "predict.py \u2014 rtlign hardware handoff bridge loads a trained...",
-      "id": "ml_predictor_predict_rationale_1",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_rationale_1"
     },
     {
       "label": "Scale features and construct a torch_geometric Data object.",
@@ -1455,8 +1335,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "scale features and construct a torch_geometric data object.",
-      "id": "ml_predictor_predict_rationale_146",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_rationale_146"
     },
     {
       "label": "Removes back-edges discovered during DFS traversal. When a back-edge is found,\u2026",
@@ -1466,8 +1345,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "removes back-edges discovered during dfs traversal. when a back-edge is found,...",
-      "id": "ml_predictor_predict_rationale_189",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_rationale_189"
     },
     {
       "label": "Extracts macro node features and 14-channel edge features directly from a\u2026",
@@ -1477,8 +1355,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "extracts macro node features and 14-channel edge features directly from a...",
-      "id": "ml_predictor_predict_rationale_50",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_predict_rationale_50"
     },
     {
       "label": "given",
@@ -1488,8 +1365,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "given",
-      "id": "given",
-      "community_name": "parse_lef_file"
+      "id": "given"
     },
     {
       "label": "lef_parser.py",
@@ -1499,8 +1375,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "lef_parser.py",
-      "id": "rtl_legalizer_lef_parser",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser"
     },
     {
       "label": "lef_parser_property_test.py",
@@ -1510,8 +1385,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "lef_parser_property_test.py",
-      "id": "rtl_legalizer_lef_parser_property_test",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test"
     },
     {
       "label": "Dimension_Dict",
@@ -1521,8 +1395,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "dimension_dict",
-      "id": "rtl_legalizer_lef_parser_py_dimension_dict",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_py_dimension_dict"
     },
     {
       "label": "lef_parser_test.py",
@@ -1532,8 +1405,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "lef_parser_test.py",
-      "id": "rtl_legalizer_lef_parser_test",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_test"
     },
     {
       "label": "settings",
@@ -1543,8 +1415,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "settings",
-      "id": "settings",
-      "community_name": "parse_lef_file"
+      "id": "settings"
     },
     {
       "label": "Property-based tests for LEF Parser Module These tests verify universal\u2026",
@@ -1554,8 +1425,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "property-based tests for lef parser module these tests verify universal...",
-      "id": "rtl_legalizer_lef_parser_property_test_rationale_1",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_rationale_1"
     },
     {
       "label": "Property 14: Dimension Dict Matches Source Validates: Requirements 8.1 FOR ALL\u2026",
@@ -1565,8 +1435,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "property 14: dimension dict matches source validates: requirements 8.1 for all...",
-      "id": "rtl_legalizer_lef_parser_property_test_rationale_176",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_rationale_176"
     },
     {
       "label": "Property 15: Round-Trip Parsing Validates: Requirements 8.2 WHEN parsing then\u2026",
@@ -1576,8 +1445,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "property 15: round-trip parsing validates: requirements 8.2 when parsing then...",
-      "id": "rtl_legalizer_lef_parser_property_test_rationale_254",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_rationale_254"
     },
     {
       "label": "Generates extreme aspect ratio dimensions: - Tall cells: width:height > 3:1\u2026",
@@ -1587,8 +1455,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "generates extreme aspect ratio dimensions: - tall cells: width:height > 3:1...",
-      "id": "rtl_legalizer_lef_parser_property_test_rationale_40",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_rationale_40"
     },
     {
       "label": "Property 13: Extreme Aspect Ratio Preservation Validates: Requirements 7.1 WHEN\u2026",
@@ -1598,8 +1465,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "property 13: extreme aspect ratio preservation validates: requirements 7.1 when...",
-      "id": "rtl_legalizer_lef_parser_property_test_rationale_66",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_property_test_rationale_66"
     },
     {
       "label": "LEF Parser Module for Real Cell Dimensions This module parses Library Exchange\u2026",
@@ -1609,8 +1475,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "lef parser module for real cell dimensions this module parses library exchange...",
-      "id": "rtl_legalizer_lef_parser_rationale_1",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_1"
     },
     {
       "label": "Extract DATABASE MICRONS value from UNITS block. LEF format: UNITS DATABASE\u2026",
@@ -1620,8 +1485,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "extract database microns value from units block. lef format: units database...",
-      "id": "rtl_legalizer_lef_parser_rationale_102",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_102"
     },
     {
       "label": "Extract MACRO SIZE statements from LEF content. LEF format: MACRO cell_name\u2026",
@@ -1631,8 +1495,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "extract macro size statements from lef content. lef format: macro cell_name...",
-      "id": "rtl_legalizer_lef_parser_rationale_144",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_144"
     },
     {
       "label": "Convert a dimension from microns to database units. Args: value_microns:\u2026",
@@ -1642,8 +1505,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "convert a dimension from microns to database units. args: value_microns:...",
-      "id": "rtl_legalizer_lef_parser_rationale_217",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_217"
     },
     {
       "label": "Validate that a dimension is a positive integer within 32-bit range. Args:\u2026",
@@ -1653,8 +1515,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "validate that a dimension is a positive integer within 32-bit range. args:...",
-      "id": "rtl_legalizer_lef_parser_rationale_235",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_235"
     },
     {
       "label": "Parse one or more LEF files and return a merged dimension dictionary. Args:\u2026",
@@ -1664,8 +1525,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "parse one or more lef files and return a merged dimension dictionary. args:...",
-      "id": "rtl_legalizer_lef_parser_rationale_27",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_27"
     },
     {
       "label": "Parse a single LEF file and extract MACRO definitions. Args: lef_path: Path to\u2026",
@@ -1675,8 +1535,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "parse a single lef file and extract macro definitions. args: lef_path: path to...",
-      "id": "rtl_legalizer_lef_parser_rationale_66",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_rationale_66"
     },
     {
       "label": "Unit tests for LEF Parser Module Tests the LEF parser functions for parsing\u2026",
@@ -1686,8 +1545,7 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "unit tests for lef parser module tests the lef parser functions for parsing...",
-      "id": "rtl_legalizer_lef_parser_test_rationale_1",
-      "community_name": "parse_lef_file"
+      "id": "rtl_legalizer_lef_parser_test_rationale_1"
     },
     {
       "label": "Requirement 7.1: Verify extreme aspect ratio cells handled correctly. WHEN\u2026",
@@ -1697,8 +1555,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "requirement 7.1: verify extreme aspect ratio cells handled correctly. when...",
-      "id": "tests_test_ispd2015_integration_rationale_109",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_rationale_109"
     },
     {
       "label": "Test 16.1: LEF parsing with mgc_matrix_mult_2 design data",
@@ -1708,8 +1565,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "test 16.1: lef parsing with mgc_matrix_mult_2 design data",
-      "id": "tests_test_ispd2015_integration_rationale_29",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_rationale_29"
     },
     {
       "label": "Requirement 6.1: Parse tech.lef and cells.lef successfully. WHEN running the\u2026",
@@ -1719,8 +1575,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "requirement 6.1: parse tech.lef and cells.lef successfully. when running the...",
-      "id": "tests_test_ispd2015_integration_rationale_32",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_rationale_32"
     },
     {
       "label": "Requirement 6.2: Extract at least 100 distinct Cell_Type definitions. WHEN\u2026",
@@ -1730,8 +1585,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "requirement 6.2: extract at least 100 distinct cell_type definitions. when...",
-      "id": "tests_test_ispd2015_integration_rationale_51",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_rationale_51"
     },
     {
       "label": "Requirement 6.4: Verify specific known dimensions (ms00f80, oa22f80). WHEN\u2026",
@@ -1741,8 +1595,7 @@
       "_origin": "ast",
       "community": 11,
       "norm_label": "requirement 6.4: verify specific known dimensions (ms00f80, oa22f80). when...",
-      "id": "tests_test_ispd2015_integration_rationale_74",
-      "community_name": "TestISPD2015LEFParsing"
+      "id": "tests_test_ispd2015_integration_rationale_74"
     },
     {
       "label": "Unit tests for parse_lef_file function.",
@@ -1752,8 +1605,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "unit tests for parse_lef_file function.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_241",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_241"
     },
     {
       "label": "Test parsing a valid LEF file.",
@@ -1763,8 +1615,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test parsing a valid lef file.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_244",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_244"
     },
     {
       "label": "Test that FileNotFoundError is raised for missing files.",
@@ -1774,8 +1625,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test that filenotfounderror is raised for missing files.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_267",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_267"
     },
     {
       "label": "Test parsing LEF file without UNITS block (uses default).",
@@ -1785,8 +1635,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test parsing lef file without units block (uses default).",
-      "id": "rtl_legalizer_lef_parser_test_rationale_272",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_272"
     },
     {
       "label": "Test merging dimension dicts from multiple LEF files.",
@@ -1796,8 +1645,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test merging dimension dicts from multiple lef files.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_293",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_293"
     },
     {
       "label": "Test that first definition wins for duplicate MACROs.",
@@ -1807,8 +1655,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test that first definition wins for duplicate macros.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_325",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_325"
     },
     {
       "label": "Test that ValueError is raised when no MACROs found.",
@@ -1818,8 +1665,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "test that valueerror is raised when no macros found.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_351",
-      "community_name": "TestParseLefFile"
+      "id": "rtl_legalizer_lef_parser_test_rationale_351"
     },
     {
       "label": "hex_to_def.py",
@@ -1829,8 +1675,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "hex_to_def.py",
-      "id": "ml_predictor_hex_to_def",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def"
     },
     {
       "label": "RTLign \u2014 HEX \u2192 DEF Injector ============================ Reads a legalized .hex\u2026",
@@ -1840,8 +1685,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "rtlign \u2014 hex \u2192 def injector ============================ reads a legalized .hex...",
-      "id": "ml_predictor_hex_to_def_rationale_1",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_rationale_1"
     },
     {
       "label": "Read the .hex file and return a list of (x, y) tuples. Each macro occupies 4\u2026",
@@ -1851,8 +1695,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "read the .hex file and return a list of (x, y) tuples. each macro occupies 4...",
-      "id": "ml_predictor_hex_to_def_rationale_24",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_rationale_24"
     },
     {
       "label": "Patch legalized coordinates into a DEF file. Strategy: - Walk through the\u2026",
@@ -1862,8 +1705,7 @@
       "_origin": "ast",
       "community": 12,
       "norm_label": "patch legalized coordinates into a def file. strategy: - walk through the...",
-      "id": "ml_predictor_hex_to_def_rationale_51",
-      "community_name": "hex_to_def.py"
+      "id": "ml_predictor_hex_to_def_rationale_51"
     },
     {
       "label": "data_generator.py",
@@ -1873,8 +1715,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "data_generator.py",
-      "id": "orchestration_data_generator",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator"
     },
     {
       "label": "Runs a single OpenROAD placement job via subprocess.",
@@ -1884,8 +1725,7 @@
       "_origin": "ast",
       "community": 13,
       "norm_label": "runs a single openroad placement job via subprocess.",
-      "id": "orchestration_data_generator_rationale_31",
-      "community_name": "data_generator.py"
+      "id": "orchestration_data_generator_rationale_31"
     },
     {
       "label": "rtl_to_def.py",
@@ -1895,8 +1735,7 @@
       "_origin": "ast",
       "community": 14,
       "norm_label": "rtl_to_def.py",
-      "id": "orchestration_rtl_to_def",
-      "community_name": "rtl_to_def.py"
+      "id": "orchestration_rtl_to_def"
     },
     {
       "label": "Finds all .v and .sv files in the given directory recursively, excluding\u2026",
@@ -1906,8 +1745,7 @@
       "_origin": "ast",
       "community": 14,
       "norm_label": "finds all .v and .sv files in the given directory recursively, excluding...",
-      "id": "orchestration_rtl_to_def_rationale_16",
-      "community_name": "rtl_to_def.py"
+      "id": "orchestration_rtl_to_def_rationale_16"
     },
     {
       "label": "legalizer_fsm",
@@ -1918,8 +1756,7 @@
       "_origin": "ast",
       "community": 15,
       "norm_label": "legalizer_fsm",
-      "id": "legalizer_fsm",
-      "community_name": "legalizer_tb"
+      "id": "legalizer_fsm"
     },
     {
       "label": "legalizer_tb.v",
@@ -1930,8 +1767,7 @@
       "_origin": "ast",
       "community": 15,
       "norm_label": "legalizer_tb.v",
-      "id": "rtl_legalizer_legalizer_tb",
-      "community_name": "legalizer_tb"
+      "id": "rtl_legalizer_legalizer_tb"
     },
     {
       "label": "legalizer_tb",
@@ -1942,8 +1778,7 @@
       "_origin": "ast",
       "community": 15,
       "norm_label": "legalizer_tb",
-      "id": "rtl_legalizer_legalizer_tb_legalizer_tb",
-      "community_name": "legalizer_tb"
+      "id": "rtl_legalizer_legalizer_tb_legalizer_tb"
     },
     {
       "label": "run_overlap_audit",
@@ -1954,8 +1789,7 @@
       "_origin": "ast",
       "community": 15,
       "norm_label": "run_overlap_audit",
-      "id": "rtl_legalizer_legalizer_tb_legalizer_tb_run_overlap_audit",
-      "community_name": "legalizer_tb"
+      "id": "rtl_legalizer_legalizer_tb_legalizer_tb_run_overlap_audit"
     },
     {
       "label": "run_predict.py",
@@ -1965,8 +1799,7 @@
       "_origin": "ast",
       "community": 16,
       "norm_label": "run_predict.py",
-      "id": "run_predict",
-      "community_name": "find_first_file"
+      "id": "run_predict"
     },
     {
       "label": "Utility to find the first matching file from a list of glob patterns.",
@@ -1976,8 +1809,7 @@
       "_origin": "ast",
       "community": 16,
       "norm_label": "utility to find the first matching file from a list of glob patterns.",
-      "id": "run_predict_rationale_8",
-      "community_name": "find_first_file"
+      "id": "run_predict_rationale_8"
     },
     {
       "label": "collision_check",
@@ -1988,8 +1820,7 @@
       "_origin": "ast",
       "community": 17,
       "norm_label": "collision_check",
-      "id": "collision_check",
-      "community_name": "legalizer_fsm"
+      "id": "collision_check"
     },
     {
       "label": "legalizer_fsm.v",
@@ -2000,8 +1831,7 @@
       "_origin": "ast",
       "community": 17,
       "norm_label": "legalizer_fsm.v",
-      "id": "rtl_legalizer_legalizer_fsm",
-      "community_name": "legalizer_fsm"
+      "id": "rtl_legalizer_legalizer_fsm"
     },
     {
       "label": "legalizer_fsm",
@@ -2012,8 +1842,7 @@
       "_origin": "ast",
       "community": 17,
       "norm_label": "legalizer_fsm",
-      "id": "rtl_legalizer_legalizer_fsm_legalizer_fsm",
-      "community_name": "legalizer_fsm"
+      "id": "rtl_legalizer_legalizer_fsm_legalizer_fsm"
     },
     {
       "label": "generate_rtl_dataset.py",
@@ -2023,8 +1852,7 @@
       "_origin": "ast",
       "community": 18,
       "norm_label": "generate_rtl_dataset.py",
-      "id": "orchestration_generate_rtl_dataset",
-      "community_name": "generate_rtl_dataset.py"
+      "id": "orchestration_generate_rtl_dataset"
     },
     {
       "label": "test_ispd2015_integration.py",
@@ -2034,8 +1862,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "test_ispd2015_integration.py",
-      "id": "tests_test_ispd2015_integration",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration"
     },
     {
       "label": "Integration tests with ISPD 2015 benchmarks. Tests Requirements 6.1, 6.2, 6.3,\u2026",
@@ -2045,8 +1872,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "integration tests with ispd 2015 benchmarks. tests requirements 6.1, 6.2, 6.3,...",
-      "id": "tests_test_ispd2015_integration_rationale_1",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_1"
     },
     {
       "label": "Test 16.2: Full pipeline integration with real dimensions",
@@ -2056,8 +1882,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "test 16.2: full pipeline integration with real dimensions",
-      "id": "tests_test_ispd2015_integration_rationale_145",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_145"
     },
     {
       "label": "Requirement 6.3: Legalizer FSM completes without deadlock. WHEN running the\u2026",
@@ -2067,8 +1892,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "requirement 6.3: legalizer fsm completes without deadlock. when running the...",
-      "id": "tests_test_ispd2015_integration_rationale_148",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_148"
     },
     {
       "label": "Requirement 6.4: Output HEX contains non-uniform dimensions. WHEN legalization\u2026",
@@ -2078,8 +1902,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "requirement 6.4: output hex contains non-uniform dimensions. when legalization...",
-      "id": "tests_test_ispd2015_integration_rationale_184",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_184"
     },
     {
       "label": "Test 16.3: Error handling scenarios",
@@ -2089,8 +1912,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "test 16.3: error handling scenarios",
-      "id": "tests_test_ispd2015_integration_rationale_252",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_252"
     },
     {
       "label": "Requirement 5.3: Invalid LEF file path aborts pipeline. WHEN the LEF_Parser\u2026",
@@ -2100,8 +1922,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "requirement 5.3: invalid lef file path aborts pipeline. when the lef_parser...",
-      "id": "tests_test_ispd2015_integration_rationale_255",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_255"
     },
     {
       "label": "Requirement 5.4: LEF with no MACROs proceeds with warning. WHEN the LEF_Parser\u2026",
@@ -2111,8 +1932,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "requirement 5.4: lef with no macros proceeds with warning. when the lef_parser...",
-      "id": "tests_test_ispd2015_integration_rationale_292",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_292"
     },
     {
       "label": "Test Topological Pipeline Parquet output schemas and assertions",
@@ -2122,8 +1942,7 @@
       "_origin": "ast",
       "community": 2,
       "norm_label": "test topological pipeline parquet output schemas and assertions",
-      "id": "tests_test_ispd2015_integration_rationale_466",
-      "community_name": "test_ispd2015_integration.py"
+      "id": "tests_test_ispd2015_integration_rationale_466"
     },
     {
       "label": "collision_check.v",
@@ -2134,8 +1953,7 @@
       "_origin": "ast",
       "community": 19,
       "norm_label": "collision_check.v",
-      "id": "rtl_legalizer_collision_check",
-      "community_name": "collision_check.v"
+      "id": "rtl_legalizer_collision_check"
     },
     {
       "label": "collision_check",
@@ -2146,8 +1964,7 @@
       "_origin": "ast",
       "community": 19,
       "norm_label": "collision_check",
-      "id": "rtl_legalizer_collision_check_collision_check",
-      "community_name": "collision_check.v"
+      "id": "rtl_legalizer_collision_check_collision_check"
     },
     {
       "label": "__init__.py",
@@ -2157,8 +1974,7 @@
       "_origin": "ast",
       "community": 20,
       "norm_label": "__init__.py",
-      "id": "tests_init",
-      "community_name": "__init__.py"
+      "id": "tests_init"
     },
     {
       "label": "Unit tests for extract_database_units function.",
@@ -2168,8 +1984,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "unit tests for extract_database_units function.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_26",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_26"
     },
     {
       "label": "Test parsing a standard UNITS block with DATABASE MICRONS 1000.",
@@ -2179,8 +1994,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test parsing a standard units block with database microns 1000.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_29",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_29"
     },
     {
       "label": "Test parsing with a different multiplier value.",
@@ -2190,8 +2004,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test parsing with a different multiplier value.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_45",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_45"
     },
     {
       "label": "Test that None is returned when UNITS block is missing.",
@@ -2201,8 +2014,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test that none is returned when units block is missing.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_55",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_55"
     },
     {
       "label": "Test that None is returned when DATABASE MICRONS is missing from UNITS block.",
@@ -2212,8 +2024,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test that none is returned when database microns is missing from units block.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_66",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_66"
     },
     {
       "label": "Test that parsing is case-insensitive.",
@@ -2223,8 +2034,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test that parsing is case-insensitive.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_76",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_76"
     },
     {
       "label": "Test handling of various whitespace patterns.",
@@ -2234,8 +2044,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test handling of various whitespace patterns.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_86",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_86"
     },
     {
       "label": "Test with a realistic LEF file format from ISPD benchmarks.",
@@ -2245,8 +2054,7 @@
       "_origin": "ast",
       "community": 4,
       "norm_label": "test with a realistic lef file format from ispd benchmarks.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_96",
-      "community_name": "TestExtractDatabaseUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_96"
     },
     {
       "label": "def_parser.py",
@@ -2256,8 +2064,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "def_parser.py",
-      "id": "ml_predictor_def_parser",
-      "community_name": "parse_def_to_hex"
+      "id": "ml_predictor_def_parser"
     },
     {
       "label": "Dimension_Dict",
@@ -2267,8 +2074,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "dimension_dict",
-      "id": "ml_predictor_def_parser_py_dimension_dict",
-      "community_name": "parse_def_to_hex"
+      "id": "ml_predictor_def_parser_py_dimension_dict"
     },
     {
       "label": "master_run.py",
@@ -2278,8 +2084,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "master_run.py",
-      "id": "orchestration_master_run",
-      "community_name": "parse_def_to_hex"
+      "id": "orchestration_master_run"
     },
     {
       "label": "Parse a DEF file and generate a .hex memory file for the hardware legalizer.\u2026",
@@ -2289,8 +2094,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "parse a def file and generate a .hex memory file for the hardware legalizer....",
-      "id": "ml_predictor_def_parser_rationale_17",
-      "community_name": "parse_def_to_hex"
+      "id": "ml_predictor_def_parser_rationale_17"
     },
     {
       "label": "RTLign \u2014 Master Orchestration Script =====================================\u2026",
@@ -2300,8 +2104,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "rtlign \u2014 master orchestration script =====================================...",
-      "id": "orchestration_master_run_rationale_1",
-      "community_name": "parse_def_to_hex"
+      "id": "orchestration_master_run_rationale_1"
     },
     {
       "label": "Run a subprocess command with timing and error handling.",
@@ -2311,8 +2114,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "run a subprocess command with timing and error handling.",
-      "id": "orchestration_master_run_rationale_54",
-      "community_name": "parse_def_to_hex"
+      "id": "orchestration_master_run_rationale_54"
     },
     {
       "label": "Additional integration tests for LEF + DEF pipeline",
@@ -2322,8 +2124,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "additional integration tests for lef + def pipeline",
-      "id": "tests_test_ispd2015_integration_rationale_357",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_rationale_357"
     },
     {
       "label": "Test that DEF parser correctly uses real dimensions from LEF. WHEN parsing a\u2026",
@@ -2333,8 +2134,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "test that def parser correctly uses real dimensions from lef. when parsing a...",
-      "id": "tests_test_ispd2015_integration_rationale_360",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_rationale_360"
     },
     {
       "label": "Test that DEF parser falls back to default dimensions for unknown cells. WHEN\u2026",
@@ -2344,8 +2144,7 @@
       "_origin": "ast",
       "community": 5,
       "norm_label": "test that def parser falls back to default dimensions for unknown cells. when...",
-      "id": "tests_test_ispd2015_integration_rationale_409",
-      "community_name": "parse_def_to_hex"
+      "id": "tests_test_ispd2015_integration_rationale_409"
     },
     {
       "label": "Any",
@@ -2355,8 +2154,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "any",
-      "id": "any",
-      "community_name": "FeatureExtractor"
+      "id": "any"
     },
     {
       "label": "Parses LEFs to return macro dimensions and pin directions. Returns: {design:\u2026",
@@ -2366,8 +2164,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "parses lefs to return macro dimensions and pin directions. returns: {design:...",
-      "id": "ml_predictor_feature_extractor_rationale_171",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_rationale_171"
     },
     {
       "label": "Uses sparse matrix exponentiation to extract k-path and undirected graph edges.",
@@ -2377,8 +2174,7 @@
       "_origin": "ast",
       "community": 1,
       "norm_label": "uses sparse matrix exponentiation to extract k-path and undirected graph edges.",
-      "id": "ml_predictor_feature_extractor_rationale_271",
-      "community_name": "FeatureExtractor"
+      "id": "ml_predictor_feature_extractor_rationale_271"
     },
     {
       "label": "test_lef_parser_cli.py",
@@ -2388,8 +2184,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test_lef_parser_cli.py",
-      "id": "tests_test_lef_parser_cli",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli"
     },
     {
       "label": "Unit tests for LEF Parser CLI interface. Tests the CLI implementation for\u2026",
@@ -2399,8 +2194,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "unit tests for lef parser cli interface. tests the cli implementation for...",
-      "id": "tests_test_lef_parser_cli_rationale_1",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_1"
     },
     {
       "label": "Test that multiple LEF files can be parsed",
@@ -2410,8 +2204,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test that multiple lef files can be parsed",
-      "id": "tests_test_lef_parser_cli_rationale_107",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_107"
     },
     {
       "label": "Test that missing LEF file produces error",
@@ -2421,8 +2214,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test that missing lef file produces error",
-      "id": "tests_test_lef_parser_cli_rationale_124",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_124"
     },
     {
       "label": "Test Requirement 10.1: --help shows usage information",
@@ -2432,8 +2224,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test requirement 10.1: --help shows usage information",
-      "id": "tests_test_lef_parser_cli_rationale_19",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_19"
     },
     {
       "label": "Test Requirement 10.2: JSON output to stdout",
@@ -2443,8 +2234,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test requirement 10.2: json output to stdout",
-      "id": "tests_test_lef_parser_cli_rationale_34",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_34"
     },
     {
       "label": "Test Requirement 10.3: --output writes to specified file",
@@ -2454,8 +2244,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test requirement 10.3: --output writes to specified file",
-      "id": "tests_test_lef_parser_cli_rationale_56",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_56"
     },
     {
       "label": "Test Requirement 10.4: --verbose logs each MACRO name and dimensions",
@@ -2465,8 +2254,7 @@
       "_origin": "ast",
       "community": 7,
       "norm_label": "test requirement 10.4: --verbose logs each macro name and dimensions",
-      "id": "tests_test_lef_parser_cli_rationale_86",
-      "community_name": "test_lef_parser_cli.py"
+      "id": "tests_test_lef_parser_cli_rationale_86"
     },
     {
       "label": "Unit tests for convert_to_db_units function.",
@@ -2476,8 +2264,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "unit tests for convert_to_db_units function.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_114",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_114"
     },
     {
       "label": "Test basic unit conversion with 1000 multiplier.",
@@ -2487,8 +2274,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "test basic unit conversion with 1000 multiplier.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_117",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_117"
     },
     {
       "label": "Test that None db_units defaults to 1000.",
@@ -2498,8 +2284,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "test that none db_units defaults to 1000.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_122",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_122"
     },
     {
       "label": "Test conversion with fractional micron values.",
@@ -2509,8 +2294,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "test conversion with fractional micron values.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_127",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_127"
     },
     {
       "label": "Test that rounding is applied correctly.",
@@ -2520,8 +2304,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "test that rounding is applied correctly.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_132",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_132"
     },
     {
       "label": "Test conversion with different database unit multipliers.",
@@ -2531,8 +2314,7 @@
       "_origin": "ast",
       "community": 8,
       "norm_label": "test conversion with different database unit multipliers.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_138",
-      "community_name": "TestConvertToDbUnits"
+      "id": "rtl_legalizer_lef_parser_test_rationale_138"
     },
     {
       "label": "Unit tests for validate_dimension function.",
@@ -2542,8 +2324,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "unit tests for validate_dimension function.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_144",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_144"
     },
     {
       "label": "Test that positive values are validated as valid.",
@@ -2553,8 +2334,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "test that positive values are validated as valid.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_147",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_147"
     },
     {
       "label": "Test that zero is rejected.",
@@ -2564,8 +2344,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "test that zero is rejected.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_152",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_152"
     },
     {
       "label": "Test that negative values are rejected.",
@@ -2575,8 +2354,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "test that negative values are rejected.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_157",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_157"
     },
     {
       "label": "Test that values exceeding 32-bit limit are rejected.",
@@ -2586,8 +2364,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "test that values exceeding 32-bit limit are rejected.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_162",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_162"
     },
     {
       "label": "Test that max 32-bit value is accepted.",
@@ -2597,8 +2374,7 @@
       "_origin": "ast",
       "community": 9,
       "norm_label": "test that max 32-bit value is accepted.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_167",
-      "community_name": "TestValidateDimension"
+      "id": "rtl_legalizer_lef_parser_test_rationale_167"
     },
     {
       "label": "Unit tests for extract_macro_dimensions function.",
@@ -2608,8 +2384,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "unit tests for extract_macro_dimensions function.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_173",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_173"
     },
     {
       "label": "Test extraction of a single MACRO block.",
@@ -2619,8 +2394,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "test extraction of a single macro block.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_176",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_176"
     },
     {
       "label": "Test extraction of multiple MACRO blocks.",
@@ -2630,8 +2404,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "test extraction of multiple macro blocks.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_189",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_189"
     },
     {
       "label": "Test that MACROs without SIZE statement are skipped.",
@@ -2641,8 +2414,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "test that macros without size statement are skipped.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_205",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_205"
     },
     {
       "label": "Test that SIZE parsing is case-insensitive.",
@@ -2652,8 +2424,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "test that size parsing is case-insensitive.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_215",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_215"
     },
     {
       "label": "Test that MACROs with invalid dimensions are skipped.",
@@ -2663,8 +2434,7 @@
       "_origin": "ast",
       "community": 10,
       "norm_label": "test that macros with invalid dimensions are skipped.",
-      "id": "rtl_legalizer_lef_parser_test_rationale_225",
-      "community_name": "TestExtractMacroDimensions"
+      "id": "rtl_legalizer_lef_parser_test_rationale_225"
     }
   ],
   "links": [
