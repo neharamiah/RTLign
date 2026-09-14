@@ -32,12 +32,11 @@ The pipeline consists of two primary files that communicate via environment vari
 
 2. **`orchestration/data_generator.py` (The Manager)**
    * **What it is:** A multi-threaded Python orchestrator (`ThreadPoolExecutor`).
-   * **What it does:** Automatically discovers benchmark designs (`data/ispd_benchmarks` and `data/generated_rtl_dataset`), generates parameter combination matrices, spawns parallel OpenROAD subprocess workers, tracks progress, and generates incremental `dataset_summary.csv` reports.
-   * **Analogy:** Think of this as the factory manager who organizes work and assigns tasks to multiple workers to finish fast.
+   * **What it does:** Automatically discovers benchmark designs (`data/ispd_benchmarks` and `data/generated_rtl_dataset`), generates parameter combination matrices, spawns parallel OpenROAD subprocess workers, tracks progress, and generates incremental `dataset_summary.csv` reports.\n   * **Analogy:** Think of this as the factory manager who organizes work and assigns tasks to multiple workers to finish fast.
 
 ---
 
-## 📂 Step 2: Prepare Your Input Files
+## 📁 Step 2: Prepare Your Input Files
 
 Before generating a dataset for a benchmark or RTL design, ensure three files exist in the design directory:
 
@@ -100,8 +99,9 @@ Output `.def` layout files and logs are saved in `data/generated_defs/<design>/`
 
 ---
 
-## 🎯 What's Next?
+## 🗂️ Overview of All Orchestration Scripts
 
-With **1,299 generated DEF layout files** available across ISPD and RTL benchmarks (`opentitan_blocks`, `picorv32`, `ibex`):
-1. Run `python ml_predictor/feature_extractor.py` to parse DEF files into ML feature matrices.
-2. Train and evaluate the macro placement prediction models.
+- **`master_run.py`**: Single-click pipeline orchestrator. Executes the complete baseline flow: parses LEF/DEF, creates `.hex` layout, compiles and runs the Icarus Verilog legalizer simulation, and injects legalized coordinates back into DEF format.
+- **`data_generator.py`**: Multi-threaded parameter sweep runner for automated dataset generation across ISPD 2015 and custom RTL designs.
+- **`generate_rtl_dataset.py`**: Batch synthesizes Verilog source modules (such as RISC-V cores) into gate-level netlists using Yosys.
+- **`rtl_to_def.py`**: Converts synthesized gate-level Verilog netlists into initial floorplanned DEF layouts with configurable aspect ratios and utilization targets.
