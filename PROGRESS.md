@@ -181,7 +181,7 @@ RTLign/
 ---
 
 ### 4.6 HEX → DEF Injector (`hex_to_def.py`)
-**Purpose:** Reads the legalized `.hex` coordinates and patches them back into the original `.def` file, preserving pins, routing, and non-macro components.
+**Purpose:** Reads the legalized `.hex` coordinates and patches them back into the original `.def` file. Supports targeted name-based macro injection from comments (`// X <inst_name>`) as well as sequential matching fallback, preserving pins, standard cells, and routing.
 
 ---
 
@@ -221,12 +221,12 @@ RTLign/
 ---
 
 ### 4.14 Inference Engine & DAG Cycle-Breaker (`ml_predictor/predict.py` & `run_predict.py`)
-**Purpose:** Executes inference on unseen DEF layouts. Employs a Depth-First Search (DFS) cycle-breaking algorithm to eliminate topological loops, ensuring the relative macro dependencies form a strict Directed Acyclic Graph (DAG) before exporting to an $N \times N$ 32-bit hex matrix.
+**Purpose:** Executes inference on unseen DEF layouts. Employs a Depth-First Search (DFS) cycle-breaking algorithm to eliminate topological loops, ensuring the relative macro dependencies form a strict Directed Acyclic Graph (DAG). Includes a topological coordinate resolver (`resolve_topological_coordinates`) to convert DAG constraints and LEF dimensions into hardware coordinates (`dummy_layout.hex`) with area-based macro filtering.
 
 ---
 
 ### 4.15 Evaluation Suite & OpenROAD Signoff (`ml_predictor/evaluate.py` & `openroad_scripts/evaluate_layout.tcl`)
-**Purpose:** Runs the complete closed-loop pipeline: GNN inference → RTL legalization → DEF injection → OpenROAD re-import. Measures placement legality (`check_placement`), calculates HPWL (`report_wire_length`), and saves visual layout comparison figures.
+**Purpose:** Runs the complete closed-loop pipeline: GNN inference → topological resolution → parameterized RTL legalization (`iverilog`) → targeted DEF injection → OpenROAD re-import. Measures placement legality (`check_placement`), calculates pre-route HPWL via direct OpenROAD database net traversal (`[ord::get_db_block] getNets`), and exports dual layout visualization figures (`evaluation_plot.png`).
 
 ---
 

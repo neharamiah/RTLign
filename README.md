@@ -156,10 +156,10 @@ Trains a Graph Neural Network (`model.py`) to infer pairwise relative topologica
 A Simulated Annealing engine that translates relative L-flow rules into exact physical coordinates. It relies on a custom combinational DAG-Solver that instantly computes 100% legal, overlap-free coordinates in a single hardware cycle. Die-boundary clamping prevents macros from leaving the chip area.
 
 ### 6. HEX → DEF Injector (`hex_to_def.py`)
-Reads the legalized `.hex` output and patches coordinates back into the original `.def` file, preserving all other physical design data (pins, nets, routing, special nets).
+Reads the legalized `.hex` output and patches coordinates back into the original `.def` file via targeted macro name matching, preserving standard cells and physical design data (pins, nets, routing, special nets).
 
 ### 7. Closed-Loop Evaluation (`evaluate.py` & `evaluate_layout.tcl`)
-Automates verification by feeding candidate placements into OpenROAD to confirm zero residual overlaps (`check_placement`), measures half-perimeter wirelength (`report_wire_length`), and generates visual comparison plots (`evaluation_plot.png`).
+Automates verification by feeding candidate placements into OpenROAD to confirm zero residual overlaps (`check_placement`), measures half-perimeter wirelength via database net traversal, and generates visual comparison plots (`evaluation_plot.png`).
 
 ---
 

@@ -1,10 +1,10 @@
-#!/usr/import/env python3
+#!/usr/bin/env python3
 """
 evaluate.py — RTLign Pipeline Evaluation Orchestrator
 
-This script runs the full ML -> RTL -> DEF pipeline on a given design and
-compares the final metrics (HPWL) with the baseline OpenROAD placement.
-It generates a visual comparison plot of the macro layouts.
+Runs the full ML -> RTL -> DEF pipeline on a given design and
+compares the final metrics (HPWL, legality) with the baseline OpenROAD placement.
+Generates a side-by-side visual comparison plot of the macro layouts.
 """
 
 import os
@@ -26,22 +26,27 @@ def check_dependencies():
 check_dependencies()
 import matplotlib.pyplot as plt
 
-# Ensure ml_predictor is importable
+# Ensure ml_predictor and rtl_legalizer are importable
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ml_predictor.feature_extractor import FeatureExtractor
+from ml_predictor.predict import get_die_bounds
+from rtl_legalizer.lef_parser import parse_lef_files
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EVAL_TCL = os.path.join(PROJECT_ROOT, "openroad_scripts", "evaluate_layout.tcl")
+
 
 def run_cmd(cmd, env=None, cwd=PROJECT_ROOT):
     print(f"\n[EVAL] Running: {' '.join(cmd)}")
     result = subprocess.run(cmd, env=env, cwd=cwd, capture_output=True, text=True)
     if result.returncode != 0:
         print(f"Command failed! Stderr: {result.stderr}")
+        print(f"Stdout: {result.stdout}")
         sys.exit(result.returncode)
     return result.stdout
+
 
 def run_openroad_eval(def_file, tech_lef, cells_lef):
     env = os.environ.copy()
@@ -62,10 +67,11 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
             
     return hpwl, legal
 
-def plot_layouts(baseline_def, legalized_def, plot_path, macro_data=None):
+
+def plot_layouts(baseline_def, legalized_def, plot_path, dim_dict=None):
     extractor = FeatureExtractor()
-    base_comps = extractor.parse_def_components(baseline_def, macro_data)
-    leg_comps = extractor.parse_def_components(legalized_def, macro_data)
+    base_comps = extractor.parse_def_components(baseline_def)
+    leg_comps = extractor.parse_def_components(legalized_def)
     
     if not base_comps or not leg_comps:
         print("[EVAL] Could not parse components for plotting.")
@@ -78,92 +84,108 @@ def plot_layouts(baseline_def, legalized_def, plot_path, macro_data=None):
         ax.set_xlabel("X (DBU)")
         ax.set_ylabel("Y (DBU)")
         for c in comps:
-            # Note: width/height might be NaN if macro_data wasn't fully matched, we plot a generic point if so.
-            w = c.get('width', 1000)
-            h = c.get('height', 1000)
-            if math.isnan(w): w = 1000
-            if math.isnan(h): h = 1000
+            cell_type = c.get('cell_type', '')
+            if dim_dict and cell_type in dim_dict:
+                w, h = dim_dict[cell_type]
+            else:
+                w = c.get('width', 1000)
+                h = c.get('height', 1000)
+                if math.isnan(w): w = 1000
+                if math.isnan(h): h = 1000
                 
             x, y = c['target_x'], c['target_y']
             rect = plt.Rectangle((x, y), w, h, linewidth=1, edgecolor='blue', facecolor='lightblue', alpha=0.7)
             ax.add_patch(rect)
         ax.autoscale_view()
-        ax.invert_yaxis() # DEF origin is usually bottom-left, but often displayed differently. Let's rely on standard autoscale.
+        ax.invert_yaxis()
     
     plt.tight_layout()
     plt.savefig(plot_path)
     print(f"\n[EVAL] Plot saved to {plot_path}")
 
+
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="RTLign Pipeline Evaluation Orchestrator")
     parser.add_argument("--def_file", required=True, help="Baseline DEF file")
     parser.add_argument("--tech_lef", required=True, help="Technology LEF")
     parser.add_argument("--cells_lef", required=True, help="Cells LEF")
-    parser.add_argument("--model_path", default="topological_gnn_model.pth")
-    parser.add_argument("--output_dir", default="evaluation_output")
+    parser.add_argument("--model_path", default="topological_gnn_model.pth", help="Path to GNN checkpoint")
+    parser.add_argument("--output_dir", default="evaluation_output", help="Directory for evaluation artifacts")
     args = parser.parse_args()
-    
+    args.def_file = os.path.abspath(args.def_file)
+    args.tech_lef = os.path.abspath(args.tech_lef)
+    args.cells_lef = os.path.abspath(args.cells_lef)
+    if args.model_path:
+        args.model_path = os.path.abspath(args.model_path)
+    args.output_dir = os.path.abspath(args.output_dir)
     os.makedirs(args.output_dir, exist_ok=True)
     
-    # Paths
-    predicted_hex = os.path.join(args.output_dir, "predicted.hex")
+    predicted_hex = os.path.join(args.output_dir, "predicted_constraints.hex")
+    dummy_hex = os.path.join(PROJECT_ROOT, "rtl_legalizer", "dummy_layout.hex")
     legalized_def = os.path.join(args.output_dir, "legalized.def")
     sim_out = os.path.join(args.output_dir, "sim.out")
-    output_hex = os.path.join(PROJECT_ROOT, "rtl_legalizer", "output_layout.hex") # Hardcoded in testbench usually, but we'll adapt if needed.
-    # Actually legalizer_tb.v writes to output_layout.hex. Let's just run it in its folder.
+    output_hex = os.path.join(PROJECT_ROOT, "rtl_legalizer", "output_layout.hex")
     
     print("\n============================================================")
     print(" RTLign ML Predictor Evaluation Orchestrator")
     print("============================================================")
     
-    # 1. Prediction
     t0 = time.time()
+    
+    # 1. Prediction & Topological Coordinate Resolution
     run_cmd([
         sys.executable, "ml_predictor/predict.py",
         "--def_file", args.def_file,
         "--lef_file", args.cells_lef,
         "--model_path", args.model_path,
-        "--output_hex", predicted_hex
+        "--output_hex", predicted_hex,
+        "--output_coords_hex", dummy_hex
     ])
     
-    # 2. RTL Legalizer
-    # Copy predicted hex to dummy_layout.hex because legalizer reads that by default
-    run_cmd(["cp", predicted_hex, os.path.join(PROJECT_ROOT, "rtl_legalizer", "dummy_layout.hex")])
+    # 2. Extract line count and die bounds for parameterized Verilog simulation
+    with open(dummy_hex, 'r') as f:
+        hex_lines = [line.strip() for line in f if line.strip() and not line.strip().startswith('//')]
+    num_lines = len(hex_lines)
+    die_w, die_h = get_die_bounds(args.def_file)
     
-    run_cmd([
-        "iverilog", "-o", sim_out,
+    # 3. RTL Legalizer Simulation
+    iverilog_cmd = [
+        "iverilog",
+        f"-Plegalizer_tb.NUM_LINES={num_lines}",
+        f"-Plegalizer_tb.DIE_WIDTH={die_w}",
+        f"-Plegalizer_tb.DIE_HEIGHT={die_h}",
+        "-o", sim_out,
         "collision_check.v", "legalizer_fsm.v", "legalizer_tb.v"
-    ], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
-    
+    ]
+    run_cmd(iverilog_cmd, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
     run_cmd(["vvp", sim_out], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
     
-    # 3. HEX -> DEF Injection
+    # 4. HEX -> DEF Injection
     run_cmd([
         sys.executable, "ml_predictor/hex_to_def.py",
         args.def_file,
-        os.path.join(PROJECT_ROOT, "rtl_legalizer", "output_layout.hex"),
-        legalized_def
+        output_hex,
+        legalized_def,
+        dummy_hex
     ])
     pipeline_time = time.time() - t0
     
-    # 4. OpenROAD Evaluation
-    print("\n[EVAL] Evaluating Baseline...")
+    # 5. OpenROAD Evaluation
+    print("\n[EVAL] Evaluating Baseline Placement...")
     base_hpwl, base_leg = run_openroad_eval(args.def_file, args.tech_lef, args.cells_lef)
     
-    print("\n[EVAL] Evaluating RTLign Legalized...")
+    print("\n[EVAL] Evaluating RTLign Legalized Placement...")
     rtl_hpwl, rtl_leg = run_openroad_eval(legalized_def, args.tech_lef, args.cells_lef)
     
-    # 5. Plotting
-    import math
+    # 6. Layout Plotting with real LEF dimensions
     plot_path = os.path.join(args.output_dir, "evaluation_plot.png")
+    try:
+        dim_dict = parse_lef_files([args.cells_lef], verbose=False)
+    except Exception:
+        dim_dict = {}
+    plot_layouts(args.def_file, legalized_def, plot_path, dim_dict=dim_dict)
     
-    # Load macro data for accurate bounding boxes
-    extractor = FeatureExtractor()
-    macro_data_map = extractor.load_macro_data({args.def_file: args.cells_lef}, area_threshold=0) # Quick hack for full parse, but actually load_macro_data takes set of design names.
-    # Better to just not pass macro_data, it will plot generic squares which is fine for visual comparison.
-    plot_layouts(args.def_file, legalized_def, plot_path)
-    
-    # 6. Summary
+    # 7. Summary
     print("\n============================================================")
     print(" EVALUATION SUMMARY")
     print("============================================================")
@@ -176,10 +198,11 @@ def main():
         rh = float(rtl_hpwl)
         imp = ((bh - rh) / bh) * 100
         print(f"HPWL Improvement : {imp:+.2f}%")
-    except:
+    except (ValueError, TypeError):
         pass
     print("============================================================")
     print(f"Visual plot saved to: {plot_path}")
+
 
 if __name__ == "__main__":
     main()

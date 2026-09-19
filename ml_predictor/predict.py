@@ -46,7 +46,7 @@ EDGE_FEATURE_COLS = [
 # ---------------------------------------------------------------------------
 # Feature Extraction (single DEF/LEF pair, in-memory)
 # ---------------------------------------------------------------------------
-def extract_features(def_file: str, lef_file: str):
+def extract_features(def_file: str, lef_file: str, area_threshold: float = 1000.0):
     """
     Extracts macro node features and 14-channel edge features directly from
     a DEF+LEF pair without writing to Parquet.
@@ -64,7 +64,6 @@ def extract_features(def_file: str, lef_file: str):
     import re
     design_name = os.path.splitext(os.path.basename(def_file))[0]
     macro_data = {}
-    area_threshold = 0.0  # Accept all macros from user-provided LEF
     if lef_file and os.path.exists(lef_file):
         current_macro = None
         with open(lef_file, 'r') as f:
@@ -99,6 +98,12 @@ def extract_features(def_file: str, lef_file: str):
                             macro_data[current_macro]['pins'][last_pin] = dir_val
                     elif line_str.startswith('END ') and line_str.split()[-1] == current_macro:
                         current_macro = None
+
+    # Filter macros by area threshold if specified
+    if area_threshold > 0:
+        filtered = {k: v for k, v in macro_data.items() if v['area'] >= area_threshold}
+        if filtered:
+            macro_data = filtered
 
     # Parse DEF for component placements
     components = ext.parse_def_components(def_file, macro_data=macro_data if macro_data else None)
@@ -223,13 +228,13 @@ def break_cycles_dfs(G: nx.DiGraph, predictions: dict) -> nx.DiGraph:
 # ---------------------------------------------------------------------------
 # Main pipeline
 # ---------------------------------------------------------------------------
-def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'):
+def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data', output_coords_hex=None, area_threshold=1000.0):
     print(f"[predict] DEF: {def_file}")
     print(f"[predict] LEF: {lef_file}")
 
     # 1. Extract features
     print("[predict] Extracting features...")
-    node_df, edge_df, inst_names = extract_features(def_file, lef_file)
+    node_df, edge_df, inst_names = extract_features(def_file, lef_file, area_threshold=area_threshold)
     N = len(inst_names)
     print(f"[predict] Found {N} macros, {len(edge_df)} edges.")
 
@@ -296,7 +301,7 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
         dist_dbu = min(dist_dbu, 0xFFFFFFFF)  # clamp to uint32
         matrix[i][j] = dist_dbu
 
-    # 7. Export hex file
+    # 7. Export hex file (N×N topological constraint matrix)
     os.makedirs(os.path.dirname(os.path.abspath(output_hex)), exist_ok=True)
     with open(output_hex, 'w') as f:
         for i in range(N):
@@ -304,7 +309,83 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
                 f.write(f"{matrix[i][j]:08X}\n")
 
     print(f"[predict] Exported {N}×{N} = {N*N} hex entries to: {output_hex}")
+
+    # 8. Optionally resolve and export layout coordinates (X, Y, Width, Height)
+    if output_coords_hex:
+        die_w, die_h = get_die_bounds(def_file)
+        resolved = resolve_topological_coordinates(G, node_df, inst_names, die_w, die_h)
+        os.makedirs(os.path.dirname(os.path.abspath(output_coords_hex)), exist_ok=True)
+        with open(output_coords_hex, 'w') as f:
+            for i, (x, y, w, h) in enumerate(resolved):
+                name = inst_names[i]
+                f.write(f"{x:08X} // X {name}\n")
+                f.write(f"{y:08X} // Y {name}\n")
+                f.write(f"{w:08X} // Width {name}\n")
+                f.write(f"{h:08X} // Height {name}\n")
+        print(f"[predict] Exported {N} resolved coordinates to: {output_coords_hex}")
+
     return output_hex
+
+
+def get_die_bounds(def_path: str):
+    """Returns (die_width, die_height) in database units."""
+    import re
+    if not os.path.exists(def_path):
+        return (200000, 200000)
+    with open(def_path, 'r') as f:
+        content = f.read()
+    match = re.search(r'DIEAREA\s+(.*?)\s*;', content, re.DOTALL)
+    if not match:
+        return (200000, 200000)
+    coords = [int(c) for c in re.findall(r'-?\d+', match.group(1))]
+    if len(coords) < 4:
+        return (200000, 200000)
+    xs, ys = coords[0::2], coords[1::2]
+    return (max(xs) - min(xs), max(ys) - min(ys))
+
+
+def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, die_width: int, die_height: int, spacing: int = 100) -> list:
+    """
+    Resolves DAG topological constraints into initial (x, y, w, h) coordinates
+    for all macros, ordered by inst_names.
+    """
+    coords = {}
+    topo_order = list(nx.topological_sort(G))
+
+    for name in topo_order:
+        w = int(node_df.loc[name, 'width']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'width'])) else 100
+        h = int(node_df.loc[name, 'height']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'height'])) else 100
+        w = max(1, w)
+        h = max(1, h)
+
+        in_edges = list(G.predecessors(name))
+        if not in_edges:
+            coords[name] = {'x': 0, 'y': 0, 'w': w, 'h': h}
+        else:
+            max_x = 0
+            max_y = 0
+            for pred in in_edges:
+                pred_coord = coords.get(pred, {'x': 0, 'y': 0, 'w': 100, 'h': 100})
+                target_x = pred_coord['x'] + pred_coord['w'] + spacing
+                target_y = pred_coord['y']
+                if target_x + w > die_width:
+                    target_x = 0
+                    target_y = pred_coord['y'] + pred_coord['h'] + spacing
+
+                if target_x > max_x:
+                    max_x = target_x
+                if target_y > max_y:
+                    max_y = target_y
+
+            max_x = max(0, min(max_x, max(0, die_width - w)))
+            max_y = max(0, min(max_y, max(0, die_height - h)))
+            coords[name] = {'x': max_x, 'y': max_y, 'w': w, 'h': h}
+
+    result = []
+    for name in inst_names:
+        c = coords.get(name, {'x': 0, 'y': 0, 'w': 100, 'h': 100})
+        result.append((c['x'], c['y'], c['w'], c['h']))
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -316,7 +397,9 @@ if __name__ == '__main__':
     parser.add_argument('--lef_file', required=True, help='Path to input LEF cell library file')
     parser.add_argument('--model_path', default='topological_gnn_model.pth', help='Path to trained .pth model')
     parser.add_argument('--output_hex', default='data/macro_rel_constraints.hex', help='Output .hex file path')
+    parser.add_argument('--output_coords_hex', default=None, help='Optional output (X, Y, W, H) coordinate hex file')
     parser.add_argument('--scaler_dir', default='data', help='Directory containing node_scaler.joblib and edge_scaler.joblib')
+    parser.add_argument('--area_threshold', type=float, default=1000.0, help='Minimum macro area in µm² (default: 1000.0)')
     args = parser.parse_args()
 
     run_prediction(
@@ -325,4 +408,6 @@ if __name__ == '__main__':
         model_path=args.model_path,
         output_hex=args.output_hex,
         scaler_dir=args.scaler_dir,
+        output_coords_hex=args.output_coords_hex,
+        area_threshold=args.area_threshold,
     )

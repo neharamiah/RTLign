@@ -55,30 +55,37 @@ if {[catch {check_placement -verbose} err]} {
     puts "\[EVAL\] check_placement finished (legal)."
 }
 
-# Dump wirelength report to a temp file and read it
-set temp_wl "temp_wl_report.rpt"
-report_wire_length -file $temp_wl -summary
-set fp [open $temp_wl r]
-set wl_data [read $fp]
-close $fp
-file delete $temp_wl
+puts "\[EVAL\] Calculating Placement HPWL..."
+set block [ord::get_db_block]
+set total_hpwl_dbu 0
+set net_count 0
 
-set hpwl_val "N/A"
-foreach line [split $wl_data "\n"] {
-    if {[string match "*Total wire length:*" $line]} {
-        set hpwl_val [lindex $line 3]
+if {$block ne ""} {
+    foreach net [$block getNets] {
+        if {[$net isSpecial]} continue
+        set bbox [$net getTermBBox]
+        if {$bbox ne ""} {
+            set dx [expr {[$bbox xMax] - [$bbox xMin]}]
+            set dy [expr {[$bbox yMax] - [$bbox yMin]}]
+            if {$dx > 0 || $dy > 0} {
+                set total_hpwl_dbu [expr {$total_hpwl_dbu + $dx + $dy}]
+                incr net_count
+            }
+        }
     }
 }
+
+set dbu_per_micron 1000
+if {$block ne ""} {
+    set dbu_per_micron [$block getDbUnitsPerMicron]
+    if {$dbu_per_micron <= 0} { set dbu_per_micron 1000 }
+}
+set hpwl_val [expr {double($total_hpwl_dbu) / double($dbu_per_micron)}]
 
 puts ""
 puts "============================================================"
 puts "METRICS SUMMARY"
 puts "============================================================"
 puts "\[METRIC\] HPWL: $hpwl_val"
-
-# Count overlaps by querying db
-set overlaps [check_placement]
-# Wait, check_placement returns empty string or error. 
-# OpenROAD doesn't return overlap count easily via TCL. 
-# We'll rely on the python script to parse check_placement stdout if needed,
-# or simply report if check_placement succeeds/fails.
+puts "============================================================"
+exit 0

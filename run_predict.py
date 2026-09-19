@@ -1,74 +1,109 @@
 #!/usr/bin/env python3
+"""
+run_predict.py — RTLign GNN Prediction Top-Level Runner
+
+Automates running the Topological GNN inference and DAG cycle-breaker.
+Exports N×N pairwise topological constraints to hex for hardware handoff.
+
+Usage:
+    python run_predict.py --def_file <path.def> --lef_file <cells.lef> [--model_path <model.pth>] [--output_hex <out.hex>]
+"""
+
 import os
 import sys
-import glob
+import argparse
 import subprocess
 
-def find_first_file(search_patterns):
-    """Utility to find the first matching file from a list of glob patterns."""
-    for pattern in search_patterns:
-        matches = glob.glob(pattern, recursive=True)
-        if matches:
-            return matches[0]
-    return None
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="RTLign GNN Inference and Hardware Handoff Runner",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Example Usage:
+  python run_predict.py \\
+      --def_file data/generated_defs/mgc_fft_1/mgc_fft_1_ar0.66_u60_d0.6.def \\
+      --lef_file data/ispd_benchmarks/ispd2015/mgc_fft_1/cells.lef \\
+      --output_hex data/macro_rel_constraints.hex
+"""
+    )
+    parser.add_argument(
+        "--def_file",
+        required=True,
+        help="Path to the placed design DEF file (e.g. data/generated_defs/.../*.def)"
+    )
+    parser.add_argument(
+        "--lef_file",
+        required=True,
+        help="Path to the library cells LEF file containing MACRO definitions (e.g. cells.lef)"
+    )
+    parser.add_argument(
+        "--model_path",
+        default="topological_gnn_model.pth",
+        help="Path to the trained PyTorch Geometric model checkpoint (default: topological_gnn_model.pth)"
+    )
+    parser.add_argument(
+        "--output_hex",
+        default="data/macro_rel_constraints.hex",
+        help="Path for the output N×N hardware constraint HEX file (default: data/macro_rel_constraints.hex)"
+    )
+    return parser.parse_args()
+
 
 def main():
-    print("🔍 Auto-detecting input files for RTLign Prediction Pipeline...")
-
-    # 1. Search for a valid DEF file
-    def_patterns = [
-        "openroad_scripts/*.def",
-        "data/**/*.def",
-        "**/*.def"
-    ]
-    def_file = find_first_file(def_patterns)
-
-    # 2. Search for a valid LEF file
-    lef_patterns = [
-        "data/**/*.lef",
-        "openroad_scripts/*.lef",
-        "**/*.lef"
-    ]
-    lef_file = find_first_file(lef_patterns)
-
-    # 3. Model Checkpoint
-    model_path = "topological_gnn_model.pth"
-    output_hex = "data/macro_rel_constraints.hex"
-
-    # Validation Checks
-    if not os.path.exists(model_path):
-        print(f"❌ Error: Model checkpoint '{model_path}' not found! Run 'python ml_predictor/train_nn.py' first.")
+    if len(sys.argv) == 1:
+        print("❌ Error: Missing required arguments: --def_file and --lef_file\n")
+        print("Usage:")
+        print("    python run_predict.py --def_file <path.def> --lef_file <cells.lef> [--model_path <model.pth>] [--output_hex <out.hex>]\n")
+        print("Example:")
+        print("    python run_predict.py \\")
+        print("        --def_file data/generated_defs/mgc_fft_1/mgc_fft_1_ar0.66_u60_d0.6.def \\")
+        print("        --lef_file data/ispd_benchmarks/ispd2015/mgc_fft_1/cells.lef\n")
         sys.exit(1)
 
-    if not def_file:
-        print("❌ Error: No .def file found in repository!")
+    args = parse_arguments()
+
+    # Validate file existence
+    if not os.path.exists(args.def_file):
+        print(f"❌ Error: DEF file not found: {args.def_file}")
         sys.exit(1)
 
-    if not lef_file:
-        print("❌ Error: No .lef file found in repository!")
+    if not os.path.exists(args.lef_file):
+        print(f"❌ Error: LEF file not found: {args.lef_file}")
         sys.exit(1)
 
-    print(f"  ✓ Model: {model_path}")
-    print(f"  ✓ DEF  : {def_file}")
-    print(f"  ✓ LEF  : {lef_file}")
-    print(f"  ✓ Output: {output_hex}\n")
+    if os.path.basename(args.lef_file).lower() == "tech.lef":
+        print(f"⚠️  Warning: '{args.lef_file}' appears to be a technology LEF.")
+        print("   RTLign requires cell macro geometry definitions (typically found in 'cells.lef').")
 
-    # Construct execution command
+    if not os.path.exists(args.model_path):
+        print(f"❌ Error: Model checkpoint not found: {args.model_path}")
+        print("   Please train the model first using 'python ml_predictor/train_nn.py'.")
+        sys.exit(1)
+
+    print("🚀 RTLign Prediction Pipeline")
+    print(f"  ✓ Model : {args.model_path}")
+    print(f"  ✓ DEF   : {args.def_file}")
+    print(f"  ✓ LEF   : {args.lef_file}")
+    print(f"  ✓ Output: {args.output_hex}\n")
+
     cmd = [
         sys.executable, "ml_predictor/predict.py",
-        "--def_file", def_file,
-        "--lef_file", lef_file,
-        "--model_path", model_path,
-        "--output_hex", output_hex
+        "--def_file", args.def_file,
+        "--lef_file", args.lef_file,
+        "--model_path", args.model_path,
+        "--output_hex", args.output_hex
     ]
 
-    print(f"🚀 Running: {' '.join(cmd)}\n")
+    print(f"[RUN] Executing: {' '.join(cmd)}\n")
     result = subprocess.run(cmd)
 
     if result.returncode == 0:
-        print(f"\n✅ Prediction completed successfully! Generated: {output_hex}")
+        print(f"\n✅ Prediction completed successfully! Generated: {args.output_hex}")
     else:
         print("\n❌ Prediction failed. Check error output above.")
+        sys.exit(result.returncode)
+
 
 if __name__ == "__main__":
     main()
