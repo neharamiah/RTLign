@@ -272,10 +272,10 @@ RTLign/
 
 | # | Limitation | Impact | Status / Planned Fix |
 |:---|:---|:---|:---|
-| 1 | **Greedy sweep, not Simulated Annealing** | Push-apart logic lacks temperature schedule and stochastic hill-climbing | Phase 6: SA engine in Verilog |
-| 2 | **No wirelength optimization in RTL** | The baseline legalizer only eliminates overlaps without minimizing HPWL | Phase 6: Cost function in SA |
-| 3 | **Sequential pair iteration** | The FSM checks one pair at a time ($N^2/2$ iterations) | Phase 6: Parallel collision units |
-| 4 | **OpenROAD re-import verification** | Automated closed-loop re-import verified via `evaluate_layout.tcl` | ✅ Verified in Phase 5 |
+| 1 | **Greedy sweep, not Simulated Annealing** | Push-apart logic lacked temperature schedule and stochastic hill-climbing | ✅ Completed in Phase 6: Two-pass SA optimizer + greedy cleanup |
+| 2 | **No wirelength optimization in RTL** | Baseline legalizer only eliminated overlaps without minimizing HPWL | ✅ Completed in Phase 6: 3-term cost function in `sa_cost.v` |
+| 3 | **Slow sequential simulation** | Icarus Verilog takes seconds for millions of cycles | ✅ Completed in Phase 6: Verilator C++ bridge achieves ~400x speedup |
+| 4 | **OpenROAD re-import verification** | Automated closed-loop re-import verified via `evaluate_layout.tcl` | ✅ Verified in Phase 5 & 6 |
 
 ---
 
@@ -290,10 +290,11 @@ RTLign/
 - **[DONE]** Build: Advanced GNN Predictor & Inference (`dataset.py`, `model.py`, `train_nn.py`, `predict.py`, `run_predict.py`)
 - **[DONE]** Build: Evaluation Suite & OpenROAD Signoff (`evaluate.py`, `evaluate_layout.tcl`, layout visualization)
 
-### Month 3: Simulated Annealing in RTL (Active Phase)
-- Build: SA Engine in Verilog (LFSR, temperature cooling, perturbation, cost function, Metropolis acceptance)
-- Build: SA Testbench & Validation (Monitor cost/temperature, verify on benchmarks, waveform analysis)
-- Build: Verilator Bridge (Verilator wrapper, Python ctypes binding, speed benchmarking)
+### Month 3: Simulated Annealing in RTL & Verilator Bridge
+- **[DONE]** Build: SA Engine in Verilog (`lfsr32.v`, `sa_cost.v`, `sa_engine.v`, `sa_legalizer_top.v`, Metropolis acceptance, step cooling)
+- **[DONE]** Build: SA Testbench & Validation (`legalizer_tb.v`, multi-pass cascade resolution, zero overlaps verified)
+- **[DONE]** Build: Verilator Bridge (`verilator/sa_harness.cpp`, `Makefile`, `verilator_bridge.py`, ~400x speedup)
+- **[DONE]** Build: Pipeline Integration (`master_run.py`, `evaluate.py`, automated test suite with 56 tests)
 
 ### Month 4: Integration, Scaling & Benchmarking
 - Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)

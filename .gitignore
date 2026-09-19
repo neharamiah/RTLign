@@ -33,6 +33,8 @@ evaluation_output/
 csrc/
 simv
 simv.daidir/
+obj_dir/
+legalizer_sim
 
 # 4. Python & ML Predictor
 __pycache__/

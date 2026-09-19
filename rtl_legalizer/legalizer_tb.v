@@ -1,9 +1,9 @@
 // ============================================================================
-// RTLign — Legalizer Testbench
+// RTLign — Legalizer Testbench (SA Optimizer + Greedy Cleanup)
 // ============================================================================
-// Drives the legalizer_fsm, waits for the `done` signal, then dumps the
+// Drives sa_legalizer_top, waits for the `done` signal, then dumps the
 // legalized layout memory to `output_layout.hex` via $writememh.
-// Also performs a post-legalization overlap audit and prints a summary.
+// Also performs a post-legalization overlap audit and prints SA metrics.
 // ============================================================================
 
 `timescale 1ns / 1ps
@@ -13,9 +13,18 @@ module legalizer_tb;
     // -----------------------------------------------------------------------
     // Parameters — must match the DUT
     // -----------------------------------------------------------------------
-    parameter NUM_LINES  = 672;
-    parameter DIE_WIDTH  = 200260;
-    parameter DIE_HEIGHT = 201600;
+    parameter NUM_LINES   = 672;
+    parameter DIE_WIDTH   = 200260;
+    parameter DIE_HEIGHT  = 201600;
+    parameter ENABLE_SA   = 1;
+    parameter T_INIT      = 1000000;
+    parameter T_MIN       = 100;
+    parameter COOL_SHIFT  = 3;
+    parameter INNER_ITERS = 100;
+    parameter MAX_ITERS   = 1000;
+    parameter W_WL        = 4;
+    parameter W_AREA      = 1;
+    parameter W_BOUNDARY  = 8;
 
     localparam NUM_MACROS = NUM_LINES / 4;
 
@@ -27,15 +36,33 @@ module legalizer_tb;
     reg  start;
     wire done;
 
-    legalizer_fsm #(
-        .NUM_LINES  (NUM_LINES),
-        .DIE_WIDTH  (DIE_WIDTH),
-        .DIE_HEIGHT (DIE_HEIGHT)
+    wire [63:0] final_cost;
+    wire [31:0] final_temp;
+    wire [31:0] total_iters;
+    wire [31:0] accepted_count;
+
+    sa_legalizer_top #(
+        .NUM_LINES   (NUM_LINES),
+        .DIE_WIDTH   (DIE_WIDTH),
+        .DIE_HEIGHT  (DIE_HEIGHT),
+        .ENABLE_SA   (ENABLE_SA),
+        .T_INIT      (T_INIT),
+        .T_MIN       (T_MIN),
+        .COOL_SHIFT  (COOL_SHIFT),
+        .INNER_ITERS (INNER_ITERS),
+        .MAX_ITERS   (MAX_ITERS),
+        .W_WL        (W_WL),
+        .W_AREA      (W_AREA),
+        .W_BOUNDARY  (W_BOUNDARY)
     ) dut (
-        .clk   (clk),
-        .rst   (rst),
-        .start (start),
-        .done  (done)
+        .clk            (clk),
+        .rst            (rst),
+        .start          (start),
+        .done           (done),
+        .final_cost     (final_cost),
+        .final_temp     (final_temp),
+        .total_iters    (total_iters),
+        .accepted_count (accepted_count)
     );
 
     // -----------------------------------------------------------------------
@@ -60,8 +87,8 @@ module legalizer_tb;
     
     initial begin
         // Optional: dump waveform for debugging
-        $dumpfile("legalizer.vcd");
-        $dumpvars(0, legalizer_tb);
+        // $dumpfile("legalizer.vcd");
+        // $dumpvars(0, legalizer_tb);
 
         // --- Reset ---
         rst   = 1;
@@ -74,12 +101,17 @@ module legalizer_tb;
         $display("========================================");
         $display("  RTLign Legalizer — Simulation Start");
         $display("  Macros: %0d | Die: %0d x %0d", NUM_MACROS, DIE_WIDTH, DIE_HEIGHT);
+        if (ENABLE_SA)
+            $display("  Engine: SA Optimizer + Greedy Cleanup");
+        else
+            $display("  Engine: Greedy Sweep Only");
         $display("========================================");
 
-        start = 1;
+        @(posedge clk);
+        #1 start = 1;
         cycle_count = 0;
         @(posedge clk);
-        start = 0;
+        #1 start = 0;
 
         // --- Wait for completion ---
         while (!done) begin
@@ -89,6 +121,13 @@ module legalizer_tb;
 
         $display("");
         $display("  Legalization complete in %0d clock cycles.", cycle_count);
+        if (ENABLE_SA) begin
+            $display("  [SA METRICS]");
+            $display("    Iterations      : %0d", total_iters);
+            $display("    Accepted Moves  : %0d", accepted_count);
+            $display("    Final Cost      : %0d", final_cost);
+            $display("    Final Temp      : %0d", final_temp);
+        end
         $display("");
 
         // --- Dump results ---

@@ -13,6 +13,7 @@ import subprocess
 import argparse
 import time
 import math
+import re
 
 def check_dependencies():
     try:
@@ -149,16 +150,46 @@ def main():
     die_w, die_h = get_die_bounds(args.def_file)
     
     # 3. RTL Legalizer Simulation
-    iverilog_cmd = [
-        "iverilog",
-        f"-Plegalizer_tb.NUM_LINES={num_lines}",
-        f"-Plegalizer_tb.DIE_WIDTH={die_w}",
-        f"-Plegalizer_tb.DIE_HEIGHT={die_h}",
-        "-o", sim_out,
-        "collision_check.v", "legalizer_fsm.v", "legalizer_tb.v"
-    ]
-    run_cmd(iverilog_cmd, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
-    run_cmd(["vvp", sim_out], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
+    sa_metrics = {}
+    verilator_sim = os.path.join(PROJECT_ROOT, "rtl_legalizer", "verilator", "legalizer_sim")
+    if num_lines == 672 and os.path.isfile(verilator_sim):
+        try:
+            from rtl_legalizer.verilator.verilator_bridge import run_verilator_legalizer
+            sa_metrics = run_verilator_legalizer(dummy_hex, output_hex, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
+            print(f"[VERILATOR] Accelerated simulation completed in {sa_metrics.get('cycles', 0)} cycles.")
+        except Exception as e:
+            print(f"[WARN] Verilator execution failed ({e}); using Icarus Verilog.")
+            sa_metrics = {}
+
+    if not sa_metrics:
+        iverilog_cmd = [
+            "iverilog",
+            f"-Plegalizer_tb.NUM_LINES={num_lines}",
+            f"-Plegalizer_tb.DIE_WIDTH={die_w}",
+            f"-Plegalizer_tb.DIE_HEIGHT={die_h}",
+            "-o", sim_out,
+            "collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
+            "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"
+        ]
+        run_cmd(iverilog_cmd, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
+        vvp_out = run_cmd(["vvp", sim_out], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
+        for line in vvp_out.splitlines():
+            if "Legalization complete in" in line:
+                m = re.search(r"in (\d+) clock cycles", line)
+                if m:
+                    sa_metrics["cycles"] = int(m.group(1))
+            elif "Iterations" in line:
+                m = re.search(r":\s*(\d+)", line)
+                if m:
+                    sa_metrics["iterations"] = int(m.group(1))
+            elif "Final Cost" in line:
+                m = re.search(r":\s*(\d+)", line)
+                if m:
+                    sa_metrics["final_cost"] = int(m.group(1))
+            elif "Final Temp" in line:
+                m = re.search(r":\s*(\d+)", line)
+                if m:
+                    sa_metrics["final_temp"] = int(m.group(1))
     
     # 4. HEX -> DEF Injection
     run_cmd([
@@ -190,6 +221,14 @@ def main():
     print(" EVALUATION SUMMARY")
     print("============================================================")
     print(f"Pipeline Runtime : {pipeline_time:.2f}s")
+    if sa_metrics:
+        print(f"Hardware Engine  : {sa_metrics.get('engine', 'SA Optimizer + Greedy Cleanup')}")
+        if 'cycles' in sa_metrics:
+            print(f"Clock Cycles     : {sa_metrics['cycles']}")
+        if 'iterations' in sa_metrics:
+            print(f"SA Iterations    : {sa_metrics['iterations']}")
+        if 'final_cost' in sa_metrics:
+            print(f"SA Final Cost    : {sa_metrics['final_cost']}")
     print(f"Baseline HPWL    : {base_hpwl} (Legal: {base_leg})")
     print(f"RTLign HPWL      : {rtl_hpwl} (Legal: {rtl_leg})")
     
