@@ -33,3 +33,4 @@ module lfsr32 (
     assign rand_out = lfsr;
 
 endmodule
+

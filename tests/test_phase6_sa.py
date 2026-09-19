@@ -195,3 +195,4 @@ class TestIcarusSAPipeline:
         assert res_sim.returncode == 0
         assert "AUDIT PASS: Zero overlaps detected!" in res_sim.stdout
         assert "Final Cost" in res_sim.stdout
+

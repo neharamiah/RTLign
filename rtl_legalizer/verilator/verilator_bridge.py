@@ -121,3 +121,4 @@ if __name__ == "__main__":
     test_out = os.path.join(RTL_DIR, "output_layout.hex")
     res = run_verilator_legalizer(test_in, test_out)
     print("Verilator Bridge Result:", res)
+

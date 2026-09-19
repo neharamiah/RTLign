@@ -38,3 +38,4 @@ $(TARGET): $(VERILOG_SRCS) $(HARNESS)
 
 clean:
 	rm -rf obj_dir $(TARGET) output_layout.hex
+
