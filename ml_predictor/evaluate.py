@@ -69,7 +69,7 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
     return hpwl, legal
 
 
-def plot_layouts(baseline_def, legalized_def, plot_path, dim_dict=None):
+def plot_layouts(baseline_def, legalized_def, plot_path, dim_dict=None, macro_names=None, die_bounds=None):
     extractor = FeatureExtractor()
     base_comps = extractor.parse_def_components(baseline_def)
     leg_comps = extractor.parse_def_components(legalized_def)
@@ -77,15 +77,37 @@ def plot_layouts(baseline_def, legalized_def, plot_path, dim_dict=None):
     if not base_comps or not leg_comps:
         print("[EVAL] Could not parse components for plotting.")
         return
-        
+
+    # If macro_names is provided, filter components to only plot macros
+    if macro_names:
+        macro_set = set(macro_names)
+        base_comps = [c for c in base_comps if c.get('inst_name') in macro_set or c.get('cell_type') in macro_set]
+        leg_comps = [c for c in leg_comps if c.get('inst_name') in macro_set or c.get('cell_type') in macro_set]
+    elif dim_dict:
+        filtered_base = [c for c in base_comps if c.get('cell_type') in dim_dict]
+        filtered_leg = [c for c in leg_comps if c.get('cell_type') in dim_dict]
+        if filtered_base and filtered_leg:
+            base_comps, leg_comps = filtered_base, filtered_leg
+
     fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+    cmap = plt.colormaps['tab10']
     
     for ax, comps, title in zip(axes, [base_comps, leg_comps], ['OpenROAD Baseline', 'RTLign ML Pipeline']):
-        ax.set_title(title)
+        ax.set_title(title, fontsize=13, fontweight='bold')
         ax.set_xlabel("X (DBU)")
         ax.set_ylabel("Y (DBU)")
-        for c in comps:
+        
+        # Draw die boundary if provided
+        if die_bounds:
+            dw, dh = die_bounds
+            die_rect = plt.Rectangle((0, 0), dw, dh, linewidth=1.5, edgecolor='#555555', facecolor='none', linestyle='--', label='Die Boundary')
+            ax.add_patch(die_rect)
+            ax.set_xlim(-0.02 * dw, 1.02 * dw)
+            ax.set_ylim(-0.02 * dh, 1.02 * dh)
+
+        for idx, c in enumerate(comps):
             cell_type = c.get('cell_type', '')
+            inst_name = c.get('inst_name', f"m{idx}")
             if dim_dict and cell_type in dim_dict:
                 w, h = dim_dict[cell_type]
             else:
@@ -95,13 +117,18 @@ def plot_layouts(baseline_def, legalized_def, plot_path, dim_dict=None):
                 if math.isnan(h): h = 1000
                 
             x, y = c['target_x'], c['target_y']
-            rect = plt.Rectangle((x, y), w, h, linewidth=1, edgecolor='blue', facecolor='lightblue', alpha=0.7)
+            color = cmap(idx % 10)
+            rect = plt.Rectangle((x, y), w, h, linewidth=1.5, edgecolor='#222222', facecolor=color, alpha=0.6)
             ax.add_patch(rect)
-        ax.autoscale_view()
-        ax.invert_yaxis()
-    
+            if len(comps) <= 32:
+                label_text = f"{inst_name}\n({cell_type})"
+                ax.text(x + w / 2, y + h / 2, label_text, ha='center', va='center', fontsize=9, fontweight='semibold', color='#111111')
+                
+        ax.set_aspect('equal', adjustable='box')
+        ax.grid(True, linestyle=':', alpha=0.5)
+
     plt.tight_layout()
-    plt.savefig(plot_path)
+    plt.savefig(plot_path, dpi=150)
     print(f"\n[EVAL] Plot saved to {plot_path}")
 
 
@@ -211,10 +238,24 @@ def main():
     # 6. Layout Plotting with real LEF dimensions
     plot_path = os.path.join(args.output_dir, "evaluation_plot.png")
     try:
-        dim_dict = parse_lef_files([args.cells_lef], verbose=False)
+        dim_dict = parse_lef_files([args.tech_lef, args.cells_lef], verbose=False)
     except Exception:
-        dim_dict = {}
-    plot_layouts(args.def_file, legalized_def, plot_path, dim_dict=dim_dict)
+        try:
+            dim_dict = parse_lef_files([args.cells_lef], verbose=False)
+        except Exception:
+            dim_dict = {}
+
+    macro_names = []
+    if os.path.exists(dummy_hex):
+        with open(dummy_hex, 'r') as f:
+            for line in f:
+                parts = line.strip().split('//')
+                if len(parts) > 1:
+                    m = re.match(r'^X\s+(\S+)$', parts[1].strip())
+                    if m and m.group(1).lower() != 'coord':
+                        macro_names.append(m.group(1))
+
+    plot_layouts(args.def_file, legalized_def, plot_path, dim_dict=dim_dict, macro_names=macro_names, die_bounds=(die_w, die_h))
     
     # 7. Summary
     print("\n============================================================")

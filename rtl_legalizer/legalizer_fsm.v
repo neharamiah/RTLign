@@ -149,7 +149,9 @@ module legalizer_fsm #(
                 // ----------------------------------------------------------
                 RESOLVE: begin
                     resolved_any <= 1'b1;
-                    if ((overlap_x < overlap_y) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b0))) begin
+                    if ((pass_count[0] == 1'b0) ?
+                        ((overlap_x < overlap_y) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b0))) :
+                        ((overlap_y < overlap_x) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b1)))) begin
                         // --- Push horizontally ---
                         if (x2 >= x1) begin
                             // B is to the right of A → push B rightward
@@ -206,8 +208,8 @@ module legalizer_fsm #(
                         ptr_a <= ptr_a + 4;
                         ptr_b <= ptr_a + 8;   // next macro after new ptr_a
                     end else begin
-                        // Sweep exhausted: if any overlap resolved, repeat pass up to 4 times
-                        if (resolved_any && (pass_count < 4)) begin
+                        // Sweep exhausted: if any overlap resolved, repeat pass up to 8 times
+                        if (resolved_any && (pass_count < 8)) begin
                             ptr_a        <= 0;
                             ptr_b        <= 4;
                             resolved_any <= 1'b0;
@@ -242,7 +244,7 @@ module legalizer_fsm #(
             ADVANCE: begin
                 if (ptr_b < last_base || ptr_a < last_base - 4)
                     next_state = FETCH;
-                else if (resolved_any && (pass_count < 4))
+                else if (resolved_any && (pass_count < 8))
                     next_state = FETCH;
                 else
                     next_state = FINISH;        // all pairs exhausted with zero overlaps

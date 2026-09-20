@@ -17,6 +17,7 @@ import os
 import sys
 import argparse
 import math
+import re
 
 import numpy as np
 import torch
@@ -313,7 +314,8 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
     # 8. Optionally resolve and export layout coordinates (X, Y, Width, Height)
     if output_coords_hex:
         die_w, die_h = get_die_bounds(def_file)
-        resolved = resolve_topological_coordinates(G, node_df, inst_names, die_w, die_h)
+        dbu = get_def_dbu(def_file)
+        resolved = resolve_topological_coordinates(G, node_df, inst_names, die_w, die_h, dbu_per_micron=dbu)
         os.makedirs(os.path.dirname(os.path.abspath(output_coords_hex)), exist_ok=True)
         with open(output_coords_hex, 'w') as f:
             for i, (x, y, w, h) in enumerate(resolved):
@@ -325,6 +327,21 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
         print(f"[predict] Exported {N} resolved coordinates to: {output_coords_hex}")
 
     return output_hex
+
+
+def get_def_dbu(def_path: str) -> int:
+    """Extract UNITS DISTANCE MICRONS from DEF file, defaulting to 1000."""
+    if not os.path.exists(def_path):
+        return 1000
+    with open(def_path, 'r') as f:
+        for line in f:
+            if 'UNITS DISTANCE MICRONS' in line:
+                m = re.search(r'UNITS\s+DISTANCE\s+MICRONS\s+(\d+)', line)
+                if m:
+                    return int(m.group(1))
+            if 'COMPONENTS' in line:
+                break
+    return 1000
 
 
 def get_die_bounds(def_path: str):
@@ -344,42 +361,60 @@ def get_die_bounds(def_path: str):
     return (max(xs) - min(xs), max(ys) - min(ys))
 
 
-def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, die_width: int, die_height: int, spacing: int = 100) -> list:
+def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, die_width: int, die_height: int, spacing: int = 1000, dbu_per_micron: int = 1) -> list:
     """
     Resolves DAG topological constraints into initial (x, y, w, h) coordinates
     for all macros, ordered by inst_names.
     """
     coords = {}
     topo_order = list(nx.topological_sort(G))
+    cur_x = 0
+    cur_y = 0
+    row_h = 0
 
     for name in topo_order:
-        w = int(node_df.loc[name, 'width']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'width'])) else 100
-        h = int(node_df.loc[name, 'height']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'height'])) else 100
-        w = max(1, w)
-        h = max(1, h)
+        raw_w = float(node_df.loc[name, 'width']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'width'])) else 100.0
+        raw_h = float(node_df.loc[name, 'height']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'height'])) else 100.0
+        w = max(1, int(round(raw_w * dbu_per_micron)))
+        h = max(1, int(round(raw_h * dbu_per_micron)))
 
         in_edges = list(G.predecessors(name))
         if not in_edges:
-            coords[name] = {'x': 0, 'y': 0, 'w': w, 'h': h}
+            if cur_x + w > die_width and cur_x > 0:
+                cur_x = 0
+                cur_y = cur_y + row_h + spacing
+                row_h = 0
+            x = cur_x
+            y = cur_y
+            cur_x = x + w + spacing
+            row_h = max(row_h, h)
         else:
-            max_x = 0
-            max_y = 0
+            min_x = 0
+            min_y = 0
             for pred in in_edges:
-                pred_coord = coords.get(pred, {'x': 0, 'y': 0, 'w': 100, 'h': 100})
-                target_x = pred_coord['x'] + pred_coord['w'] + spacing
-                target_y = pred_coord['y']
-                if target_x + w > die_width:
-                    target_x = 0
-                    target_y = pred_coord['y'] + pred_coord['h'] + spacing
+                pred_c = coords[pred]
+                px = pred_c['x'] + pred_c['w'] + spacing
+                py = pred_c['y']
+                if px + w > die_width:
+                    px = 0
+                    py = pred_c['y'] + pred_c['h'] + spacing
+                if px > min_x:
+                    min_x = px
+                if py > min_y:
+                    min_y = py
+            x = max(min_x, cur_x) if min_y <= cur_y else min_x
+            y = max(min_y, cur_y)
+            if x + w > die_width and x > 0:
+                x = 0
+                y = cur_y + row_h + spacing
+                row_h = 0
+            cur_x = x + w + spacing
+            cur_y = y
+            row_h = max(row_h, h)
 
-                if target_x > max_x:
-                    max_x = target_x
-                if target_y > max_y:
-                    max_y = target_y
-
-            max_x = max(0, min(max_x, max(0, die_width - w)))
-            max_y = max(0, min(max_y, max(0, die_height - h)))
-            coords[name] = {'x': max_x, 'y': max_y, 'w': w, 'h': h}
+        x = max(0, min(x, max(0, die_width - w)))
+        y = max(0, min(y, max(0, die_height - h)))
+        coords[name] = {'x': x, 'y': y, 'w': w, 'h': h}
 
     result = []
     for name in inst_names:
