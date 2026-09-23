@@ -3143,7 +3143,7 @@
       "node_kind": "heading",
       "norm_label": "1. lef parser (`lef_parser.py`)",
       "source_file": "README.md",
-      "source_location": "L143"
+      "source_location": "L178"
     },
     {
       "id": "readme_2_dataset_generator_data_generator_py",
@@ -3155,7 +3155,7 @@
       "node_kind": "heading",
       "norm_label": "2. dataset generator (`data_generator.py`)",
       "source_file": "README.md",
-      "source_location": "L146"
+      "source_location": "L181"
     },
     {
       "id": "readme_3_feature_extractor_feature_extractor_py",
@@ -3167,7 +3167,7 @@
       "node_kind": "heading",
       "norm_label": "3. feature extractor (`feature_extractor.py`)",
       "source_file": "README.md",
-      "source_location": "L149"
+      "source_location": "L184"
     },
     {
       "id": "readme_4_topological_gnn_training_inference_train_nn_py_predict_py",
@@ -3179,19 +3179,19 @@
       "node_kind": "heading",
       "norm_label": "4. topological gnn training & inference (`train_nn.py`, `predict.py`)",
       "source_file": "README.md",
-      "source_location": "L152"
+      "source_location": "L187"
     },
     {
-      "id": "readme_5_two_pass_hardware_legalizer_verilator_accelerator",
-      "label": "5. Two-Pass Hardware Legalizer & Verilator Accelerator",
+      "id": "readme_5_two_pass_hardware_legalizer_verilator_bridge_verification",
+      "label": "5. Two-Pass Hardware Legalizer, Verilator Bridge & Verification",
       "_origin": "ast",
       "community": 11,
       "community_name": "How It Works",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "5. two-pass hardware legalizer & verilator accelerator",
+      "norm_label": "5. two-pass hardware legalizer, verilator bridge & verification",
       "source_file": "README.md",
-      "source_location": "L155"
+      "source_location": "L190"
     },
     {
       "id": "readme_6_hex_def_injector_hex_to_def_py",
@@ -3203,7 +3203,7 @@
       "node_kind": "heading",
       "norm_label": "6. hex \u2192 def injector (`hex_to_def.py`)",
       "source_file": "README.md",
-      "source_location": "L161"
+      "source_location": "L197"
     },
     {
       "id": "readme_7_closed_loop_evaluation_evaluate_py_evaluate_layout_tcl",
@@ -3215,7 +3215,7 @@
       "node_kind": "heading",
       "norm_label": "7. closed-loop evaluation (`evaluate.py` & `evaluate_layout.tcl`)",
       "source_file": "README.md",
-      "source_location": "L164"
+      "source_location": "L200"
     },
     {
       "id": "readme_how_it_works",
@@ -3227,7 +3227,7 @@
       "node_kind": "heading",
       "norm_label": "how it works",
       "source_file": "README.md",
-      "source_location": "L141"
+      "source_location": "L176"
     },
     {
       "id": "readme_license",
@@ -3239,7 +3239,7 @@
       "node_kind": "heading",
       "norm_label": "license",
       "source_file": "README.md",
-      "source_location": "L178"
+      "source_location": "L214"
     },
     {
       "id": "readme_option_a_running_with_docker_recommended_for_windows_teammates",
@@ -3311,7 +3311,7 @@
       "node_kind": "heading",
       "norm_label": "project structure",
       "source_file": "README.md",
-      "source_location": "L96"
+      "source_location": "L112"
     },
     {
       "id": "readme_quick_start",
@@ -3383,7 +3383,7 @@
       "node_kind": "heading",
       "norm_label": "team p124",
       "source_file": "README.md",
-      "source_location": "L169"
+      "source_location": "L205"
     },
     {
       "id": "readme_usage",
@@ -3396,6 +3396,18 @@
       "norm_label": "usage:",
       "source_file": "README.md",
       "source_location": "L34"
+    },
+    {
+      "id": "readme_verification_test_suite",
+      "label": "Verification & Test Suite",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "How It Works",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "verification & test suite",
+      "source_file": "README.md",
+      "source_location": "L94"
     },
     {
       "id": "ml_predictor_hex_to_def",
@@ -4191,7 +4203,7 @@
       "node_kind": "heading",
       "norm_label": "1. think before coding",
       "source_file": "AGENTS.md",
-      "source_location": "L131"
+      "source_location": "L149"
     },
     {
       "id": "agents_2_simplicity_first",
@@ -4203,7 +4215,7 @@
       "node_kind": "heading",
       "norm_label": "2. simplicity first",
       "source_file": "AGENTS.md",
-      "source_location": "L139"
+      "source_location": "L157"
     },
     {
       "id": "agents_2_technology_stack",
@@ -4215,7 +4227,7 @@
       "node_kind": "heading",
       "norm_label": "2. technology stack",
       "source_file": "AGENTS.md",
-      "source_location": "L40"
+      "source_location": "L41"
     },
     {
       "id": "agents_3_project_structure",
@@ -4227,7 +4239,7 @@
       "node_kind": "heading",
       "norm_label": "3. project structure",
       "source_file": "AGENTS.md",
-      "source_location": "L87"
+      "source_location": "L102"
     },
     {
       "id": "agents_3_surgical_changes",
@@ -4239,7 +4251,7 @@
       "node_kind": "heading",
       "norm_label": "3. surgical changes",
       "source_file": "AGENTS.md",
-      "source_location": "L148"
+      "source_location": "L166"
     },
     {
       "id": "agents_4_agent_operational_guidelines",
@@ -4251,7 +4263,7 @@
       "node_kind": "heading",
       "norm_label": "4. agent operational guidelines",
       "source_file": "AGENTS.md",
-      "source_location": "L123"
+      "source_location": "L141"
     },
     {
       "id": "agents_4_goal_driven_execution",
@@ -4263,7 +4275,7 @@
       "node_kind": "heading",
       "norm_label": "4. goal-driven execution",
       "source_file": "AGENTS.md",
-      "source_location": "L160"
+      "source_location": "L178"
     },
     {
       "id": "agents_graphify",
@@ -4275,7 +4287,7 @@
       "node_kind": "heading",
       "norm_label": "graphify",
       "source_file": "AGENTS.md",
-      "source_location": "L174"
+      "source_location": "L192"
     },
     {
       "id": "agents_rtlign_ai_agent_system_architecture_guidelines",
@@ -4465,7 +4477,7 @@
       "node_kind": "heading",
       "norm_label": "datasets",
       "source_file": "Project_Readiness_Note.md",
-      "source_location": "L34"
+      "source_location": "L35"
     },
     {
       "id": "project_readiness_note_pipeline_architecture",
@@ -4492,16 +4504,16 @@
       "source_location": "L15"
     },
     {
-      "id": "project_readiness_note_project_timeline",
-      "label": "Project Timeline",
+      "id": "project_readiness_note_project_timeline_current_status",
+      "label": "Project Timeline & Current Status",
       "_origin": "ast",
       "community": 25,
       "community_name": "RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "project timeline",
+      "norm_label": "project timeline & current status",
       "source_file": "Project_Readiness_Note.md",
-      "source_location": "L40"
+      "source_location": "L41"
     },
     {
       "id": "project_readiness_note_rtlign_ml_assisted_simulated_annealing_for_rtl_accelerated_vlsi_macro_placement",
@@ -4729,7 +4741,7 @@
       "node_kind": "heading",
       "norm_label": "1. accelerated verilator execution (recommended)",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L97"
+      "source_location": "L102"
     },
     {
       "id": "rtl_legalizer_readme_2_interpreted_icarus_verilog_simulation",
@@ -4741,7 +4753,7 @@
       "node_kind": "heading",
       "norm_label": "2. interpreted icarus verilog simulation",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L124"
+      "source_location": "L129"
     },
     {
       "id": "rtl_legalizer_readme_architecture_overview",
@@ -4765,7 +4777,7 @@
       "node_kind": "heading",
       "norm_label": "build the executable:",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L101"
+      "source_location": "L106"
     },
     {
       "id": "rtl_legalizer_readme_execution_modes",
@@ -4777,7 +4789,7 @@
       "node_kind": "heading",
       "norm_label": "execution modes",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L95"
+      "source_location": "L100"
     },
     {
       "id": "rtl_legalizer_readme_file_manifest",
@@ -4801,7 +4813,7 @@
       "node_kind": "heading",
       "norm_label": "hardware memory contract",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L55"
+      "source_location": "L60"
     },
     {
       "id": "rtl_legalizer_readme_hardware_parameters",
@@ -4813,7 +4825,19 @@
       "node_kind": "heading",
       "norm_label": "hardware parameters",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L74"
+      "source_location": "L79"
+    },
+    {
+      "id": "rtl_legalizer_readme_layout_auditing_characterization",
+      "label": "Layout Auditing & Characterization",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "RTL Legalizer & Simulated Annealing Engine",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "layout auditing & characterization",
+      "source_file": "rtl_legalizer/README.md",
+      "source_location": "L170"
     },
     {
       "id": "rtl_legalizer_readme_rtl_legalizer_simulated_annealing_engine",
@@ -4837,7 +4861,7 @@
       "node_kind": "heading",
       "norm_label": "run via cli:",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L106"
+      "source_location": "L111"
     },
     {
       "id": "rtl_legalizer_readme_run_via_python",
@@ -4849,19 +4873,19 @@
       "node_kind": "heading",
       "norm_label": "run via python:",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L111"
+      "source_location": "L116"
     },
     {
-      "id": "rtl_legalizer_readme_unit_and_property_testing",
-      "label": "Unit and Property Testing",
+      "id": "rtl_legalizer_readme_unit_property_and_verification_testing",
+      "label": "Unit, Property, and Verification Testing",
       "_origin": "ast",
       "community": 28,
       "community_name": "RTL Legalizer & Simulated Annealing Engine",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "unit and property testing",
+      "norm_label": "unit, property, and verification testing",
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L147"
+      "source_location": "L152"
     },
     {
       "id": "tests_test_audit",
@@ -6453,14 +6477,14 @@
       "source_location": "L89"
     },
     {
-      "id": "roadmap_month_3_simulated_annealing_in_rtl",
-      "label": "Month 3: Simulated Annealing in RTL",
+      "id": "roadmap_month_3_simulated_annealing_in_rtl_verification",
+      "label": "Month 3: Simulated Annealing in RTL & Verification",
       "_origin": "ast",
       "community": 6,
       "community_name": "RTLign \u2014 6-Month Comprehensive Roadmap",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "month 3: simulated annealing in rtl",
+      "norm_label": "month 3: simulated annealing in rtl & verification",
       "source_file": "ROADMAP.md",
       "source_location": "L145"
     },
@@ -6474,7 +6498,7 @@
       "node_kind": "heading",
       "norm_label": "month 4: integration, scaling & benchmarking",
       "source_file": "ROADMAP.md",
-      "source_location": "L198"
+      "source_location": "L200"
     },
     {
       "id": "roadmap_philosophy",
@@ -6501,28 +6525,28 @@
       "source_location": "L1"
     },
     {
-      "id": "roadmap_week_11_build_testbench_validation",
-      "label": "Week 11: Build \u2014 Testbench & Validation",
+      "id": "roadmap_week_11_build_testbench_auditing_golden_model",
+      "label": "Week 11: Build \u2014 Testbench, Auditing & Golden Model",
       "_origin": "ast",
       "community": 6,
       "community_name": "RTLign \u2014 6-Month Comprehensive Roadmap",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "week 11: build \u2014 testbench & validation",
+      "norm_label": "week 11: build \u2014 testbench, auditing & golden model",
       "source_file": "ROADMAP.md",
       "source_location": "L174"
     },
     {
-      "id": "roadmap_week_12_build_verilator_bridge",
-      "label": "Week 12: Build \u2014 Verilator Bridge",
+      "id": "roadmap_week_12_build_verilator_bridge_regression_suite",
+      "label": "Week 12: Build \u2014 Verilator Bridge & Regression Suite",
       "_origin": "ast",
       "community": 6,
       "community_name": "RTLign \u2014 6-Month Comprehensive Roadmap",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "week 12: build \u2014 verilator bridge",
+      "norm_label": "week 12: build \u2014 verilator bridge & regression suite",
       "source_file": "ROADMAP.md",
-      "source_location": "L185"
+      "source_location": "L186"
     },
     {
       "id": "roadmap_week_13_14_build_full_benchmarking_suite",
@@ -6534,7 +6558,7 @@
       "node_kind": "heading",
       "norm_label": "week 13\u201314: build \u2014 full benchmarking suite",
       "source_file": "ROADMAP.md",
-      "source_location": "L202"
+      "source_location": "L204"
     },
     {
       "id": "roadmap_week_1_study_vlsi_physical_design",
@@ -6754,7 +6778,7 @@
       "node_kind": "heading",
       "norm_label": "1. project overview",
       "source_file": "PROGRESS.md",
-      "source_location": "L37"
+      "source_location": "L42"
     },
     {
       "id": "progress_2_repository_structure",
@@ -6766,7 +6790,7 @@
       "node_kind": "heading",
       "norm_label": "2. repository structure",
       "source_file": "PROGRESS.md",
-      "source_location": "L73"
+      "source_location": "L78"
     },
     {
       "id": "progress_3_development_timeline",
@@ -6778,7 +6802,7 @@
       "node_kind": "heading",
       "norm_label": "3. development timeline",
       "source_file": "PROGRESS.md",
-      "source_location": "L125"
+      "source_location": "L149"
     },
     {
       "id": "progress_4_10_feature_extractor_ml_predictor_feature_extractor_py",
@@ -6790,7 +6814,7 @@
       "node_kind": "heading",
       "norm_label": "4.10 feature extractor (`ml_predictor/feature_extractor.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L203"
+      "source_location": "L237"
     },
     {
       "id": "progress_4_11_gnn_dataset_loader_ml_predictor_dataset_py",
@@ -6802,7 +6826,7 @@
       "node_kind": "heading",
       "norm_label": "4.11 gnn dataset loader (`ml_predictor/dataset.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L208"
+      "source_location": "L242"
     },
     {
       "id": "progress_4_12_topological_gnn_model_ml_predictor_model_py",
@@ -6814,7 +6838,7 @@
       "node_kind": "heading",
       "norm_label": "4.12 topological gnn model (`ml_predictor/model.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L213"
+      "source_location": "L247"
     },
     {
       "id": "progress_4_13_gnn_training_pipeline_ml_predictor_train_nn_py",
@@ -6826,7 +6850,7 @@
       "node_kind": "heading",
       "norm_label": "4.13 gnn training pipeline (`ml_predictor/train_nn.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L218"
+      "source_location": "L252"
     },
     {
       "id": "progress_4_14_inference_engine_dag_cycle_breaker_ml_predictor_predict_py_run_predict_py",
@@ -6838,7 +6862,7 @@
       "node_kind": "heading",
       "norm_label": "4.14 inference engine & dag cycle-breaker (`ml_predictor/predict.py` & `run_predict.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L223"
+      "source_location": "L257"
     },
     {
       "id": "progress_4_15_evaluation_suite_openroad_signoff_ml_predictor_evaluate_py_openroad_scripts_evaluate_layout_tcl",
@@ -6850,7 +6874,55 @@
       "node_kind": "heading",
       "norm_label": "4.15 evaluation suite & openroad signoff (`ml_predictor/evaluate.py` & `openroad_scripts/evaluate_layout.tcl`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L228"
+      "source_location": "L262"
+    },
+    {
+      "id": "progress_4_16_sa_hardware_engine_cost_function_sa_engine_v_sa_cost_v_lfsr32_v",
+      "label": "4.16 SA Hardware Engine & Cost Function (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.16 sa hardware engine & cost function (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L267"
+    },
+    {
+      "id": "progress_4_17_verilator_c_simulation_bridge_verilator_sa_harness_cpp",
+      "label": "4.17 Verilator C++ Simulation Bridge (`verilator/sa_harness.cpp`)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.17 verilator c++ simulation bridge (`verilator/sa_harness.cpp`)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L272"
+    },
+    {
+      "id": "progress_4_18_layout_auditor_rtl_legalizer_audit_py",
+      "label": "4.18 Layout Auditor (`rtl_legalizer/audit.py`)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.18 layout auditor (`rtl_legalizer/audit.py`)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L277"
+    },
+    {
+      "id": "progress_4_19_cycle_accurate_python_golden_model_rtl_legalizer_golden_model_py",
+      "label": "4.19 Cycle-Accurate Python Golden Model (`rtl_legalizer/golden_model.py`)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.19 cycle-accurate python golden model (`rtl_legalizer/golden_model.py`)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L285"
     },
     {
       "id": "progress_4_1_collision_check_module_collision_check_v",
@@ -6862,7 +6934,19 @@
       "node_kind": "heading",
       "norm_label": "4.1 collision check module (`collision_check.v`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L157"
+      "source_location": "L191"
+    },
+    {
+      "id": "progress_4_20_synthetic_layout_generator_sweeps_layout_gen_py_scripts",
+      "label": "4.20 Synthetic Layout Generator & Sweeps (`layout_gen.py`, `scripts/`)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.20 synthetic layout generator & sweeps (`layout_gen.py`, `scripts/`)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L290"
     },
     {
       "id": "progress_4_2_lef_parser_lef_parser_py",
@@ -6874,7 +6958,7 @@
       "node_kind": "heading",
       "norm_label": "4.2 lef parser (`lef_parser.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L163"
+      "source_location": "L197"
     },
     {
       "id": "progress_4_3_def_parser_def_parser_py",
@@ -6886,7 +6970,7 @@
       "node_kind": "heading",
       "norm_label": "4.3 def parser (`def_parser.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L168"
+      "source_location": "L202"
     },
     {
       "id": "progress_4_4_legalizer_fsm_legalizer_fsm_v",
@@ -6898,7 +6982,7 @@
       "node_kind": "heading",
       "norm_label": "4.4 legalizer fsm (`legalizer_fsm.v`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L173"
+      "source_location": "L207"
     },
     {
       "id": "progress_4_5_legalizer_testbench_legalizer_tb_v",
@@ -6910,7 +6994,7 @@
       "node_kind": "heading",
       "norm_label": "4.5 legalizer testbench (`legalizer_tb.v`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L178"
+      "source_location": "L212"
     },
     {
       "id": "progress_4_6_hex_def_injector_hex_to_def_py",
@@ -6922,7 +7006,7 @@
       "node_kind": "heading",
       "norm_label": "4.6 hex \u2192 def injector (`hex_to_def.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L183"
+      "source_location": "L217"
     },
     {
       "id": "progress_4_7_master_orchestrator_master_run_py",
@@ -6934,7 +7018,7 @@
       "node_kind": "heading",
       "norm_label": "4.7 master orchestrator (`master_run.py`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L188"
+      "source_location": "L222"
     },
     {
       "id": "progress_4_8_testing_suite_tests_and_property_tests",
@@ -6946,7 +7030,7 @@
       "node_kind": "heading",
       "norm_label": "4.8 testing suite (`tests/` and property tests)",
       "source_file": "PROGRESS.md",
-      "source_location": "L193"
+      "source_location": "L227"
     },
     {
       "id": "progress_4_9_openroad_placement_script_openroad_scripts_run_placement_tcl",
@@ -6958,7 +7042,7 @@
       "node_kind": "heading",
       "norm_label": "4.9 openroad placement script (`openroad_scripts/run_placement.tcl`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L198"
+      "source_location": "L232"
     },
     {
       "id": "progress_4_component_deep_dives",
@@ -6970,7 +7054,7 @@
       "node_kind": "heading",
       "norm_label": "4. component deep-dives",
       "source_file": "PROGRESS.md",
-      "source_location": "L155"
+      "source_location": "L189"
     },
     {
       "id": "progress_5_simulation_evaluation_results",
@@ -6982,7 +7066,7 @@
       "node_kind": "heading",
       "norm_label": "5. simulation & evaluation results",
       "source_file": "PROGRESS.md",
-      "source_location": "L233"
+      "source_location": "L295"
     },
     {
       "id": "progress_6_known_limitations",
@@ -6994,7 +7078,7 @@
       "node_kind": "heading",
       "norm_label": "6. known limitations",
       "source_file": "PROGRESS.md",
-      "source_location": "L269"
+      "source_location": "L333"
     },
     {
       "id": "progress_7_roadmap_what_s_next",
@@ -7006,7 +7090,7 @@
       "node_kind": "heading",
       "norm_label": "7. roadmap \u2014 what's next",
       "source_file": "PROGRESS.md",
-      "source_location": "L282"
+      "source_location": "L346"
     },
     {
       "id": "progress_baseline_pipeline_execution",
@@ -7018,31 +7102,31 @@
       "node_kind": "heading",
       "norm_label": "baseline pipeline execution",
       "source_file": "PROGRESS.md",
-      "source_location": "L235"
+      "source_location": "L297"
     },
     {
-      "id": "progress_current_limitations_next_steps",
-      "label": "Current Limitations & Next Steps",
+      "id": "progress_current_limitations_verified_boundaries_from_verification_md",
+      "label": "Current Limitations & Verified Boundaries (from `VERIFICATION.md`)",
       "_origin": "ast",
       "community": 8,
       "community_name": "4. Component Deep-Dives",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "current limitations & next steps",
+      "norm_label": "current limitations & verified boundaries (from `verification.md`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L271"
+      "source_location": "L335"
     },
     {
-      "id": "progress_legalizer_hardware_simulation_metrics",
-      "label": "Legalizer Hardware Simulation Metrics",
+      "id": "progress_legalizer_hardware_verification_metrics",
+      "label": "Legalizer Hardware & Verification Metrics",
       "_origin": "ast",
       "community": 8,
       "community_name": "4. Component Deep-Dives",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "legalizer hardware simulation metrics",
+      "norm_label": "legalizer hardware & verification metrics",
       "source_file": "PROGRESS.md",
-      "source_location": "L252"
+      "source_location": "L314"
     },
     {
       "id": "progress_ml_predictor_evaluation_artifacts",
@@ -7054,7 +7138,7 @@
       "node_kind": "heading",
       "norm_label": "ml predictor & evaluation artifacts",
       "source_file": "PROGRESS.md",
-      "source_location": "L262"
+      "source_location": "L326"
     },
     {
       "id": "progress_month_1_foundations_dataset_generation",
@@ -7066,7 +7150,7 @@
       "node_kind": "heading",
       "norm_label": "month 1: foundations & dataset generation",
       "source_file": "PROGRESS.md",
-      "source_location": "L284"
+      "source_location": "L348"
     },
     {
       "id": "progress_month_2_supervised_ml_predictor_evaluation",
@@ -7078,19 +7162,19 @@
       "node_kind": "heading",
       "norm_label": "month 2: supervised ml predictor & evaluation",
       "source_file": "PROGRESS.md",
-      "source_location": "L288"
+      "source_location": "L352"
     },
     {
-      "id": "progress_month_3_simulated_annealing_in_rtl_verilator_bridge",
-      "label": "Month 3: Simulated Annealing in RTL & Verilator Bridge",
+      "id": "progress_month_3_simulated_annealing_in_rtl_verification",
+      "label": "Month 3: Simulated Annealing in RTL & Verification",
       "_origin": "ast",
       "community": 8,
       "community_name": "4. Component Deep-Dives",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "month 3: simulated annealing in rtl & verilator bridge",
+      "norm_label": "month 3: simulated annealing in rtl & verification",
       "source_file": "PROGRESS.md",
-      "source_location": "L293"
+      "source_location": "L357"
     },
     {
       "id": "progress_month_4_integration_scaling_benchmarking",
@@ -7102,7 +7186,7 @@
       "node_kind": "heading",
       "norm_label": "month 4: integration, scaling & benchmarking",
       "source_file": "PROGRESS.md",
-      "source_location": "L299"
+      "source_location": "L363"
     },
     {
       "id": "progress_phase_1_proof_of_concept_end_to_end_pipeline_commits_3b1c5da_7dc9944",
@@ -7114,7 +7198,7 @@
       "node_kind": "heading",
       "norm_label": "phase 1: proof of concept \u2014 end-to-end pipeline (commits `3b1c5da` \u2192 `7dc9944`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L127"
+      "source_location": "L151"
     },
     {
       "id": "progress_phase_2_dimension_accuracy_scalability_commits_897a44f_9557fc9",
@@ -7126,7 +7210,7 @@
       "node_kind": "heading",
       "norm_label": "phase 2: dimension accuracy & scalability (commits `897a44f` \u2192 `9557fc9`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L132"
+      "source_location": "L156"
     },
     {
       "id": "progress_phase_3_robust_testing_dataset_preparation_commits_ba8af81_ee64e51",
@@ -7138,7 +7222,7 @@
       "node_kind": "heading",
       "norm_label": "phase 3: robust testing & dataset preparation (commits `ba8af81` \u2192 `ee64e51`)",
       "source_file": "PROGRESS.md",
-      "source_location": "L137"
+      "source_location": "L161"
     },
     {
       "id": "progress_phase_4_ml_feature_extraction_completed",
@@ -7150,7 +7234,7 @@
       "node_kind": "heading",
       "norm_label": "phase 4: ml feature extraction (completed)",
       "source_file": "PROGRESS.md",
-      "source_location": "L143"
+      "source_location": "L167"
     },
     {
       "id": "progress_phase_5_ml_predictor_evaluation_suite_completed",
@@ -7162,7 +7246,19 @@
       "node_kind": "heading",
       "norm_label": "phase 5: ml predictor & evaluation suite (completed)",
       "source_file": "PROGRESS.md",
-      "source_location": "L147"
+      "source_location": "L171"
+    },
+    {
+      "id": "progress_phase_6_simulated_annealing_in_rtl_formal_verification_completed",
+      "label": "Phase 6: Simulated Annealing in RTL & Formal Verification (Completed)",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "4. Component Deep-Dives",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 6: simulated annealing in rtl & formal verification (completed)",
+      "source_file": "PROGRESS.md",
+      "source_location": "L177"
     },
     {
       "id": "progress_pipeline_diagram",
@@ -7174,7 +7270,7 @@
       "node_kind": "heading",
       "norm_label": "pipeline diagram",
       "source_file": "PROGRESS.md",
-      "source_location": "L47"
+      "source_location": "L52"
     },
     {
       "id": "progress_rtlign_project_progress_document",
@@ -7210,7 +7306,7 @@
       "node_kind": "heading",
       "norm_label": "technology stack",
       "source_file": "PROGRESS.md",
-      "source_location": "L59"
+      "source_location": "L64"
     },
     {
       "id": "rtl_legalizer_lef_parser_rationale_235",
@@ -9782,7 +9878,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L131",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -9793,7 +9889,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L139",
+      "source_location": "L157",
       "weight": 1.0
     },
     {
@@ -9804,7 +9900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L148",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -9815,7 +9911,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L160",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_rtlign_ai_agent_system_architecture_guidelines",
+      "target": "agents_3_project_structure",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -9826,7 +9933,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L123",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -9837,7 +9944,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L174",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -9848,7 +9955,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -9860,17 +9967,6 @@
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
       "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_rtlign_ai_agent_system_architecture_guidelines",
-      "target": "agents_3_project_structure",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L87",
       "weight": 1.0
     },
     {
@@ -10607,7 +10703,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L47",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -10618,7 +10714,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L59",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -10629,7 +10725,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L127",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -10640,7 +10736,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L132",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -10651,7 +10747,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L137",
+      "source_location": "L161",
       "weight": 1.0
     },
     {
@@ -10662,7 +10758,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L143",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -10673,7 +10769,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L147",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_3_development_timeline",
+      "target": "progress_phase_6_simulated_annealing_in_rtl_formal_verification_completed",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -10684,7 +10791,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L157",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -10695,7 +10802,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L163",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -10706,7 +10813,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L168",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -10717,7 +10824,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L173",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -10728,7 +10835,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L178",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -10739,7 +10846,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L183",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -10750,7 +10857,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L188",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -10761,7 +10868,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L193",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -10772,7 +10879,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L198",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -10783,7 +10890,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L203",
+      "source_location": "L237",
       "weight": 1.0
     },
     {
@@ -10794,7 +10901,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L208",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -10805,7 +10912,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L213",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
@@ -10816,7 +10923,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L218",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -10827,7 +10934,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L223",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -10838,7 +10945,62 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L228",
+      "source_location": "L262",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_4_component_deep_dives",
+      "target": "progress_4_16_sa_hardware_engine_cost_function_sa_engine_v_sa_cost_v_lfsr32_v",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_4_component_deep_dives",
+      "target": "progress_4_17_verilator_c_simulation_bridge_verilator_sa_harness_cpp",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L272",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_4_component_deep_dives",
+      "target": "progress_4_18_layout_auditor_rtl_legalizer_audit_py",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L277",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_4_component_deep_dives",
+      "target": "progress_4_19_cycle_accurate_python_golden_model_rtl_legalizer_golden_model_py",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L285",
+      "weight": 1.0
+    },
+    {
+      "source": "progress_4_component_deep_dives",
+      "target": "progress_4_20_synthetic_layout_generator_sweeps_layout_gen_py_scripts",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PROGRESS.md",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -10849,18 +11011,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L235",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
       "source": "progress_5_simulation_evaluation_results",
-      "target": "progress_legalizer_hardware_simulation_metrics",
+      "target": "progress_legalizer_hardware_verification_metrics",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L252",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -10871,18 +11033,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L262",
+      "source_location": "L326",
       "weight": 1.0
     },
     {
       "source": "progress_6_known_limitations",
-      "target": "progress_current_limitations_next_steps",
+      "target": "progress_current_limitations_verified_boundaries_from_verification_md",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L271",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -10893,7 +11055,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L284",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -10904,18 +11066,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L288",
+      "source_location": "L352",
       "weight": 1.0
     },
     {
       "source": "progress_7_roadmap_what_s_next",
-      "target": "progress_month_3_simulated_annealing_in_rtl_verilator_bridge",
+      "target": "progress_month_3_simulated_annealing_in_rtl_verification",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L293",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -10926,7 +11088,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L299",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -10948,7 +11110,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L125",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -10959,7 +11121,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L155",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -10970,7 +11132,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L233",
+      "source_location": "L295",
       "weight": 1.0
     },
     {
@@ -10981,7 +11143,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L269",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -10992,7 +11154,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L282",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -11003,7 +11165,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L37",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -11014,7 +11176,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PROGRESS.md",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0
     },
     {
@@ -11069,18 +11231,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "Project_Readiness_Note.md",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
       "source": "project_readiness_note_rtlign_ml_assisted_simulated_annealing_for_rtl_accelerated_vlsi_macro_placement",
-      "target": "project_readiness_note_project_timeline",
+      "target": "project_readiness_note_project_timeline_current_status",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "Project_Readiness_Note.md",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -11113,7 +11275,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L143",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -11124,7 +11286,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L146",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -11135,7 +11297,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L149",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -11146,18 +11308,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L152",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
       "source": "readme_how_it_works",
-      "target": "readme_5_two_pass_hardware_legalizer_verilator_accelerator",
+      "target": "readme_5_two_pass_hardware_legalizer_verilator_bridge_verification",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L155",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -11168,7 +11330,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L161",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -11179,7 +11341,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L164",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
@@ -11238,6 +11400,17 @@
       "weight": 1.0
     },
     {
+      "source": "readme_option_b_local_environment_setup",
+      "target": "readme_verification_test_suite",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
       "source": "readme_quick_start",
       "target": "readme_option_a_running_with_docker_recommended_for_windows_teammates",
       "relation": "contains",
@@ -11261,24 +11434,13 @@
     },
     {
       "source": "readme_rtlign",
-      "target": "readme_how_it_works",
+      "target": "readme_project_structure",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L141",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_rtlign",
-      "target": "readme_team_p124",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L169",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -11294,13 +11456,35 @@
     },
     {
       "source": "readme_rtlign",
+      "target": "readme_how_it_works",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rtlign",
+      "target": "readme_team_p124",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L205",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rtlign",
       "target": "readme_license",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L178",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -11323,17 +11507,6 @@
       "confidence_score": 1.0,
       "source_file": "README.md",
       "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_rtlign",
-      "target": "readme_project_structure",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -11436,7 +11609,7 @@
       "weight": 1.0
     },
     {
-      "source": "roadmap_month_3_simulated_annealing_in_rtl",
+      "source": "roadmap_month_3_simulated_annealing_in_rtl_verification",
       "target": "roadmap_week_9_10_build_sa_engine_in_verilog",
       "relation": "contains",
       "_origin": "ast",
@@ -11447,8 +11620,8 @@
       "weight": 1.0
     },
     {
-      "source": "roadmap_month_3_simulated_annealing_in_rtl",
-      "target": "roadmap_week_11_build_testbench_validation",
+      "source": "roadmap_month_3_simulated_annealing_in_rtl_verification",
+      "target": "roadmap_week_11_build_testbench_auditing_golden_model",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11458,14 +11631,14 @@
       "weight": 1.0
     },
     {
-      "source": "roadmap_month_3_simulated_annealing_in_rtl",
-      "target": "roadmap_week_12_build_verilator_bridge",
+      "source": "roadmap_month_3_simulated_annealing_in_rtl_verification",
+      "target": "roadmap_week_12_build_verilator_bridge_regression_suite",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ROADMAP.md",
-      "source_location": "L185",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -11476,7 +11649,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ROADMAP.md",
-      "source_location": "L202",
+      "source_location": "L204",
       "weight": 1.0
     },
     {
@@ -11492,7 +11665,7 @@
     },
     {
       "source": "roadmap_rtlign_6_month_comprehensive_roadmap",
-      "target": "roadmap_month_3_simulated_annealing_in_rtl",
+      "target": "roadmap_month_3_simulated_annealing_in_rtl_verification",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11509,7 +11682,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ROADMAP.md",
-      "source_location": "L198",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
@@ -11960,7 +12133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L101",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -11971,7 +12144,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L106",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -11982,18 +12155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L111",
-      "weight": 1.0
-    },
-    {
-      "source": "rtl_legalizer_readme_execution_modes",
-      "target": "rtl_legalizer_readme_2_interpreted_icarus_verilog_simulation",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "rtl_legalizer/README.md",
-      "source_location": "L124",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -12004,18 +12166,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L97",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
-      "source": "rtl_legalizer_readme_rtl_legalizer_simulated_annealing_engine",
-      "target": "rtl_legalizer_readme_unit_and_property_testing",
+      "source": "rtl_legalizer_readme_execution_modes",
+      "target": "rtl_legalizer_readme_2_interpreted_icarus_verilog_simulation",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L147",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "rtl_legalizer_readme_rtl_legalizer_simulated_annealing_engine",
+      "target": "rtl_legalizer_readme_execution_modes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "rtl_legalizer/README.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "rtl_legalizer_readme_rtl_legalizer_simulated_annealing_engine",
+      "target": "rtl_legalizer_readme_unit_property_and_verification_testing",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "rtl_legalizer/README.md",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -12037,7 +12221,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L55",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -12059,18 +12243,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L74",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
-      "source": "rtl_legalizer_readme_rtl_legalizer_simulated_annealing_engine",
-      "target": "rtl_legalizer_readme_execution_modes",
+      "source": "rtl_legalizer_readme_unit_property_and_verification_testing",
+      "target": "rtl_legalizer_readme_layout_auditing_characterization",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rtl_legalizer/README.md",
-      "source_location": "L95",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -15851,5 +16035,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7c2dedf3559a0e1c23058fbf961c539b9465aa60"
+  "built_at_commit": "7311b6d05e6874d5810c717d874fdf162e8746c9"
 }

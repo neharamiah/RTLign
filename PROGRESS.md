@@ -28,6 +28,11 @@
    - 4.13 [GNN Training Pipeline](#413-gnn-training-pipeline-ml_predictortrain_nnpy)
    - 4.14 [Inference Engine & DAG Cycle-Breaker](#414-inference-engine--dag-cycle-breaker-ml_predictorpredictpy--run_predictpy)
    - 4.15 [Evaluation Suite & OpenROAD Signoff](#415-evaluation-suite--openroad-signoff-ml_predictorevaluatepy--openroad_scriptsevaluate_layouttcl)
+   - 4.16 [SA Hardware Engine & Cost Function](#416-sa-hardware-engine--cost-function-sa_enginev-sa_costv-lfsr32v)
+   - 4.17 [Verilator C++ Simulation Bridge](#417-verilator-c-simulation-bridge-verilatorsa_harnesscpp)
+   - 4.18 [Layout Auditor](#418-layout-auditor-rtl_legalizerauditpy)
+   - 4.19 [Cycle-Accurate Python Golden Model](#419-cycle-accurate-python-golden-model-rtl_legalizergolden_modelpy)
+   - 4.20 [Synthetic Layout Generator & Sweeps](#420-synthetic-layout-generator--sweeps-layout_genpy-scripts)
 5. [Simulation & Evaluation Results](#5-simulation--evaluation-results)
 6. [Known Limitations](#6-known-limitations)
 7. [Roadmap — What's Next](#7-roadmap--whats-next)
@@ -61,7 +66,7 @@ During the physical design phase of VLSI development, **macro placement** is an 
 | Category | Tool / Language |
 |:---|:---|
 | RTL Design | Verilog HDL / SystemVerilog |
-| RTL Simulation | Icarus Verilog (`iverilog` + `vvp`) |
+| RTL Simulation | Icarus Verilog (`iverilog` + `vvp`) & Verilator (C++ simulation) |
 | Scripting & ML | Python 3.x, PyTorch, PyTorch Geometric |
 | EDA Suite | OpenROAD (with GUI, RePlAce, DPL, STA) |
 | Target PDK | FreePDK45, Nangate45 |
@@ -91,14 +96,22 @@ RTLign/
 │   └── hex_to_def.py               # HEX → DEF coordinate injector
 │
 ├── rtl_legalizer/
+│   ├── sa_legalizer_top.v          # Top-level SA + greedy legalizer
+│   ├── sa_engine.v                 # Simulated Annealing optimizer FSM
+│   ├── sa_cost.v                   # 3-term hardware cost (HPWL, area, boundary)
+│   ├── lfsr32.v                    # 32-bit Galois LFSR pseudo-random generator
 │   ├── collision_check.v           # Combinational AABB overlap detector
 │   ├── legalizer_fsm.v             # FSM-based greedy sweep legalizer
-│   ├── legalizer_tb.v              # Testbench with overlap audit
+│   ├── legalizer_tb.v              # Testbench with full audit checks
+│   ├── audit.py                    # Layout auditor (zero overlaps, bounds, sizes)
+│   ├── golden_model.py             # Bit-exact cycle-accurate Python golden model
+│   ├── layout_gen.py               # Synthetic layout generator for stress testing
 │   ├── lef_parser.py               # LEF → Dimension Dictionary extractor
 │   ├── lef_parser_test.py          # Unit tests for LEF parser
 │   ├── lef_parser_property_test.py # Property-based tests for LEF parser
-│   ├── dummy_layout.hex            # Input macro layout (generated)
-│   └── output_layout.hex           # Legalized layout coordinates (generated)
+│   ├── tb_*.v                      # Directed Verilog unit testbenches
+│   ├── VERIFICATION.md             # Formal verification report and audit results
+│   └── verilator/                  # C++ simulation harness and Python bridge
 │
 ├── openroad_scripts/
 │   ├── run_placement.tcl           # OpenROAD placement flow script for dataset generation
@@ -107,11 +120,22 @@ RTLign/
 │   ├── mockup_export.def           # Baseline GCD design (FreePDK45, 482 components)
 │   └── legalized_export.def        # Legalized placement output DEF
 │
-├── tests/
-│   ├── __init__.py
-│   ├── test_ispd2015_integration.py # Integration testing on real ISPD benchmarks
-│   └── test_lef_parser_cli.py      # Command Line Interface tests
+├── scripts/
+│   ├── sweep_legalizer.py          # Bug-hunt sweep over 350 layout configurations
+│   └── characterize_metropolis.py  # Metropolis LUT characterization script
 │
+├── tests/
+│   ├── test_audit.py               # Tests for layout auditor and generator
+│   ├── test_golden_model.py        # Golden model vs RTL equivalence tests
+│   ├── test_phase6_verification.py # Cross-simulator determinism and golden regressions
+│   ├── test_unit_tbs.py            # Directed Verilog unit testbench runners
+│   ├── test_phase6_sa.py           # SA engine and Verilator bridge tests
+│   ├── test_phase5_integration.py  # GNN prediction and DEF injection tests
+│   ├── test_ispd2015_integration.py # Integration testing on real ISPD benchmarks
+│   ├── test_lef_parser_cli.py      # Command Line Interface tests
+│   └── data/golden/                # Golden regression test fixtures
+│
+├── conftest.py                     # Root pytest import configuration
 ├── run_predict.py                  # Top-level prediction orchestrator with auto-detection
 ├── topological_gnn_model.pth       # Trained Topological GNN weights
 ├── data/                           # Training datasets and raw benchmarks
@@ -149,6 +173,16 @@ RTLign/
 - **Topological GNN Model:** Implemented `ml_predictor/model.py` and `ml_predictor/train_nn.py` to train a supervised model that predicts normalized pairwise macro displacements (L-flows $\Delta x, \Delta y$) from netlist graph connectivity. Checkpoint saved as `topological_gnn_model.pth`.
 - **Hardware Handoff Bridge:** Created `ml_predictor/predict.py` with a cycle-breaking DFS algorithm to enforce a strict Directed Acyclic Graph (DAG) and export an $N \times N$ 32-bit hex matrix for hardware initialization. Added top-level `run_predict.py` for automated one-click inference.
 - **Evaluation Orchestrator & OpenROAD Signoff:** Implemented `ml_predictor/evaluate.py` and `openroad_scripts/evaluate_layout.tcl` to benchmark the ML+RTL pipeline against native OpenROAD placement, verify physical legality, measure HPWL wirelength, and produce side-by-side layout comparison plots (`evaluation_plot.png`).
+
+### Phase 6: Simulated Annealing in RTL & Formal Verification (Completed)
+- **SA Engine in Verilog:** Built `sa_engine.v` implementing stochastic simulated annealing with exponential cooling, coordinate perturbation, and 16-bit LUT Metropolis acceptance.
+- **LFSR Pseudo-Random Generator:** Built `lfsr32.v` using a 32-bit Galois LFSR with maximal-length polynomial ($x^{32} + x^{22} + x^2 + x + 1$) and non-zero lockup avoidance.
+- **3-Term Hardware Cost Function:** Built `sa_cost.v` to compute wirelength (HPWL), bounding box area, and boundary violation penalties with configurable integer weights.
+- **Greedy Cleanup Hardening:** Hardened `legalizer_fsm.v` by bounding resolve loops with `MAX_RESOLVE_TRIES` to eliminate hang risks and fixed unsigned pointer underflow on single-macro designs.
+- **Integrated Legalizer Top:** Built `sa_legalizer_top.v` coordinating Pass 1 (SA optimization) and Pass 2 (deterministic greedy cleanup).
+- **Verilator Simulation Bridge:** Developed `verilator/sa_harness.cpp` with parametric compile flags (`NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT`) and Python wrapper, delivering ~400× speedup over interpreted simulation.
+- **Cycle-Accurate Golden Model:** Implemented `rtl_legalizer/golden_model.py` replicating RTL arithmetic, LFSR sequence, Metropolis LUT, and boundary handling for exact word-by-word equivalence.
+- **Layout Auditor & Verification Suite:** Built `rtl_legalizer/audit.py` to audit P1 (overlaps), P2 (die containment), and P3 (size preservation). Created 135 passing tests across unit testbenches, determinism, cross-simulator equivalence, and golden regressions.
 
 ---
 
@@ -230,6 +264,34 @@ RTLign/
 
 ---
 
+### 4.16 SA Hardware Engine & Cost Function (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`)
+**Purpose:** Implements Pass 1 of the hardware legalizer. `sa_engine.v` controls stochastic hill-climbing using exponential cooling and a 16-bit lookup-table Metropolis acceptance rule. `lfsr32.v` provides high-entropy 32-bit pseudo-random numbers via a Galois LFSR ($x^{32} + x^{22} + x^2 + x + 1$). `sa_cost.v` evaluates a 3-term objective combining HPWL wirelength, bounding box area, and boundary penalties.
+
+---
+
+### 4.17 Verilator C++ Simulation Bridge (`verilator/sa_harness.cpp`)
+**Purpose:** Accelerates hardware simulation by compiling synthesizable Verilog into native C++ binaries. Provides ~400× speedup over interpreted simulation, enabling hundreds of thousands of annealing cycles in milliseconds. Supports parameterized builds via make variables (`NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT`).
+
+---
+
+### 4.18 Layout Auditor (`rtl_legalizer/audit.py`)
+**Purpose:** Serves as the single source of truth for post-legalization validation. Audits layout hex files against three core physical properties:
+- **P1 Zero Overlaps:** Strict AABB intersection test over all macro pairs.
+- **P2 Die Containment:** $0 \le x$, $x + w \le \text{DIE\_WIDTH}$, and the same for $y$.
+- **P3 Size Preservation:** Output width and height match input dimensions exactly.
+
+---
+
+### 4.19 Cycle-Accurate Python Golden Model (`rtl_legalizer/golden_model.py`)
+**Purpose:** Bit-exact software replica of the Verilog hardware pipeline. Models 32-bit wraparound arithmetic, Galois LFSR sequences, Metropolis LUT evaluation, boundary reflection, and greedy push resolution to cross-check RTL output word-for-word.
+
+---
+
+### 4.20 Synthetic Layout Generator & Sweeps (`layout_gen.py`, `scripts/`)
+**Purpose:** Generates synthetic stress layouts across 7 modes (single, legal, pair overlap, chain, dense, out of bounds, wide macro). Evaluates convergence across 350 randomized layout sweeps (`scripts/sweep_legalizer.py`) and characterizes Metropolis probability distributions (`scripts/characterize_metropolis.py`).
+
+---
+
 ## 5. Simulation & Evaluation Results
 
 ### Baseline Pipeline Execution
@@ -249,15 +311,17 @@ RTLign/
   Total time:  0.22s
 ```
 
-### Legalizer Hardware Simulation Metrics
-| Metric | Value |
-|:---|:---|
-| Number of macros | 168 |
-| Clock cycles to legalize | 42,086 |
-| Simulated clock frequency | 100 MHz |
-| Theoretical hardware latency | 0.42 ms |
-| Overlaps after legalization | **0** (AUDIT PASS) |
-| Coordinates injected into DEF | 168 / 168 |
+### Legalizer Hardware & Verification Metrics
+| Metric | Icarus Verilog | Verilator Bridge | Golden Model |
+|:---|:---|:---|:---|
+| Macros Evaluated | 168 | 168 | 168 |
+| Clock Cycles | 724,110 | 724,111 | N/A (cycle-accurate) |
+| SA Iterations | 1,000 | 1,000 | 1,000 |
+| Accepted Moves | 1,000 | 1,000 | 1,000 |
+| Final Placement Cost | 3,704,579 | 3,704,579 | 3,704,579 |
+| Bit-Exact Equivalence | Match | Match | Match |
+| Test Suite Coverage | **135 / 135 passing** | **135 / 135 passing** | **135 / 135 passing** |
+| Post-Run Audit Status | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** |
 
 ### ML Predictor & Evaluation Artifacts
 - **Model Checkpoint:** `topological_gnn_model.pth` (PyTorch Geometric weights trained on Parquet datasets).
@@ -268,14 +332,14 @@ RTLign/
 
 ## 6. Known Limitations
 
-### Current Limitations & Next Steps
+### Current Limitations & Verified Boundaries (from `VERIFICATION.md`)
 
-| # | Limitation | Impact | Status / Planned Fix |
+| # | Limitation | Impact | Status / Documentation |
 |:---|:---|:---|:---|
-| 1 | **Greedy sweep, not Simulated Annealing** | Push-apart logic lacked temperature schedule and stochastic hill-climbing | ✅ Completed in Phase 6: Two-pass SA optimizer + greedy cleanup |
-| 2 | **No wirelength optimization in RTL** | Baseline legalizer only eliminated overlaps without minimizing HPWL | ✅ Completed in Phase 6: 3-term cost function in `sa_cost.v` |
-| 3 | **Slow sequential simulation** | Icarus Verilog takes seconds for millions of cycles | ✅ Completed in Phase 6: Verilator C++ bridge achieves ~400x speedup |
-| 4 | **OpenROAD re-import verification** | Automated closed-loop re-import verified via `evaluate_layout.tcl` | ✅ Verified in Phase 5 & 6 |
+| 1 | **Greedy sweep pass cap (8 passes)** | Dense clusters of 24+ overlapping macros may leave residual overlaps | Documented in `VERIFICATION.md`. Hardened with `$fatal` audit in testbench. |
+| 2 | **Macro width exceeding die width** | Macros with width > `DIE_WIDTH` cannot satisfy containment P2 | Documented boundary limitation. Clamped to $x = 0$. |
+| 3 | **Slow sequential simulation in Icarus** | Interpreted simulation runs in seconds | Resolved via Verilator C++ simulation bridge (~400× speedup). |
+| 4 | **Single-macro FSM underflow** | $N=1$ macro designs previously hung greedy FSM | Resolved: corrected pointer underflow logic `(ptr_a + 4) < last_base`. |
 
 ---
 
@@ -290,11 +354,11 @@ RTLign/
 - **[DONE]** Build: Advanced GNN Predictor & Inference (`dataset.py`, `model.py`, `train_nn.py`, `predict.py`, `run_predict.py`)
 - **[DONE]** Build: Evaluation Suite & OpenROAD Signoff (`evaluate.py`, `evaluate_layout.tcl`, layout visualization)
 
-### Month 3: Simulated Annealing in RTL & Verilator Bridge
+### Month 3: Simulated Annealing in RTL & Verification
 - **[DONE]** Build: SA Engine in Verilog (`lfsr32.v`, `sa_cost.v`, `sa_engine.v`, `sa_legalizer_top.v`, Metropolis acceptance, step cooling)
-- **[DONE]** Build: SA Testbench & Validation (`legalizer_tb.v`, multi-pass cascade resolution, zero overlaps verified)
-- **[DONE]** Build: Verilator Bridge (`verilator/sa_harness.cpp`, `Makefile`, `verilator_bridge.py`, ~400x speedup)
-- **[DONE]** Build: Pipeline Integration (`master_run.py`, `evaluate.py`, automated test suite with 56 tests)
+- **[DONE]** Build: SA Testbench & Validation (`legalizer_tb.v`, multi-pass cascade resolution, audit assertions)
+- **[DONE]** Build: Verilator Bridge (`verilator/sa_harness.cpp`, `Makefile`, parameterized builds, ~400× speedup)
+- **[DONE]** Build: Formal Verification Suite (`audit.py`, `golden_model.py`, `layout_gen.py`, `VERIFICATION.md`, 135 passing tests)
 
 ### Month 4: Integration, Scaling & Benchmarking
 - Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)

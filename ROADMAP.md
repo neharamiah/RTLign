@@ -142,23 +142,23 @@ If RL fails to converge → fall back to the ML predictor. The project is still 
 
 ---
 
-## Month 3: Simulated Annealing in RTL
+## Month 3: Simulated Annealing in RTL & Verification
 
-> **Goal:** Upgrade the greedy legalizer into a proper SA engine. This is the core hardware innovation.
+> **Goal:** Upgrade the greedy legalizer into a synthesizable SA engine, build the Verilator accelerator, and formally verify the implementation.
 
 ### Week 9–10: Build — SA Engine in Verilog
 
 | Task | Owner | Details | Status |
 |:-----|:------|:--------|:-------|
-| Design SA FSM state diagram on paper | All | States: INIT → PERTURB → EVALUATE → ACCEPT/REJECT → COOL → CHECK_DONE | ⏳ In Progress |
-| Implement 32-bit LFSR | Sahana | Galois LFSR with maximal-length polynomial, produces pseudo-random numbers | ⏳ In Progress |
-| Implement temperature register + cooling | Ratik | `temp <= temp - (temp >> COOL_SHIFT)` — exponential decay | ⏳ In Progress |
-| Implement perturbation logic | Ratik | Pick random macro, apply random displacement scaled by temperature | ⏳ In Progress |
-| Implement cost function | Neha | `cost = overlap_area + α × estimated_HPWL` (combinational logic) | ⏳ In Progress |
-| Implement Metropolis acceptance | Sahana | `if new_cost < old_cost: accept. else: accept with probability e^(-ΔC/T)` | ⏳ In Progress |
-| Integrate with existing collision checker | All | Reuse `collision_check.v`, add HPWL estimator | ⏳ In Progress |
+| Design SA FSM state diagram on paper | All | States: INIT → PERTURB → EVALUATE → ACCEPT/REJECT → COOL → CHECK_DONE | ✅ Done |
+| Implement 32-bit LFSR | Sahana | Galois LFSR with maximal-length polynomial, produces pseudo-random numbers (`lfsr32.v`) | ✅ Done |
+| Implement temperature register + cooling | Ratik | `temp <= temp - (temp >> COOL_SHIFT)` — exponential decay in `sa_engine.v` | ✅ Done |
+| Implement perturbation logic | Ratik | Pick random macro, apply random displacement scaled by temperature | ✅ Done |
+| Implement cost function | Neha | `sa_cost.v`: 3-term cost combining HPWL wirelength, bbox area, boundary penalty | ✅ Done |
+| Implement Metropolis acceptance | Sahana | 16-bit lookup table approximating $e^{-\Delta C / T}$ for uphill acceptance | ✅ Done |
+| Integrate with existing collision checker | All | Combine Pass 1 (SA engine) and Pass 2 (greedy cleanup) in `sa_legalizer_top.v` | ✅ Done |
 
-**New FSM (replaces greedy sweep):**
+**Two-Pass FSM Architecture:**
 
 ```
 INIT ──► PERTURB ──► FETCH ──► EVALUATE_COST ──► ACCEPT/REJECT ──► COOL ──►─┐
@@ -171,27 +171,29 @@ INIT ──► PERTURB ──► FETCH ──► EVALUATE_COST ──► ACCEPT/
 
 ---
 
-### Week 11: Build — Testbench & Validation
+### Week 11: Build — Testbench, Auditing & Golden Model
 
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Update `legalizer_tb.v` for SA | Sahana | Monitor temperature, cost, acceptance rate over time |
-| Verify on GCD benchmark | Ratik | SA should reduce HPWL compared to greedy sweep |
-| VCD waveform analysis | Neha | Open in GTKWave, verify cooling schedule, cost convergence |
-| Compare: greedy sweep vs SA | All | Table: cycles, final HPWL, final overlap count |
+| Task | Owner | Details | Status |
+|:-----|:------|:--------|:-------|
+| Update `legalizer_tb.v` for SA | Sahana | Full post-run audits: overlap count, die containment, size preservation with `$fatal` | ✅ Done |
+| Build layout auditor | Ratik | Standalone `rtl_legalizer/audit.py` for automated P1/P2/P3 signoff | ✅ Done |
+| Develop cycle-accurate golden model | Ratik | `rtl_legalizer/golden_model.py` replicating exact RTL arithmetic and LFSR sequence | ✅ Done |
+| Directed Verilog testbenches | Neha | Unit testbenches: `tb_collision_check.v`, `tb_sa_cost.v`, `tb_legalizer_fsm.v`, `tb_sa_trace.v` | ✅ Done |
+| Randomized bug-hunt sweep | Sahana | `scripts/sweep_legalizer.py` across 350 layout configurations | ✅ Done |
 
 ---
 
-### Week 12: Build — Verilator Bridge
+### Week 12: Build — Verilator Bridge & Regression Suite
 
-| Task | Owner | Details |
-|:-----|:------|:--------|
-| Install Verilator | Ratik | `sudo apt install verilator` or build from source |
-| Write Verilator wrapper for legalizer | Ratik | C++ class that loads `.hex`, runs SA, returns result |
-| Write Python ctypes binding | Neha | `legalizer.so` → callable from Python in microseconds |
-| Benchmark: vvp vs Verilator speed | Sahana | Expect 100–1000× speedup |
+| Task | Owner | Details | Status |
+|:-----|:------|:--------|:-------|
+| Verilator build configuration | Ratik | `verilator/Makefile` parameterized with `NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT` | ✅ Done |
+| Write Verilator C++ harness | Ratik | `verilator/sa_harness.cpp` supporting custom input/output HEX paths | ✅ Done |
+| Python Verilator bridge | Neha | `verilator/verilator_bridge.py` running C++ binary with metrics extraction | ✅ Done |
+| Cross-simulator verification | Sahana | `tests/test_phase6_verification.py` verifying bit-exact Icarus vs. Verilator results | ✅ Done |
+| Full pytest test suite | All | Complete 135-test suite passing across all modules (`pytest tests/ rtl_legalizer/ -v`) | ✅ Done |
 
-**Deliverable:** SA legalizer callable from Python at microsecond latency. HPWL improvement measured over greedy sweep.
+**Deliverable:** Hardware SA legalizer and Verilator accelerator (~400× speedup), verified word-for-word against a Python golden model with 135 passing automated tests.
 
 ---
 

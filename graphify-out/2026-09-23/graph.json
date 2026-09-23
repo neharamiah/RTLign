@@ -17,19 +17,6 @@
       "source_location": "L113"
     },
     {
-      "id": "ml_predictor_dataset_topologicalmacrodataset",
-      "label": "TopologicalMacroDataset",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "topologicalmacrodataset",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L9"
-    },
-    {
       "id": "ml_predictor_feature_extractor_featureextractor",
       "label": "FeatureExtractor",
       "_callable": true,
@@ -41,19 +28,6 @@
       "norm_label": "featureextractor",
       "source_file": "ml_predictor/feature_extractor.py",
       "source_location": "L51"
-    },
-    {
-      "id": "ml_predictor_model_topologicalmacrognn",
-      "label": "TopologicalMacroGNN",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "topologicalmacrognn",
-      "source_file": "ml_predictor/model.py",
-      "source_location": "L5"
     },
     {
       "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions",
@@ -407,6 +381,32 @@
       "source_location": "L108"
     },
     {
+      "id": "ml_predictor_dataset_topologicalmacrodataset",
+      "label": "TopologicalMacroDataset",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "topologicalmacrodataset",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L9"
+    },
+    {
+      "id": "ml_predictor_model_topologicalmacrognn",
+      "label": "TopologicalMacroGNN",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "topologicalmacrognn",
+      "source_file": "ml_predictor/model.py",
+      "source_location": "L5"
+    },
+    {
       "id": "rtl_legalizer_lef_parser_test_testparseleffile",
       "label": "TestParseLefFile",
       "_callable": true,
@@ -542,66 +542,6 @@
       "norm_label": ".test_rounding()",
       "source_file": "rtl_legalizer/lef_parser_test.py",
       "source_location": "L131"
-    },
-    {
-      "id": "ml_predictor_dataset_topologicalmacrodataset_download",
-      "label": ".download()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".download()",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L22"
-    },
-    {
-      "id": "ml_predictor_dataset_topologicalmacrodataset_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L10"
-    },
-    {
-      "id": "ml_predictor_dataset_topologicalmacrodataset_process",
-      "label": ".process()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".process()",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L26"
-    },
-    {
-      "id": "ml_predictor_dataset_topologicalmacrodataset_processed_file_names",
-      "label": ".processed_file_names()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".processed_file_names()",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L19"
-    },
-    {
-      "id": "ml_predictor_dataset_topologicalmacrodataset_raw_file_names",
-      "label": ".raw_file_names()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".raw_file_names()",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L15"
     },
     {
       "id": "ml_predictor_evaluate_check_dependencies",
@@ -820,30 +760,6 @@
       "source_location": "L33"
     },
     {
-      "id": "ml_predictor_model_topologicalmacrognn_forward",
-      "label": ".forward()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".forward()",
-      "source_file": "ml_predictor/model.py",
-      "source_location": "L42"
-    },
-    {
-      "id": "ml_predictor_model_topologicalmacrognn_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "ml_predictor/model.py",
-      "source_location": "L6"
-    },
-    {
       "id": "ml_predictor_predict_break_cycles_dfs",
       "label": "break_cycles_dfs()",
       "_callable": true,
@@ -938,30 +854,6 @@
       "norm_label": "run_prediction()",
       "source_file": "ml_predictor/predict.py",
       "source_location": "L232"
-    },
-    {
-      "id": "ml_predictor_train_nn_check_dependencies",
-      "label": "check_dependencies()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "check_dependencies()",
-      "source_file": "ml_predictor/train_nn.py",
-      "source_location": "L5"
-    },
-    {
-      "id": "ml_predictor_train_nn_train",
-      "label": "train()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "train()",
-      "source_file": "ml_predictor/train_nn.py",
-      "source_location": "L26"
     },
     {
       "id": "rtl_legalizer_lef_parser_test_testextractmacrodimensions_test_case_insensitive",
@@ -2356,6 +2248,114 @@
       "source_location": "L109"
     },
     {
+      "id": "ml_predictor_dataset_topologicalmacrodataset_download",
+      "label": ".download()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".download()",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L22"
+    },
+    {
+      "id": "ml_predictor_dataset_topologicalmacrodataset_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L10"
+    },
+    {
+      "id": "ml_predictor_dataset_topologicalmacrodataset_process",
+      "label": ".process()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".process()",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L26"
+    },
+    {
+      "id": "ml_predictor_dataset_topologicalmacrodataset_processed_file_names",
+      "label": ".processed_file_names()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".processed_file_names()",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L19"
+    },
+    {
+      "id": "ml_predictor_dataset_topologicalmacrodataset_raw_file_names",
+      "label": ".raw_file_names()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".raw_file_names()",
+      "source_file": "ml_predictor/dataset.py",
+      "source_location": "L15"
+    },
+    {
+      "id": "ml_predictor_model_topologicalmacrognn_forward",
+      "label": ".forward()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".forward()",
+      "source_file": "ml_predictor/model.py",
+      "source_location": "L42"
+    },
+    {
+      "id": "ml_predictor_model_topologicalmacrognn_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "ml_predictor/model.py",
+      "source_location": "L6"
+    },
+    {
+      "id": "ml_predictor_train_nn_check_dependencies",
+      "label": "check_dependencies()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "check_dependencies()",
+      "source_file": "ml_predictor/train_nn.py",
+      "source_location": "L5"
+    },
+    {
+      "id": "ml_predictor_train_nn_train",
+      "label": "train()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "train()",
+      "source_file": "ml_predictor/train_nn.py",
+      "source_location": "L26"
+    },
+    {
       "id": "rtl_legalizer_lef_parser_property_test_test_dimension_dict_matches_source",
       "label": "test_dimension_dict_matches_source()",
       "_callable": true,
@@ -2880,28 +2880,6 @@
       "source_location": ""
     },
     {
-      "id": "inmemorydataset",
-      "label": "InMemoryDataset",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "inmemorydataset",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "ml_predictor_dataset",
-      "label": "dataset.py",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "dataset.py",
-      "source_file": "ml_predictor/dataset.py",
-      "source_location": "L1"
-    },
-    {
       "id": "ml_predictor_evaluate",
       "label": "evaluate.py",
       "_origin": "ast",
@@ -2935,17 +2913,6 @@
       "source_location": ""
     },
     {
-      "id": "ml_predictor_model",
-      "label": "model.py",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "model.py",
-      "source_file": "ml_predictor/model.py",
-      "source_location": "L1"
-    },
-    {
       "id": "ml_predictor_predict",
       "label": "predict.py",
       "_origin": "ast",
@@ -2954,17 +2921,6 @@
       "file_type": "code",
       "norm_label": "predict.py",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "ml_predictor_train_nn",
-      "label": "train_nn.py",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "code",
-      "norm_label": "train_nn.py",
-      "source_file": "ml_predictor/train_nn.py",
       "source_location": "L1"
     },
     {
@@ -3021,17 +2977,6 @@
       "norm_label": "safely extracts diearea to compute the bounding box diagonal.",
       "source_file": "ml_predictor/feature_extractor.py",
       "source_location": "L34"
-    },
-    {
-      "id": "ml_predictor_model_rationale_43",
-      "label": "x: [N, node_in_channels] edge_index: [2, E] edge_attr: [E, edge_in_channels]",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "FeatureExtractor",
-      "file_type": "rationale",
-      "norm_label": "x: [n, node_in_channels] edge_index: [2, e] edge_attr: [e, edge_in_channels]",
-      "source_file": "ml_predictor/model.py",
-      "source_location": "L43"
     },
     {
       "id": "ml_predictor_predict_rationale_1",
@@ -5671,124 +5616,59 @@
       "source_location": "L1"
     },
     {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771",
-      "label": "plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
+      "id": "inmemorydataset",
+      "label": "InMemoryDataset",
       "_origin": "ast",
       "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "inmemorydataset",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "ml_predictor_dataset",
+      "label": "dataset.py",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "dataset.py",
+      "source_file": "ml_predictor/dataset.py",
       "source_location": "L1"
     },
     {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_final_step",
-      "label": "Final step",
+      "id": "ml_predictor_model",
+      "label": "model.py",
       "_origin": "ast",
       "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "final step",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L67"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_goal",
-      "label": "Goal",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "goal",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L3"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_out_of_scope",
-      "label": "Out of scope",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "out of scope",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L80"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_a_infrastructure_and_bug_hunting",
-      "label": "Phase A \u2014 Infrastructure and bug hunting",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase a \u2014 infrastructure and bug hunting",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L18"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_b_regression_hardening",
-      "label": "Phase B \u2014 Regression hardening",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase b \u2014 regression hardening",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L53"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_c_metropolis_characterization_and_report",
-      "label": "Phase C \u2014 Metropolis characterization and report",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase c \u2014 metropolis characterization and report",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L61"
-    },
-    {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "label": "rtl_legalizer Verification Plan",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "rtl_legalizer verification plan",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "model.py",
+      "source_file": "ml_predictor/model.py",
       "source_location": "L1"
     },
     {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_success_criteria",
-      "label": "Success criteria",
+      "id": "ml_predictor_train_nn",
+      "label": "train_nn.py",
       "_origin": "ast",
       "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "success criteria",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L71"
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "code",
+      "norm_label": "train_nn.py",
+      "source_file": "ml_predictor/train_nn.py",
+      "source_location": "L1"
     },
     {
-      "id": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_verification_spec_properties_under_test",
-      "label": "Verification spec (properties under test)",
+      "id": "ml_predictor_model_rationale_43",
+      "label": "x: [N, node_in_channels] edge_index: [2, E] edge_attr: [E, edge_in_channels]",
       "_origin": "ast",
       "community": 35,
-      "community_name": "rtl_legalizer Verification Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "verification spec (properties under test)",
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L7"
+      "community_name": "TopologicalMacroDataset",
+      "file_type": "rationale",
+      "norm_label": "x: [n, node_in_channels] edge_index: [2, e] edge_attr: [e, edge_in_channels]",
+      "source_file": "ml_predictor/model.py",
+      "source_location": "L43"
     },
     {
       "id": "given",
@@ -12818,105 +12698,6 @@
       "confidence_score": 1.0,
       "source_file": "tests/test_unit_tbs.py",
       "source_location": "L59",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L1",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_a_infrastructure_and_bug_hunting",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L18",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_goal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_b_regression_hardening",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L53",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_phase_c_metropolis_characterization_and_report",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L61",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_final_step",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L67",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_verification_spec_properties_under_test",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_success_criteria",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L71",
-      "weight": 1.0
-    },
-    {
-      "source": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_rtl_legalizer_verification_plan",
-      "target": "zcode_plans_plan_sess_2909bd1d_e201_4fa3_8872_9b9af045f771_out_of_scope",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md",
-      "source_location": "L80",
       "weight": 1.0
     },
     {

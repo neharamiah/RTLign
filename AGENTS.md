@@ -33,22 +33,23 @@ OpenROAD DEF ──▶ ML Predictor ──▶ RTL Legalizer ──▶ OpenROAD I
 - Phase 3 complete: Dataset Generation Pipeline and Robust Testing
 - Phase 4 complete: ML Feature Extraction (Parquet datasets generated)
 - Phase 5 complete: ML Predictor & Evaluation Suite (GNN trained, DAG prediction, hex export, OpenROAD evaluation & plotting implemented)
-- Phase 6 planned: Verilog Simulated Annealing engine (RTL legalizer upgrade) and benchmarking
+- Phase 6 complete: Verilog Simulated Annealing engine (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`, `sa_legalizer_top.v`), Verilator bridge, bit-exact golden model (`golden_model.py`), layout auditor (`audit.py`), directed verification testbenches, and test suite (135 passing tests)
+- Phase 7 planned: Full benchmark scaling across ISPD 2015 designs and signoff
 
 ---
 
 ## 2. Technology Stack
 
 **Languages**
-- **Python 3.x** - Pipeline orchestration, parsing, ML predictor, evaluation
-- **Verilog HDL** - RTL legalizer hardware (Simulated Annealing engine / FSM)
+- **Python 3.x** - Pipeline orchestration, parsing, ML predictor, evaluation, golden model, layout audit
+- **Verilog HDL / C++** - RTL legalizer hardware (SA engine / greedy FSM) and Verilator C++ simulation bridge
 - **TCL** - OpenROAD automation scripts (placement, evaluation, metrics)
 
 **Tools & Frameworks**
-- **RTL Simulation:** Icarus Verilog (`iverilog`, `vvp`) - Verilog compilation and simulation. Used for legalizer FSM simulation and VCD waveform output for debugging.
+- **RTL Simulation:** Icarus Verilog (`iverilog`, `vvp`) and Verilator (C++ compilation for ~400× faster simulation). Used for legalizer FSM and SA simulation with VCD waveform output.
 - **EDA Tools:** OpenROAD - Physical design suite (GUI, routing, STA). DEF/LEF file import/export, placement visualization, signoff analysis.
 - **ML/AI:** PyTorch, PyTorch Geometric (Topological GNN), scikit-learn, pandas, matplotlib.
-- **Testing:** pytest (Unit and integration tests), Hypothesis (Property-based testing).
+- **Testing & Verification:** pytest (135 unit, integration, and verification tests), Hypothesis (Property-based testing), Python golden model, and standalone layout auditor.
 
 **Build & Run Commands**
 *Full Baseline Pipeline:*
@@ -69,12 +70,26 @@ python ml_predictor/predict.py --def_file openroad_scripts/mockup_export.def --l
 ```bash
 python ml_predictor/evaluate.py --def_file openroad_scripts/mockup_export.def --tech_lef data/tech.lef --cells_lef data/cells.lef --output_dir evaluation_output
 ```
+*Verification & Auditing:*
+```bash
+# Run the complete test suite (135 tests):
+pytest tests/ rtl_legalizer/ -v
+
+# Audit layout hex outputs for overlaps, die containment, and size preservation:
+python rtl_legalizer/audit.py <input.hex> <output.hex>
+
+# Run randomized bug-hunt sweep (350 layouts):
+python scripts/sweep_legalizer.py
+
+# Run Metropolis acceptance characterization:
+python scripts/characterize_metropolis.py
+```
 *Individual Stages:*
 - **LEF Parsing:** `python rtl_legalizer/lef_parser.py data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/tech.lef data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/cells.lef --verbose`
 - **DEF → HEX:** `python ml_predictor/def_parser.py`
-- **RTL Legalizer:** `cd rtl_legalizer && iverilog -o sim.out collision_check.v legalizer_fsm.v legalizer_tb.v && vvp sim.out`
+- **RTL Legalizer (Icarus):** `cd rtl_legalizer && iverilog -o sim.out collision_check.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v && vvp sim.out`
+- **RTL Legalizer (Verilator):** `make -C rtl_legalizer/verilator && ./rtl_legalizer/verilator/legalizer_sim rtl_legalizer/output_layout.hex`
 - **HEX → DEF:** `python ml_predictor/hex_to_def.py`
-- **Testing:** `pytest tests/ rtl_legalizer/`
 
 **Data Formats**
 - **DEF:** Component placements, netlist, die area
@@ -91,17 +106,20 @@ python ml_predictor/evaluate.py --def_file openroad_scripts/mockup_export.def --
 RTLign/
 ├── orchestration/          # Pipeline orchestration scripts
 ├── ml_predictor/           # ML models, GNN training, prediction, and evaluation
-├── rtl_legalizer/          # Verilog RTL legalizer hardware & tests
+├── rtl_legalizer/          # Verilog RTL SA engine, legalizer hardware, golden model & audits
 ├── openroad_scripts/       # OpenROAD DEF files and TCL scripts
-├── tests/                  # Integration and CLI tests
+├── scripts/                # Analysis, sweep, and characterization scripts
+├── tests/                  # Integration, CLI, unit, and verification tests
 └── data/                   # Benchmarks and training data (gitignored)
 ```
 
 **Module Organization**
 - **orchestration/**: `master_run.py` (pipeline orchestrator), `data_generator.py` (multi-threaded OpenROAD placement sweeps), `generate_rtl_dataset.py` (Yosys synthesis), `rtl_to_def.py` (floorplan generation).
 - **ml_predictor/**: `dataset.py` (PyG dataset loader), `model.py` (Topological GNN), `train_nn.py` (GNN training), `predict.py` (inference & DFS DAG cycle-breaker), `evaluate.py` (OpenROAD HPWL benchmark & layout plotting), `feature_extractor.py` (Parquet extractor), `def_parser.py`, `hex_to_def.py`.
-- **rtl_legalizer/**: `collision_check.v`, `legalizer_fsm.v`, `legalizer_tb.v`, `lef_parser.py`, `lef_parser_test.py`, `lef_parser_property_test.py`. Generated: `dummy_layout.hex`, `output_layout.hex`, `sim.out`, `legalizer.vcd`. Key params: `NUM_LINES`=672, `DIE_WIDTH`=200260, `DIE_HEIGHT`=201600.
+- **rtl_legalizer/**: `sa_legalizer_top.v` (top-level SA + greedy legalizer), `sa_engine.v` (SA FSM), `sa_cost.v` (3-term hardware cost), `lfsr32.v` (32-bit Galois LFSR), `collision_check.v`, `legalizer_fsm.v` (greedy cleanup), `legalizer_tb.v`, `audit.py` (P1/P2/P3 auditor), `golden_model.py` (bit-exact Python model), `layout_gen.py` (synthetic layout generator), `VERIFICATION.md` (verification report), `tb_*.v` (directed unit testbenches), `verilator/` (C++ harness and bridge).
 - **openroad_scripts/**: `run_placement.tcl` (batch placement), `evaluate_layout.tcl` (HPWL & legality verification), `generate_ibex_floorplan.tcl`, `mockup_export.def` (GCD design), `legalized_export.def` (Final output).
+- **scripts/**: `sweep_legalizer.py` (golden model sweep), `characterize_metropolis.py` (Metropolis LUT characterization).
+- **tests/**: `test_audit.py`, `test_golden_model.py`, `test_phase6_verification.py`, `test_unit_tbs.py`, `test_phase6_sa.py`, `test_phase5_integration.py`, `test_ispd2015_integration.py`, `test_lef_parser_cli.py`, `data/golden/` (regression fixtures).
 - **data/**: Training datasets and benchmarks.
 
 **Data Flow**

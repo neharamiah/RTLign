@@ -209,12 +209,6 @@
     "ast_hash": "84872c680d1382796665e06977490a07",
     "semantic_hash": "84872c680d1382796665e06977490a07"
   },
-  ".codex/hooks.json": {
-    "mtime": 1790026008.6573725,
-    "seen": 1790179014.3474894,
-    "ast_hash": "eba0f183af17a81a0c0f68d7e68a70ab",
-    "semantic_hash": ""
-  },
   "conftest.py": {
     "mtime": 1790178500.006066,
     "seen": 1790179014.3474915,
@@ -357,12 +351,6 @@
     "mtime": 1790109292.2215283,
     "seen": 1790179014.3475277,
     "ast_hash": "1a17066140c280fe5bea40607f4eab21",
-    "semantic_hash": ""
-  },
-  ".zcode/plans/plan-sess_2909bd1d-e201-4fa3-8872-9b9af045f771.md": {
-    "mtime": 1790107741.5909314,
-    "seen": 1790179014.3475285,
-    "ast_hash": "0a4bfc8e624b1f40e2a3a61844be05b7",
     "semantic_hash": ""
   },
   "rtl_legalizer/VERIFICATION.md": {

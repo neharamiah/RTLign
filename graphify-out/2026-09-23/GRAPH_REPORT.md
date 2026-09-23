@@ -1,12 +1,12 @@
 # Graph Report - RTLign  (2026-09-23)
 
 ## Corpus Check
-- 59 files · ~46,420 words
+- 57 files · ~45,334 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 15 file(s) not represented in the graph (top: (none) 5, .parquet 5, .tcl 4)
+- Unclassified: 16 file(s) not represented in the graph (top: .parquet 5, (none) 4, .tcl 4)
 
 ## Summary
-- 628 nodes · 768 edges · 50 communities (39 shown, 8 thin omitted)
+- 618 nodes · 759 edges · 50 communities (39 shown, 8 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
@@ -49,7 +49,7 @@
 - parse_lef_file
 - 3. Findings
 - test_golden_model.py
-- rtl_legalizer Verification Plan
+- TopologicalMacroDataset
 - test_dimension_dict_matches_source
 - TestParseLefFile
 - TestParseLefFiles
@@ -98,8 +98,8 @@ Cohesion: 0.19
 Nodes (9): convert_to_db_units(), Convert a dimension from microns to database units. Args: value_microns:…, Unit tests for convert_to_db_units function., Test basic unit conversion with 1000 multiplier., Test that None db_units defaults to 1000., Test conversion with fractional micron values., Test that rounding is applied correctly., Test conversion with different database unit multipliers. (+1 more)
 
 ### Community 1 - "FeatureExtractor"
-Cohesion: 0.06
-Nodes (33): DiGraph, InMemoryDataset, TopologicalMacroDataset, main(), plot_layouts(), evaluate.py — RTLign Pipeline Evaluation Orchestrator Runs the full ML -> RTL…, run_cmd(), run_openroad_eval() (+25 more)
+Cohesion: 0.08
+Nodes (28): DiGraph, main(), plot_layouts(), evaluate.py — RTLign Pipeline Evaluation Orchestrator Runs the full ML -> RTL…, run_cmd(), run_openroad_eval(), FeatureExtractor, get_die_diagonal() (+20 more)
 
 ### Community 2 - "test_ispd2015_integration.py"
 Cohesion: 0.07
@@ -217,9 +217,9 @@ Nodes (14): 1. Verification spec, 2. Infrastructure added, 3. Findings, 4. Prope
 Cohesion: 0.22
 Nodes (6): compile_and_run(), parametrize, Staged validation of the Python golden model against the RTL. Stage 1:…, TestStage1Cost, TestStage2Greedy, TestStage3SA
 
-### Community 35 - "rtl_legalizer Verification Plan"
-Cohesion: 0.20
-Nodes (9): Final step, Goal, Out of scope, Phase A — Infrastructure and bug hunting, Phase B — Regression hardening, Phase C — Metropolis characterization and report, rtl_legalizer Verification Plan, Success criteria (+1 more)
+### Community 35 - "TopologicalMacroDataset"
+Cohesion: 0.17
+Nodes (5): InMemoryDataset, TopologicalMacroDataset, x: [N, node_in_channels] edge_index: [2, E] edge_attr: [E, edge_in_channels], TopologicalMacroGNN, train()
 
 ### Community 36 - "test_dimension_dict_matches_source"
 Cohesion: 0.32
@@ -250,21 +250,21 @@ Cohesion: 0.50
 Nodes (3): sa_legalizer_top, legalizer_fsm, sa_engine
 
 ## Knowledge Gaps
-- **150 isolated node(s):** `collision_check`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit`, `run_overlap_audit` (+145 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 362 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **142 isolated node(s):** `collision_check`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit`, `run_overlap_audit` (+137 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 353 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `parse_lef_files()` connect `parse_lef_file` to `FeatureExtractor`, `parse_def_to_hex`, `TestParseLefFiles`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Why does `TestLEFDEFIntegration` connect `parse_def_to_hex` to `test_ispd2015_integration.py`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `collision_check`, `collision_check`, `sa_legalizer_top` to the rest of the system?**
-  _150 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _142 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `FeatureExtractor` be split into smaller, more focused modules?**
-  _Cohesion score 0.05706214689265537 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08139534883720931 - nodes in this community are weakly interconnected._
 - **Should `test_ispd2015_integration.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._
 - **Should `golden_model.py` be split into smaller, more focused modules?**

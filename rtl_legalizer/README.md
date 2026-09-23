@@ -46,9 +46,14 @@ This directory contains the custom Verilog RTL hardware and verification suite f
 | [`lfsr32.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/lfsr32.v) | 32-bit Galois Linear Feedback Shift Register pseudo-random generator. |
 | [`legalizer_fsm.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/legalizer_fsm.v) | Greedy cleanup FSM with alternating-axis cascade resolution. |
 | [`collision_check.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/collision_check.v) | Combinational 2D Axis-Aligned Bounding Box (AABB) overlap checker. |
-| [`legalizer_tb.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/legalizer_tb.v) | Testbench with hardware metrics reporting and post-run overlap audit. |
+| [`legalizer_tb.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/legalizer_tb.v) | Testbench with hardware metrics reporting and post-run audits (P1, P2, P3). |
+| [`audit.py`](file:///home/ratik/Projects/RTLign/rtl_legalizer/audit.py) | Layout auditor: verifies zero overlaps (P1), die containment (P2), and size preservation (P3). |
+| [`golden_model.py`](file:///home/ratik/Projects/RTLign/rtl_legalizer/golden_model.py) | Bit-exact, cycle-accurate Python golden model of the complete RTL pipeline. |
+| [`layout_gen.py`](file:///home/ratik/Projects/RTLign/rtl_legalizer/layout_gen.py) | Seeded layout generator supporting 7 synthetic stress modes. |
+| [`VERIFICATION.md`](file:///home/ratik/Projects/RTLign/rtl_legalizer/VERIFICATION.md) | Formal verification report, audit proofs, and documented boundary limits. |
+| [`tb_*.v`](file:///home/ratik/Projects/RTLign/rtl_legalizer/) | Directed Verilog testbenches: `tb_collision_check.v`, `tb_sa_cost.v`, `tb_legalizer_fsm.v`, `tb_sa_trace.v`. |
 | [`lef_parser.py`](file:///home/ratik/Projects/RTLign/rtl_legalizer/lef_parser.py) | LEF parser extracting macro dimensions into integer Database Units (DBU). |
-| [`verilator/`](file:///home/ratik/Projects/RTLign/rtl_legalizer/verilator/) | Verilator acceleration directory containing C++ harness and Python bridge. |
+| [`verilator/`](file:///home/ratik/Projects/RTLign/rtl_legalizer/verilator/) | Verilator acceleration directory containing C++ harness, Makefile, and Python bridge. |
 
 ---
 
@@ -144,10 +149,36 @@ gtkwave legalizer.vcd
 
 ---
 
-## Unit and Property Testing
+## Unit, Property, and Verification Testing
 
-Run pytest across parser unit tests, property tests, and Verilog simulations:
+Run pytest across the unit tests, property tests, golden model equivalence, and formal verification suite:
 
 ```bash
-pytest rtl_legalizer/ -v
+# Run all legalizer and verification tests (135 tests):
+pytest tests/ rtl_legalizer/ -v
+
+# Run directed Verilog unit testbenches:
+pytest tests/test_unit_tbs.py -v
+
+# Run golden model equivalence tests:
+pytest tests/test_golden_model.py -v
+
+# Run cross-simulator determinism and golden regression:
+pytest tests/test_phase6_verification.py -v
 ```
+
+### Layout Auditing & Characterization
+
+Audit any layout HEX output against physical design rules:
+```bash
+# Verify P1 (overlaps), P2 (die bounds), and P3 (size preservation):
+python audit.py <input.hex> <output.hex>
+
+# Run randomized layout sweep (350 cases across 7 modes):
+python ../scripts/sweep_legalizer.py
+
+# Characterize Metropolis acceptance probabilities:
+python ../scripts/characterize_metropolis.py
+```
+
+For full verification metrics, formal specifications, and documented edge-case behavior, see [`VERIFICATION.md`](file:///home/ratik/Projects/RTLign/rtl_legalizer/VERIFICATION.md).

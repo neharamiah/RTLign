@@ -91,6 +91,22 @@ python ml_predictor/evaluate.py \
   --output_dir evaluation_output
 ```
 
+#### Verification & Test Suite
+
+```bash
+# Run the complete test suite (135 tests):
+pytest tests/ rtl_legalizer/ -v
+
+# Run the layout auditor (P1: overlaps, P2: die bounds, P3: size preservation):
+python rtl_legalizer/audit.py <input.hex> <output.hex>
+
+# Run the 350-case randomized sweep:
+python scripts/sweep_legalizer.py
+
+# Run the Metropolis characterization script:
+python scripts/characterize_metropolis.py
+```
+
 ---
 
 ## Project Structure
@@ -112,23 +128,42 @@ RTLign/
 │   ├── def_parser.py          # DEF + LEF → HEX coordinate extractor
 │   └── hex_to_def.py          # HEX → DEF coordinate injector
 ├── rtl_legalizer/
+│   ├── sa_legalizer_top.v     # Top-level SA + greedy legalizer
+│   ├── sa_engine.v            # Simulated Annealing optimizer FSM
+│   ├── sa_cost.v              # 3-term hardware cost module (HPWL, area, boundary)
+│   ├── lfsr32.v               # 32-bit Galois LFSR pseudo-random generator
 │   ├── collision_check.v      # Combinational AABB overlap detector
-│   ├── legalizer_fsm.v        # FSM-based greedy sweep legalizer
-│   ├── legalizer_tb.v         # Testbench with overlap audit
+│   ├── legalizer_fsm.v        # Greedy cleanup FSM with alternating-axis push
+│   ├── legalizer_tb.v         # Testbench with full audit checks
+│   ├── audit.py               # Layout auditor for zero overlaps, bounds, and sizes
+│   ├── golden_model.py        # Bit-exact cycle-accurate Python golden model
+│   ├── layout_gen.py          # Synthetic layout generator for stress testing
 │   ├── lef_parser.py          # LEF → Dimension Dictionary extractor
 │   ├── lef_parser_test.py     # Unit tests for LEF parser
 │   ├── lef_parser_property_test.py # Property-based tests for LEF parser
-│   ├── dummy_layout.hex       # Input macro layout (generated)
-│   └── output_layout.hex      # Legalized layout coordinates (generated)
+│   ├── tb_*.v                 # Directed Verilog unit testbenches
+│   ├── VERIFICATION.md        # Comprehensive verification and audit report
+│   └── verilator/             # Fast C++ simulation harness and bridge
 ├── openroad_scripts/
 │   ├── run_placement.tcl      # OpenROAD placement flow script for dataset generation
 │   ├── evaluate_layout.tcl    # OpenROAD layout legality & HPWL verification script
 │   ├── generate_ibex_floorplan.tcl # Floorplan generator for Ibex RISC-V core
 │   ├── mockup_export.def      # Baseline GCD design file
 │   └── legalized_export.def   # Output file with legalized coordinates
+├── scripts/
+│   ├── sweep_legalizer.py     # Bug-hunt sweep over 350 layout configurations
+│   └── characterize_metropolis.py # RTL Metropolis acceptance characterization
 ├── tests/
-│   ├── test_ispd2015_integration.py # Integration testing on real benchmarks
-│   └── test_lef_parser_cli.py      # CLI verification for LEF parser
+│   ├── test_audit.py          # Tests for layout auditor and generator
+│   ├── test_golden_model.py   # Staged golden model vs RTL equivalence tests
+│   ├── test_phase6_verification.py # Cross-simulator determinism and regression tests
+│   ├── test_unit_tbs.py       # Directed Verilog testbench runner tests
+│   ├── test_phase6_sa.py      # SA engine and Verilator bridge integration tests
+│   ├── test_phase5_integration.py # GNN prediction and DEF injection tests
+│   ├── test_ispd2015_integration.py # Real benchmark LEF/DEF integration tests
+│   ├── test_lef_parser_cli.py # CLI tests for LEF parser
+│   └── data/golden/           # Versioned golden regression fixtures
+├── conftest.py                # Pytest path configuration
 ├── run_predict.py             # One-click prediction orchestrator with auto-detection
 ├── topological_gnn_model.pth  # Trained Topological GNN weights
 ├── ROADMAP.md                 # 6-Month Comprehensive Roadmap
@@ -152,11 +187,12 @@ Parses generated DEF layouts to extract structural node features and graph edge 
 ### 4. Topological GNN Training & Inference (`train_nn.py`, `predict.py`)
 Trains a Graph Neural Network (`model.py`) to infer pairwise relative topological relationships (L-flows $\Delta x, \Delta y$). The inference engine includes a Depth-First Search (DFS) cycle-breaking algorithm to guarantee a strict Directed Acyclic Graph (DAG) for hardware consumption.
 
-### 5. Two-Pass Hardware Legalizer & Verilator Accelerator
+### 5. Two-Pass Hardware Legalizer, Verilator Bridge & Verification
 A heterogeneous two-pass placement engine implemented in synthesizable Verilog:
 - **Pass 1: Simulated Annealing Optimizer (`sa_engine.v`):** Explores the placement solution space using stochastic hill-climbing, 32-bit Galois LFSR pseudo-random perturbations (`lfsr32.v`), and Metropolis acceptance ($P = e^{-\Delta C / T}$). Minimizes a 3-term cost function (`sa_cost.v`): wirelength (HPWL), bounding box area, and boundary penalties.
 - **Pass 2: Deterministic Greedy Cleanup (`legalizer_fsm.v`):** Resolves residual overlaps via axis-of-minimum-overlap push with multi-pass cascade resolution, guaranteeing 100% legal, zero-overlap macro layouts.
 - **Verilator Simulation Bridge (`verilator/`):** A high-speed C++ simulation harness (`sa_harness.cpp`, `verilator_bridge.py`) delivering ~400x speedup over interpreted simulation (executing 9.7M clock cycles in 0.35s).
+- **Formal Verification & Auditing (`audit.py`, `golden_model.py`, `VERIFICATION.md`):** Bit-exact Python golden model reproducing RTL arithmetic, automated 3-property layout auditor (P1: overlaps, P2: die containment, P3: size preservation), and a 135-test verification suite with cross-simulator equivalence (Icarus vs. Verilator).
 
 ### 6. HEX → DEF Injector (`hex_to_def.py`)
 Reads the legalized `.hex` output and patches coordinates back into the original `.def` file via targeted macro name matching, preserving standard cells and physical design data (pins, nets, routing, special nets).

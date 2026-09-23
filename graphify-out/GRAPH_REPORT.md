@@ -1,17 +1,17 @@
 # Graph Report - RTLign  (2026-09-23)
 
 ## Corpus Check
-- 57 files · ~45,334 words
+- 57 files · ~46,735 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 16 file(s) not represented in the graph (top: .parquet 5, (none) 4, .tcl 4)
 
 ## Summary
-- 618 nodes · 759 edges · 50 communities (39 shown, 8 thin omitted)
+- 626 nodes · 767 edges · 50 communities (39 shown, 8 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7c2dedf3`
+- Built from commit: `7311b6d0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -65,7 +65,7 @@
 - sa_cost.v
 
 ## God Nodes (most connected - your core abstractions)
-1. `4. Component Deep-Dives` - 16 edges
+1. `4. Component Deep-Dives` - 21 edges
 2. `FeatureExtractor` - 15 edges
 3. `parse_lef_file()` - 14 edges
 4. `parse_lef_files()` - 13 edges
@@ -119,15 +119,15 @@ Nodes (11): parse_def_to_hex(), Dimension_Dict, Parse a DEF file and generate a 
 
 ### Community 6 - "RTLign — 6-Month Comprehensive Roadmap"
 Cohesion: 0.11
-Nodes (18): Month 1: Foundations & Physical Design Literacy, Month 2: Supervised ML Predictor & Evaluation, Month 3: Simulated Annealing in RTL, Month 4: Integration, Scaling & Benchmarking, Philosophy, RTLign — 6-Month Comprehensive Roadmap, Week 11: Build — Testbench & Validation, Week 12: Build — Verilator Bridge (+10 more)
+Nodes (18): Month 1: Foundations & Physical Design Literacy, Month 2: Supervised ML Predictor & Evaluation, Month 3: Simulated Annealing in RTL & Verification, Month 4: Integration, Scaling & Benchmarking, Philosophy, RTLign — 6-Month Comprehensive Roadmap, Week 11: Build — Testbench, Auditing & Golden Model, Week 12: Build — Verilator Bridge & Regression Suite (+10 more)
 
 ### Community 7 - "test_lef_parser_cli.py"
 Cohesion: 0.14
 Nodes (13): Unit tests for LEF Parser CLI interface. Tests the CLI implementation for…, Test that multiple LEF files can be parsed, Test that missing LEF file produces error, Test Requirement 10.1: --help shows usage information, Test Requirement 10.2: JSON output to stdout, Test Requirement 10.3: --output writes to specified file, Test Requirement 10.4: --verbose logs each MACRO name and dimensions, test_error_on_missing_file() (+5 more)
 
 ### Community 8 - "4. Component Deep-Dives"
-Cohesion: 0.05
-Nodes (39): 1. Project Overview, 2. Repository Structure, 3. Development Timeline, 4.10 Feature Extractor (`ml_predictor/feature_extractor.py`), 4.11 GNN Dataset Loader (`ml_predictor/dataset.py`), 4.12 Topological GNN Model (`ml_predictor/model.py`), 4.13 GNN Training Pipeline (`ml_predictor/train_nn.py`), 4.14 Inference Engine & DAG Cycle-Breaker (`ml_predictor/predict.py` & `run_predict.py`) (+31 more)
+Cohesion: 0.04
+Nodes (45): 1. Project Overview, 2. Repository Structure, 3. Development Timeline, 4.10 Feature Extractor (`ml_predictor/feature_extractor.py`), 4.11 GNN Dataset Loader (`ml_predictor/dataset.py`), 4.12 Topological GNN Model (`ml_predictor/model.py`), 4.13 GNN Training Pipeline (`ml_predictor/train_nn.py`), 4.14 Inference Engine & DAG Cycle-Breaker (`ml_predictor/predict.py` & `run_predict.py`) (+37 more)
 
 ### Community 9 - "validate_dimension"
 Cohesion: 0.19
@@ -138,8 +138,8 @@ Cohesion: 0.17
 Nodes (7): Unit tests for extract_macro_dimensions function., Test extraction of a single MACRO block., Test extraction of multiple MACRO blocks., Test that MACROs without SIZE statement are skipped., Test that SIZE parsing is case-insensitive., Test that MACROs with invalid dimensions are skipped., TestExtractMacroDimensions
 
 ### Community 11 - "How It Works"
-Cohesion: 0.09
-Nodes (22): 1. LEF Parser (`lef_parser.py`), 2. Dataset Generator (`data_generator.py`), 3. Feature Extractor (`feature_extractor.py`), 4. Topological GNN Training & Inference (`train_nn.py`, `predict.py`), 5. Two-Pass Hardware Legalizer & Verilator Accelerator, 6. HEX → DEF Injector (`hex_to_def.py`), 7. Closed-Loop Evaluation (`evaluate.py` & `evaluate_layout.tcl`), How It Works (+14 more)
+Cohesion: 0.08
+Nodes (23): 1. LEF Parser (`lef_parser.py`), 2. Dataset Generator (`data_generator.py`), 3. Feature Extractor (`feature_extractor.py`), 4. Topological GNN Training & Inference (`train_nn.py`, `predict.py`), 5. Two-Pass Hardware Legalizer, Verilator Bridge & Verification, 6. HEX → DEF Injector (`hex_to_def.py`), 7. Closed-Loop Evaluation (`evaluate.py` & `evaluate_layout.tcl`), How It Works (+15 more)
 
 ### Community 12 - "test_phase5_integration.py"
 Cohesion: 0.13
@@ -179,7 +179,7 @@ Nodes (24): audit_layout(), AuditResult, check_layout(), main(), Layout auditor 
 
 ### Community 25 - "RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement"
 Cohesion: 0.25
-Nodes (7): Datasets, Pipeline Architecture, Project Background & Problem Statement, Project Timeline, RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement, Team P124, Tools & Technologies
+Nodes (7): Datasets, Pipeline Architecture, Project Background & Problem Statement, Project Timeline & Current Status, RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement, Team P124, Tools & Technologies
 
 ### Community 26 - "ML Predictor"
 Cohesion: 0.25
@@ -190,8 +190,8 @@ Cohesion: 0.33
 Nodes (5): Direct CLI Usage, Evaluating a Placed Layout:, Files, OpenROAD Scripts, Running Placement:
 
 ### Community 28 - "RTL Legalizer & Simulated Annealing Engine"
-Cohesion: 0.15
-Nodes (12): 1. Accelerated Verilator Execution (Recommended), 2. Interpreted Icarus Verilog Simulation, Architecture Overview, Build the executable:, Execution Modes, File Manifest, Hardware Memory Contract, Hardware Parameters (+4 more)
+Cohesion: 0.14
+Nodes (13): 1. Accelerated Verilator Execution (Recommended), 2. Interpreted Icarus Verilog Simulation, Architecture Overview, Build the executable:, Execution Modes, File Manifest, Hardware Memory Contract, Hardware Parameters (+5 more)
 
 ### Community 29 - "TestCheckLayout"
 Cohesion: 0.07
@@ -250,19 +250,19 @@ Cohesion: 0.50
 Nodes (3): sa_legalizer_top, legalizer_fsm, sa_engine
 
 ## Knowledge Gaps
-- **142 isolated node(s):** `collision_check`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit`, `run_overlap_audit` (+137 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 353 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **149 isolated node(s):** `collision_check`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit`, `run_overlap_audit` (+144 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 360 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `parse_lef_files()` connect `parse_lef_file` to `FeatureExtractor`, `parse_def_to_hex`, `TestParseLefFiles`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Why does `TestLEFDEFIntegration` connect `parse_def_to_hex` to `test_ispd2015_integration.py`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **What connects `collision_check`, `collision_check`, `sa_legalizer_top` to the rest of the system?**
-  _142 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _149 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `FeatureExtractor` be split into smaller, more focused modules?**
   _Cohesion score 0.08139534883720931 - nodes in this community are weakly interconnected._
 - **Should `test_ispd2015_integration.py` be split into smaller, more focused modules?**
