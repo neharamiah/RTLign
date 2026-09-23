@@ -4,6 +4,12 @@
 
 VERILATOR ?= /home/ratik/Projects/RTLign/oss-cad-suite/bin/verilator
 
+# Design parameters. Overrides flow to Verilog via -G (top-module parameters)
+# and to the C++ harness via -CFLAGS. Defaults match the 168-macro mockup.
+NUM_LINES  ?= 672
+DIE_WIDTH  ?= 200260
+DIE_HEIGHT ?= 201600
+
 VERILOG_DIR = ..
 VERILOG_SRCS = $(VERILOG_DIR)/collision_check.v \
                $(VERILOG_DIR)/lfsr32.v \
@@ -25,6 +31,10 @@ VERILATOR_FLAGS = -Wall -Wno-fatal \
                   --exe \
                   --build \
                   --top-module sa_legalizer_top \
+                  -GNUM_LINES=$(NUM_LINES) \
+                  -GDIE_WIDTH=$(DIE_WIDTH) \
+                  -GDIE_HEIGHT=$(DIE_HEIGHT) \
+                  -CFLAGS "-DNUM_LINES=$(NUM_LINES)" \
                   -I$(VERILOG_DIR) \
                   -o $(TARGET)
 

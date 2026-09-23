@@ -23,7 +23,8 @@ This directory contains the custom Verilog RTL hardware and verification suite f
 │                        - AABB collision detection (collision_check.v) │
 │                                   │                                    │
 │                                   ▼                                    │
-│                        output_layout.hex (Zero overlaps guaranteed)   │
+│                        output_layout.hex (See VERIFICATION.md for      │
+│                        legality guarantees and limits)                 │
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```

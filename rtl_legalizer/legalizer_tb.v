@@ -81,6 +81,12 @@ module legalizer_tb;
     end
 
     // -----------------------------------------------------------------------
+    // Input reference copy — used by the size-preservation audit (P3)
+    // -----------------------------------------------------------------------
+    reg [31:0] input_mem [0:NUM_LINES-1];
+    initial $readmemh("dummy_layout.hex", input_mem);
+
+    // -----------------------------------------------------------------------
     // Main test sequence
     // -----------------------------------------------------------------------
     integer cycle_count;
@@ -134,8 +140,15 @@ module legalizer_tb;
         $writememh("output_layout.hex", dut.layout_mem);
         $display("  Output written to: output_layout.hex");
 
-        // --- Post-legalization overlap audit ---
+        // --- Post-legalization audits: overlaps, die bounds, size integrity ---
         run_overlap_audit;
+        run_boundary_audit;
+        run_size_audit;
+
+        if ((overlap_count != 0) || (boundary_count != 0) || (size_count != 0))
+            $fatal(1, "LEGALIZATION AUDIT FAILED: %0d overlaps, %0d boundary violations, %0d size mismatches",
+                   overlap_count, boundary_count, size_count);
+        $display("  ALL AUDITS PASSED");
 
         $display("");
         $display("========================================");
@@ -184,6 +197,77 @@ module legalizer_tb;
             $display("  AUDIT PASS: Zero overlaps detected!");
         else
             $display("  AUDIT FAIL: %0d overlaps remain (showing first 10 above).", overlap_count);
+    end
+    endtask
+
+    // -----------------------------------------------------------------------
+    // Boundary Audit — every macro must satisfy 0 <= x, x+w <= DIE_WIDTH
+    // and 0 <= y, y+h <= DIE_HEIGHT (P2). Coordinates are unsigned 32-bit,
+    // so a wrapped "negative" coordinate appears as a huge value and is
+    // caught by the x > DIE_WIDTH test. Sums use 64 bits to avoid wrap.
+    // -----------------------------------------------------------------------
+    integer boundary_count;
+    reg [63:0] sum_x, sum_y;
+
+    task run_boundary_audit;
+    begin
+        boundary_count = 0;
+        for (i = 0; i < NUM_MACROS; i = i + 1) begin
+            ax = dut.layout_mem[i*4];
+            ay = dut.layout_mem[i*4 + 1];
+            aw = dut.layout_mem[i*4 + 2];
+            ah = dut.layout_mem[i*4 + 3];
+            sum_x = ax + aw;
+            sum_y = ay + ah;
+            if ((ax > DIE_WIDTH) || (sum_x > DIE_WIDTH)) begin
+                boundary_count = boundary_count + 1;
+                if (boundary_count <= 10)
+                    $display("  BOUNDARY: macro[%0d] x=%0d x+w=%0d exceeds die width %0d",
+                             i, ax, sum_x, DIE_WIDTH);
+            end
+            if ((ay > DIE_HEIGHT) || (sum_y > DIE_HEIGHT)) begin
+                boundary_count = boundary_count + 1;
+                if (boundary_count <= 10)
+                    $display("  BOUNDARY: macro[%0d] y=%0d y+h=%0d exceeds die height %0d",
+                             i, ay, sum_y, DIE_HEIGHT);
+            end
+        end
+
+        if (boundary_count == 0)
+            $display("  AUDIT PASS: All macros inside the die.");
+        else
+            $display("  AUDIT FAIL: %0d boundary violations (showing first 10 above).", boundary_count);
+    end
+    endtask
+
+    // -----------------------------------------------------------------------
+    // Size Audit — output W/H must equal input W/H for every macro (P3).
+    // The legalizer moves macros; it must never resize them.
+    // -----------------------------------------------------------------------
+    integer size_count;
+
+    task run_size_audit;
+    begin
+        size_count = 0;
+        for (i = 0; i < NUM_MACROS; i = i + 1) begin
+            if (dut.layout_mem[i*4 + 2] !== input_mem[i*4 + 2]) begin
+                size_count = size_count + 1;
+                if (size_count <= 10)
+                    $display("  SIZE: macro[%0d] width in=%0d out=%0d",
+                             i, input_mem[i*4 + 2], dut.layout_mem[i*4 + 2]);
+            end
+            if (dut.layout_mem[i*4 + 3] !== input_mem[i*4 + 3]) begin
+                size_count = size_count + 1;
+                if (size_count <= 10)
+                    $display("  SIZE: macro[%0d] height in=%0d out=%0d",
+                             i, input_mem[i*4 + 3], dut.layout_mem[i*4 + 3]);
+            end
+        end
+
+        if (size_count == 0)
+            $display("  AUDIT PASS: All macro sizes preserved.");
+        else
+            $display("  AUDIT FAIL: %0d size mismatches (showing first 10 above).", size_count);
     end
     endtask
 

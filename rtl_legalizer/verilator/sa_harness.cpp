@@ -14,6 +14,12 @@
 #include "Vsa_legalizer_top_sa_legalizer_top.h"
 #include "verilated.h"
 
+// Memory depth, injected by the Makefile via -CFLAGS (must match the -G
+// overrides passed to Verilator). Defaults preserve the 168-macro build.
+#ifndef NUM_LINES
+#define NUM_LINES 672
+#endif
+
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
 
@@ -74,7 +80,7 @@ int main(int argc, char** argv) {
         // Write legalized output memory to HEX file
         std::ofstream outfile(output_hex);
         if (outfile.is_open()) {
-            for (size_t i = 0; i < 672; ++i) {
+            for (size_t i = 0; i < NUM_LINES; ++i) {
                 outfile << std::hex << std::uppercase << std::setw(8) << std::setfill('0')
                         << top->sa_legalizer_top->layout_mem[i] << std::endl;
             }

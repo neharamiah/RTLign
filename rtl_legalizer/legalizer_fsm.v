@@ -57,6 +57,12 @@ module legalizer_fsm #(
     reg        resolved_any;
     reg [3:0]  pass_count;
 
+    // Per-pair resolve attempt counter. Caps the RESOLVE->CHECK retry loop so
+    // an unresolvable pair (e.g. two die-wide macros that cannot separate on
+    // any axis) can never hang the FSM. Normal pairs resolve in 1-2 tries.
+    localparam MAX_RESOLVE_TRIES = 16;
+    reg [5:0]  resolve_tries;
+
     // -----------------------------------------------------------------------
     // Collision checker instantiation
     // -----------------------------------------------------------------------
@@ -109,6 +115,7 @@ module legalizer_fsm #(
             done          <= 0;
             resolved_any  <= 1'b0;
             pass_count    <= 4'd0;
+            resolve_tries <= 6'd0;
             x1 <= 0; y1 <= 0; w1 <= 0; h1 <= 0;
             x2 <= 0; y2 <= 0; w2 <= 0; h2 <= 0;
         end else begin
@@ -140,6 +147,7 @@ module legalizer_fsm #(
                     y2 <= layout_mem[ptr_b + 1];
                     w2 <= layout_mem[ptr_b + 2];
                     h2 <= layout_mem[ptr_b + 3];
+                    resolve_tries <= 6'd0;
                 end
 
                 // ----------------------------------------------------------
@@ -149,6 +157,7 @@ module legalizer_fsm #(
                 // ----------------------------------------------------------
                 RESOLVE: begin
                     resolved_any <= 1'b1;
+                    resolve_tries <= resolve_tries + 6'd1;
                     if ((pass_count[0] == 1'b0) ?
                         ((overlap_x < overlap_y) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b0))) :
                         ((overlap_y < overlap_x) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b1)))) begin
@@ -203,8 +212,12 @@ module legalizer_fsm #(
                     if (ptr_b < last_base) begin
                         // More inner-loop pairs for this ptr_a
                         ptr_b <= ptr_b + 4;
-                    end else if (ptr_a < last_base - 4) begin
-                        // Inner loop exhausted → advance outer, reset inner
+                    end else if ((ptr_a + 4) < last_base) begin
+                        // Inner loop exhausted → advance outer, reset inner.
+                        // Written as (ptr_a + 4) < last_base instead of
+                        // ptr_a < last_base - 4: the subtraction wraps in a
+                        // 32-bit context when NUM_MACROS == 1 and hung the
+                        // FSM. Identical semantics for NUM_MACROS >= 2.
                         ptr_a <= ptr_a + 4;
                         ptr_b <= ptr_a + 8;   // next macro after new ptr_a
                     end else begin
@@ -238,11 +251,12 @@ module legalizer_fsm #(
         case (current_state)
             IDLE:    if (start)          next_state = FETCH;
             FETCH:                       next_state = CHECK;
-            CHECK:   if (is_overlapping) next_state = RESOLVE;
+            CHECK:   if (is_overlapping && (resolve_tries < MAX_RESOLVE_TRIES))
+                                     next_state = RESOLVE;
                      else                next_state = ADVANCE;
             RESOLVE:                     next_state = CHECK;  // re-check after push
             ADVANCE: begin
-                if (ptr_b < last_base || ptr_a < last_base - 4)
+                if (ptr_b < last_base || (ptr_a + 4) < last_base)
                     next_state = FETCH;
                 else if (resolved_any && (pass_count < 8))
                     next_state = FETCH;
