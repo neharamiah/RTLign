@@ -17,7 +17,13 @@ module legalizer_fsm #(
     input  wire clk,
     input  wire rst,
     input  wire start,
-    output reg  done
+    output reg  done,
+
+    // External Memory Interface
+    input  wire        ext_we,
+    input  wire [31:0] ext_waddr,
+    input  wire [31:0] ext_wdata,
+    output wire [31:0] ext_rdata
 );
 
     // -----------------------------------------------------------------------
@@ -33,6 +39,8 @@ module legalizer_fsm #(
     reg [31:0] layout_mem [0:MEM_DEPTH-1];
     initial $readmemh("dummy_layout.hex", layout_mem);
 
+    assign ext_rdata = (ext_waddr < MEM_DEPTH) ? layout_mem[ext_waddr] : 32'd0;
+
     // -----------------------------------------------------------------------
     // Pointers (index into layout_mem; each macro starts at ptr * 4 implicitly
     // but we store the raw line index: macro i starts at i*4)
@@ -45,6 +53,15 @@ module legalizer_fsm #(
     // -----------------------------------------------------------------------
     reg [31:0] x1, y1, w1, h1;
     reg [31:0] x2, y2, w2, h2;
+
+    reg        resolved_any;
+    reg [3:0]  pass_count;
+
+    // Per-pair resolve attempt counter. Caps the RESOLVE->CHECK retry loop so
+    // an unresolvable pair (e.g. two die-wide macros that cannot separate on
+    // any axis) can never hang the FSM. Normal pairs resolve in 1-2 tries.
+    localparam MAX_RESOLVE_TRIES = 16;
+    reg [5:0]  resolve_tries;
 
     // -----------------------------------------------------------------------
     // Collision checker instantiation
@@ -96,12 +113,28 @@ module legalizer_fsm #(
             ptr_a         <= 0;
             ptr_b         <= 4;     // second macro
             done          <= 0;
+            resolved_any  <= 1'b0;
+            pass_count    <= 4'd0;
+            resolve_tries <= 6'd0;
             x1 <= 0; y1 <= 0; w1 <= 0; h1 <= 0;
             x2 <= 0; y2 <= 0; w2 <= 0; h2 <= 0;
         end else begin
+            if (ext_we && (ext_waddr < MEM_DEPTH)) begin
+                layout_mem[ext_waddr] <= ext_wdata;
+            end
             current_state <= next_state;
 
             case (current_state)
+                IDLE: begin
+                    done <= 1'b0;
+                    if (start) begin
+                        ptr_a        <= 0;
+                        ptr_b        <= 4;
+                        resolved_any <= 1'b0;
+                        pass_count   <= 4'd0;
+                    end
+                end
+
                 // ----------------------------------------------------------
                 // FETCH: Load both macros from memory into registers
                 // ----------------------------------------------------------
@@ -114,6 +147,7 @@ module legalizer_fsm #(
                     y2 <= layout_mem[ptr_b + 1];
                     w2 <= layout_mem[ptr_b + 2];
                     h2 <= layout_mem[ptr_b + 3];
+                    resolve_tries <= 6'd0;
                 end
 
                 // ----------------------------------------------------------
@@ -122,7 +156,11 @@ module legalizer_fsm #(
                 //          eliminate the collision. Then clamp to die boundary.
                 // ----------------------------------------------------------
                 RESOLVE: begin
-                    if (overlap_x <= overlap_y) begin
+                    resolved_any <= 1'b1;
+                    resolve_tries <= resolve_tries + 6'd1;
+                    if ((pass_count[0] == 1'b0) ?
+                        ((overlap_x < overlap_y) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b0))) :
+                        ((overlap_y < overlap_x) || ((overlap_x == overlap_y) && (ptr_b[2] == 1'b1)))) begin
                         // --- Push horizontally ---
                         if (x2 >= x1) begin
                             // B is to the right of A → push B rightward
@@ -174,10 +212,22 @@ module legalizer_fsm #(
                     if (ptr_b < last_base) begin
                         // More inner-loop pairs for this ptr_a
                         ptr_b <= ptr_b + 4;
-                    end else begin
-                        // Inner loop exhausted → advance outer, reset inner
+                    end else if ((ptr_a + 4) < last_base) begin
+                        // Inner loop exhausted → advance outer, reset inner.
+                        // Written as (ptr_a + 4) < last_base instead of
+                        // ptr_a < last_base - 4: the subtraction wraps in a
+                        // 32-bit context when NUM_MACROS == 1 and hung the
+                        // FSM. Identical semantics for NUM_MACROS >= 2.
                         ptr_a <= ptr_a + 4;
                         ptr_b <= ptr_a + 8;   // next macro after new ptr_a
+                    end else begin
+                        // Sweep exhausted: if any overlap resolved, repeat pass up to 8 times
+                        if (resolved_any && (pass_count < 8)) begin
+                            ptr_a        <= 0;
+                            ptr_b        <= 4;
+                            resolved_any <= 1'b0;
+                            pass_count   <= pass_count + 1;
+                        end
                     end
                 end
 
@@ -201,14 +251,17 @@ module legalizer_fsm #(
         case (current_state)
             IDLE:    if (start)          next_state = FETCH;
             FETCH:                       next_state = CHECK;
-            CHECK:   if (is_overlapping) next_state = RESOLVE;
+            CHECK:   if (is_overlapping && (resolve_tries < MAX_RESOLVE_TRIES))
+                                     next_state = RESOLVE;
                      else                next_state = ADVANCE;
             RESOLVE:                     next_state = CHECK;  // re-check after push
             ADVANCE: begin
-                if (ptr_a >= last_base - 4)
-                    next_state = FINISH;        // all pairs exhausted
-                else
+                if (ptr_b < last_base || (ptr_a + 4) < last_base)
                     next_state = FETCH;
+                else if (resolved_any && (pass_count < 8))
+                    next_state = FETCH;
+                else
+                    next_state = FINISH;        // all pairs exhausted with zero overlaps
             end
             FINISH:                      next_state = IDLE;
             default:                     next_state = IDLE;

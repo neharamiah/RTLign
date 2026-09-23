@@ -23,15 +23,19 @@ datasets/
 *.err
 openroad_scripts/results/
 openroad_scripts/reports/
+evaluation_output/
 
 # 3. Verilog Simulation & Synthesis
 *.hex
+!tests/data/golden/*.hex
 *.vcd
 *.fsdb
 *.out
 csrc/
 simv
 simv.daidir/
+obj_dir/
+legalizer_sim
 
 # 4. Python & ML Predictor
 __pycache__/
@@ -58,6 +62,9 @@ openroad_debug.log
 .pytest_cache/
 .hypothesis/
 .venv/
+.codex/
+.zcode/
+.zcodeignore
 
 # 7. Reports
 *Report*.md

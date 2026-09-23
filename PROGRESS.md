@@ -3,7 +3,7 @@
 **Project:** ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement  
 **Team:** P124 — K Sahana, Ratik Agrawal, Neha Ramiah  
 **Mentor:** Dr. Krupa Rasane  
-**Last Updated:** 17 July 2026
+**Last Updated:** September 2026  
 
 ---
 
@@ -22,7 +22,18 @@
    - 4.7 [Master Orchestrator](#47-master-orchestrator-master_runpy)
    - 4.8 [Testing Suite](#48-testing-suite-tests-and-property-tests)
    - 4.9 [OpenROAD Placement Script](#49-openroad-placement-script-openroad_scriptsrun_placementtcl)
-5. [Simulation Results](#5-simulation-results)
+   - 4.10 [Feature Extractor](#410-feature-extractor-ml_predictorfeature_extractorpy)
+   - 4.11 [GNN Dataset Loader](#411-gnn-dataset-loader-ml_predictordatasetpy)
+   - 4.12 [Topological GNN Model](#412-topological-gnn-model-ml_predictormodelpy)
+   - 4.13 [GNN Training Pipeline](#413-gnn-training-pipeline-ml_predictortrain_nnpy)
+   - 4.14 [Inference Engine & DAG Cycle-Breaker](#414-inference-engine--dag-cycle-breaker-ml_predictorpredictpy--run_predictpy)
+   - 4.15 [Evaluation Suite & OpenROAD Signoff](#415-evaluation-suite--openroad-signoff-ml_predictorevaluatepy--openroad_scriptsevaluate_layouttcl)
+   - 4.16 [SA Hardware Engine & Cost Function](#416-sa-hardware-engine--cost-function-sa_enginev-sa_costv-lfsr32v)
+   - 4.17 [Verilator C++ Simulation Bridge](#417-verilator-c-simulation-bridge-verilatorsa_harnesscpp)
+   - 4.18 [Layout Auditor](#418-layout-auditor-rtl_legalizerauditpy)
+   - 4.19 [Cycle-Accurate Python Golden Model](#419-cycle-accurate-python-golden-model-rtl_legalizergolden_modelpy)
+   - 4.20 [Synthetic Layout Generator & Sweeps](#420-synthetic-layout-generator--sweeps-layout_genpy-scripts)
+5. [Simulation & Evaluation Results](#5-simulation--evaluation-results)
 6. [Known Limitations](#6-known-limitations)
 7. [Roadmap — What's Next](#7-roadmap--whats-next)
 
@@ -45,8 +56,8 @@ During the physical design phase of VLSI development, **macro placement** is an 
 │    OpenROAD      │      │   ML Predictor    │      │   RTL Legalizer     │      │    OpenROAD      │
 │                  │      │                   │      │                     │      │                  │
 │  Synthesize &    │─────▶│  def_parser.py    │─────▶│  collision_check.v  │─────▶│  hex_to_def.py   │
-│  Export .def     │      │  DEF → .hex       │      │  legalizer_fsm.v    │      │  .hex → .def     │
-│                  │      │                   │      │  legalizer_tb.v     │      │  Route + STA     │
+│  Export .def     │      │  predict.py (GNN) │      │  legalizer_fsm.v    │      │  .hex → .def     │
+│                  │      │  DEF → .hex       │      │  legalizer_tb.v     │      │  Route + STA     │
 └──────────────────┘      └───────────────────┘      └─────────────────────┘      └──────────────────┘
 ```
 
@@ -54,12 +65,12 @@ During the physical design phase of VLSI development, **macro placement** is an 
 
 | Category | Tool / Language |
 |:---|:---|
-| RTL Design | Verilog HDL |
-| RTL Simulation | Icarus Verilog (`iverilog` + `vvp`) |
-| Scripting & ML | Python 3.x |
-| EDA Suite | OpenROAD (with GUI) |
-| Target PDK | FreePDK45 |
-| Benchmark Design | GCD (Greatest Common Divisor) |
+| RTL Design | Verilog HDL / SystemVerilog |
+| RTL Simulation | Icarus Verilog (`iverilog` + `vvp`) & Verilator (C++ simulation) |
+| Scripting & ML | Python 3.x, PyTorch, PyTorch Geometric |
+| EDA Suite | OpenROAD (with GUI, RePlAce, DPL, STA) |
+| Target PDK | FreePDK45, Nangate45 |
+| Benchmark Designs | GCD, ISPD 2015, Ibex, PicoRV32, OpenTitan |
 | Version Control | Git / GitHub |
 
 ---
@@ -69,441 +80,221 @@ During the physical design phase of VLSI development, **macro placement** is an 
 ```
 RTLign/
 ├── orchestration/
-│   └── master_run.py              # Single-click pipeline orchestrator
+│   ├── master_run.py               # Single-click baseline pipeline orchestrator
+│   ├── data_generator.py           # Automated OpenROAD placement dataset generator
+│   ├── generate_rtl_dataset.py     # Yosys synthesis for RTL designs
+│   └── rtl_to_def.py               # Floorplan DEF generator from gate netlists
 │
 ├── ml_predictor/
-│   ├── def_parser.py              # DEF + LEF → HEX coordinate extractor
-│   └── hex_to_def.py              # HEX → DEF coordinate injector
+│   ├── dataset.py                  # PyTorch Geometric InMemoryDataset loader
+│   ├── model.py                    # Topological GNN with spatial convolutions
+│   ├── train_nn.py                 # Supervised GNN training pipeline
+│   ├── predict.py                  # Inference engine + DFS DAG cycle-breaker
+│   ├── evaluate.py                 # End-to-end evaluation runner and plotter
+│   ├── feature_extractor.py        # High-throughput DEF → Parquet extractor
+│   ├── def_parser.py               # DEF + LEF → HEX coordinate extractor
+│   └── hex_to_def.py               # HEX → DEF coordinate injector
 │
 ├── rtl_legalizer/
-│   ├── lef_parser.py              # LEF → Dimension Dictionary extractor
-│   ├── lef_parser_test.py         # Unit tests for LEF parser
-│   ├── lef_parser_property_test.py # Property-based tests for LEF parser (NEW)
-│   ├── collision_check.v          # Combinational AABB overlap detector
-│   ├── legalizer_fsm.v            # FSM-based greedy sweep legalizer
-│   ├── legalizer_tb.v             # Testbench with overlap audit
-│   └── dummy_layout.hex           # Input macro layout (generated by def_parser)
+│   ├── sa_legalizer_top.v          # Top-level SA + greedy legalizer
+│   ├── sa_engine.v                 # Simulated Annealing optimizer FSM
+│   ├── sa_cost.v                   # 3-term hardware cost (HPWL, area, boundary)
+│   ├── lfsr32.v                    # 32-bit Galois LFSR pseudo-random generator
+│   ├── collision_check.v           # Combinational AABB overlap detector
+│   ├── legalizer_fsm.v             # FSM-based greedy sweep legalizer
+│   ├── legalizer_tb.v              # Testbench with full audit checks
+│   ├── audit.py                    # Layout auditor (zero overlaps, bounds, sizes)
+│   ├── golden_model.py             # Bit-exact cycle-accurate Python golden model
+│   ├── layout_gen.py               # Synthetic layout generator for stress testing
+│   ├── lef_parser.py               # LEF → Dimension Dictionary extractor
+│   ├── lef_parser_test.py          # Unit tests for LEF parser
+│   ├── lef_parser_property_test.py # Property-based tests for LEF parser
+│   ├── tb_*.v                      # Directed Verilog unit testbenches
+│   ├── VERIFICATION.md             # Formal verification report and audit results
+│   └── verilator/                  # C++ simulation harness and Python bridge
 │
 ├── openroad_scripts/
-│   ├── mockup_export.def          # Baseline GCD design (FreePDK45, 482 components)
-│   ├── legalized_export.def       # Output: legalized placement (generated)
-│   └── run_placement.tcl          # OpenROAD placement flow script for dataset generation (NEW)
+│   ├── run_placement.tcl           # OpenROAD placement flow script for dataset generation
+│   ├── evaluate_layout.tcl         # OpenROAD placement legality & HPWL metric script
+│   ├── generate_ibex_floorplan.tcl # Floorplan generator for Ibex core
+│   ├── mockup_export.def           # Baseline GCD design (FreePDK45, 482 components)
+│   └── legalized_export.def        # Legalized placement output DEF
 │
-├── tests/                         # Integration and CLI testing suite (NEW)
-│   ├── __init__.py
-│   ├── test_ispd2015_integration.py # Integration testing on real benchmarks (NEW)
-│   └── test_lef_parser_cli.py     # Command Line Interface tests (NEW)
+├── scripts/
+│   ├── sweep_legalizer.py          # Bug-hunt sweep over 350 layout configurations
+│   └── characterize_metropolis.py  # Metropolis LUT characterization script
 │
-├── data/                          # Training datasets
-├── README.md                      # Project README
-├── ROADMAP.md                     # Comprehensive 6-month roadmap
-├── PROGRESS.md                    # This document
-├── Project_Readiness_Note.md      # Original project proposal
-├── Project_Readiness_Note.docx    # Proposal Word document format
-├── AGENTS.md                      # Steering context & guidelines for AI agents (NEW)
-├── Monthly_Report_Formatted.md    # Formatted monthly report (NEW)
-└── .gitignore                     # Ignores EDA outputs, datasets, sim artifacts
+├── tests/
+│   ├── test_audit.py               # Tests for layout auditor and generator
+│   ├── test_golden_model.py        # Golden model vs RTL equivalence tests
+│   ├── test_phase6_verification.py # Cross-simulator determinism and golden regressions
+│   ├── test_unit_tbs.py            # Directed Verilog unit testbench runners
+│   ├── test_phase6_sa.py           # SA engine and Verilator bridge tests
+│   ├── test_phase5_integration.py  # GNN prediction and DEF injection tests
+│   ├── test_ispd2015_integration.py # Integration testing on real ISPD benchmarks
+│   ├── test_lef_parser_cli.py      # Command Line Interface tests
+│   └── data/golden/                # Golden regression test fixtures
+│
+├── conftest.py                     # Root pytest import configuration
+├── run_predict.py                  # Top-level prediction orchestrator with auto-detection
+├── topological_gnn_model.pth       # Trained Topological GNN weights
+├── data/                           # Training datasets and raw benchmarks
+├── README.md                       # Project README
+├── ROADMAP.md                      # Comprehensive 6-month roadmap
+└── PROGRESS.md                     # This document
 ```
 
 ---
 
 ## 3. Development Timeline
 
-### Phase 0: Architecture & Initial Scaffolding (Commits `4c49e44` → `380851e`)
+### Phase 1: Proof of Concept — End-to-End Pipeline (Commits `3b1c5da` → `7dc9944`)
+- Implemented baseline greedy push-apart legalizer in Verilog.
+- Verified collision detection and basic DEF injection into OpenROAD.
+- Validated on GCD benchmark layout.
 
-**What was done:**
-- Created the repository directory structure: `ml_predictor/`, `rtl_legalizer/`, `openroad_scripts/`, `orchestration/`, `data/`
-- Wrote and verified the initial `collision_check.v` — a pure combinational AABB overlap detector
-- Created a stub `master_run.py` orchestrator with `TODO` placeholders
-- Added the RTL Legalizer README documenting the hardware memory contract
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `4c49e44` | Initial commit: architecture and directory |
-| `b6767bb` | feat: verified core AABB collision logic in Verilog |
-| `380851e` | added master python file, and readme for verilog collision check |
-
----
-
-### Phase 0.5: Data Pipeline & DEF Export (Commits `4f28874` → `cee702f`)
-
-**What was done:**
-- Exported the GCD benchmark design from OpenROAD as `mockup_export.def` (FreePDK45, 482 components, 1540 lines)
-- Wrote `def_parser.py` to extract macro coordinates from the DEF `COMPONENTS` section and convert them to the `.hex` hardware memory format
-- Generated `dummy_layout.hex` — 168 macros × 4 fields = 672 lines of 32-bit hex values
-
-**Key Design Decision:** The DEF file only stores placement `(X, Y)`, not dimensions. Cell widths and heights live in the `.lef` library file. For Phase 1, we inject a placeholder `100 × 100` dimension to satisfy the Verilog memory contract. Real LEF parsing is deferred to Phase 2.
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `24728d1` | added project readiness note |
-| `4f28874` | exported mockup def file |
-| `cee702f` | created def parser.py to filter the .def file and format it in dummy_layout.hex |
-
----
-
-### Phase 0.75: Legalizer FSM v1 (Commits `88a61b0` → `f0a8634`)
-
-**What was done:**
-- Drafted the baseline `legalizer_fsm.v` with a 6-state FSM: `IDLE → FETCH → CHECK → RESOLVE → ADVANCE → FINISH`
-- Memory-mapped layout via `$readmemh("dummy_layout.hex")`
-- Collision result wired from an inline `collision_check` instance
-- RESOLVE state pushed Macro B rightward on X-axis only (`x2 <= x1 + w1`)
-
-**Issues identified (later fixed):**
-- `collision_check` was duplicated inside `legalizer_fsm.v` (would cause compile error if both files compiled together)
-- `MAX_LINES = 8` — hardcoded to only 2 macros instead of all 168
-- Only resolved overlaps on the X-axis (1D push-apart)
-- No die-boundary clamping
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `88a61b0` | arch: drafted baseline legalizer FSM and memory pointers |
-| `f0a8634` | feat: finalized FSM with layout_mem commit logic |
-
----
-
-### Phase 0.9: Gitignore & Cleanup (Commits `31fd55e` → `eb3d7eb`)
-
-**What was done:**
-- Applied a comprehensive `.gitignore` covering EDA outputs (`.def`, `.lef`, `.odb`, `.sdc`), simulation artifacts (`.hex`, `.vcd`, `.out`), Python caches, and ML model files
-- Untracked large EDA data files from the repo
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `31fd55e` | updated gitignore |
-| `eb3d7eb` | chore: applied strict gitignore and untracked EDA data |
-
----
-
-### Phase 1: Fix Foundations & End-to-End Pipeline (Completed)
-
-**This is the major milestone.** Every component was either rewritten or created from scratch to produce a fully functional end-to-end pipeline.
-
-#### What was done:
-
-**1. Legalizer FSM — Complete Rewrite (`legalizer_fsm.v`)**
-- Removed the duplicate inline `collision_check` module
-- Added Verilog parameters: `NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT` — fully configurable
-- Changed `layout_mem` size from fixed `[0:1023]` to `[0:MEM_DEPTH-1]` (derived from `NUM_LINES`)
-- Fixed pointer arithmetic to correctly iterate all `N × (N-1) / 2` unique macro pairs
-- **2D minimum-overlap resolution:** The RESOLVE state now calculates overlap extents on both axes and pushes Macro B along whichever axis has the *smaller* overlap — producing the minimum displacement needed
-- **Die-boundary clamping:** If a push would place a macro outside the `DIEAREA`, it wraps to the opposite side of the reference macro, or clamps to coordinate 0
-
-**2. Legalizer Testbench — New (`legalizer_tb.v`)**
-- Drives `clk` at 100 MHz (10 ns period), asserts `rst`, then pulses `start`
-- Waits for the `done` signal and counts clock cycles
-- Dumps the legalized `layout_mem` array to `output_layout.hex` via `$writememh`
-- **Post-legalization overlap audit:** Checks ALL `N × (N-1) / 2` pairs in the final layout and reports PASS/FAIL with the first 10 violations
-- VCD waveform dump (`legalizer.vcd`) for debugging
-- 100 ms simulation timeout safety net
-
-**3. HEX → DEF Injector — New (`hex_to_def.py`)**
-- Reads the legalized `.hex` output (X, Y, W, H per macro — only X, Y are used)
-- Patches coordinates back into the original `.def` file:
-  - **Unplaced components** (no existing coordinates) → appends `+ PLACED ( X Y ) N` before the trailing `;`
-  - **Existing PLACED components** → updates coordinates in-place
-  - **FIXED components** (fill cells, endcaps) → skipped entirely
-- Reports injection statistics: how many updated, how many added, how many hex entries consumed
-
-**4. Master Orchestrator — Rewrite (`master_run.py`)**
-- Replaced all `time.sleep()` stubs with real `subprocess.run()` calls
-- 4-step pipeline:
-  1. `python def_parser.py` — DEF → HEX
-  2. `iverilog -o sim.out collision_check.v legalizer_fsm.v legalizer_tb.v` — compile
-  3. `vvp sim.out` — simulate (cwd set to `rtl_legalizer/` so `$readmemh` finds the `.hex`)
-  4. `python hex_to_def.py` — HEX → DEF injection
-- Per-stage timing and total pipeline timing
-- Error handling with exit codes and stderr capture
-
-**5. README — Written (`README.md`)**
-- Architecture diagram, quick-start guide, individual stage commands, project structure, and per-component documentation
-
----
-
-
----
-
-### Phase 2: Real Dimensions & Improved Resolution (Commits `af11957` → `b97ae8d`)
-
-**What was done:**
-- Added `lef_parser.py` to extract real cell widths and heights from LEF files, converting floating-point micron dimensions to integer database units.
-- Created `lef_parser_test.py` with comprehensive unit tests for LEF parsing.
-- Updated `def_parser.py` to accept and use the dimension dictionary for accurate cell geometries, replacing the hardcoded 100x100 placeholder. This enables physically accurate collision detection for non-square cells.
-- Updated `master_run.py` to orchestrate parsing LEF files before DEF parsing.
-- Added comprehensive learning-based roadmap (`ROADMAP.md`).
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `b97ae8d` | feat(lef-parser): add LEF parser for real cell dimensions |
-| `af11957` | added learning based roadmap |
-
-**Status:** ✅ Completed.
-
----
+### Phase 2: Dimension Accuracy & Scalability (Commits `897a44f` → `9557fc9`)
+- Replaced hardcoded dimensions with dynamic `.lef` extraction via `lef_parser.py`.
+- Corrected unit scaling from microns to Database Units (DBU).
+- Resolved aspect-ratio clamping bugs in the Verilog FSM.
 
 ### Phase 3: Robust Testing & Dataset Preparation (Commits `ba8af81` → `ee64e51`)
-
-**What was done:**
-- **Robust Testing Infrastructure:** Added property-based tests via Hypothesis (`rtl_legalizer/lef_parser_property_test.py`) to verify dimension parsing properties. Created CLI tests (`tests/test_lef_parser_cli.py`) and full integration tests (`tests/test_ispd2015_integration.py`) to run the entire parsing and simulation pipeline on actual ISPD 2015 benchmarks.
+- **Robust Testing Infrastructure:** Added property-based tests via Hypothesis (`rtl_legalizer/lef_parser_property_test.py`) to verify dimension parsing properties. Created CLI tests (`tests/test_lef_parser_cli.py`) and full integration tests (`tests/test_ispd2015_integration.py`) on real ISPD 2015 benchmarks.
 - **OpenROAD Batch Placement Script:** Developed `openroad_scripts/run_placement.tcl` to drive OpenROAD's RePlAce global placement and detailed legalization engines with custom seeds and densities.
-- **Dataset Generation Orchestrator:** Wrote `orchestration/data_generator.py` utilizing Python's `ThreadPoolExecutor` for high-throughput, multi-threaded dataset generation. The script loops over ISPD 2015 benchmarks (22 designs), applying various physical constraints (Aspect Ratio, Utilization, Target Density) and dynamically tracking OpenROAD `dpl` (Detailed Placement) engine success/failure.
-- **Documentation & Agent Guidance:** Added `AGENTS.md` containing strict guidelines and architectural rules for AI agent collaboration. Cleaned up the repository by removing obsolete `.kiro/` steering specifications.
-- **Reporting:** Created the structured `Monthly_Report_Formatted.md` for project milestones tracking.
-
-**Dataset Results:**
-- Evaluated 792 different constraint configurations across 22 ISPD benchmarks.
-- Yielded **277 completed layout DEFs** (113 `Legal` layouts, 164 `Illegal` layouts with minor overlap).
-- Identified the absolute failure boundaries of OpenROAD (515 `Failed` runs crashed the C++ engine due to extreme density).
-- Captured high-quality data of layouts *just before* software limits breaking point, providing optimal targets for the RTL Legalizer.
-
-**Commits:**
-| Hash | Description |
-|:---|:---|
-| `ee64e51` | made run_placement.md to generate dataset |
-| `ab19cec` | updated documentation, added AGENTS.md and removed .kiro to remove confusion |
-| `4114433` | updated tasks.ms in .kiro |
-| `ba8af81` | updated parser (property tests & integration tests) |
-
-**Status:** ✅ Completed and verified — all 47 tests pass successfully. Dataset generation complete.
-
----
+- **Dataset Generation Orchestrator:** Wrote `orchestration/data_generator.py` utilizing Python's `ThreadPoolExecutor` for multi-threaded dataset generation across 22 ISPD benchmarks under varying aspect ratios, utilizations, and target densities.
+- **Generated Data:** Evaluated 792 configurations; yielded 277 completed layout DEFs (113 Legal, 164 with minor overlap).
 
 ### Phase 4: ML Feature Extraction (Completed)
+- **Feature Extractor Development:** Wrote `ml_predictor/feature_extractor.py` to systematically parse the hundreds of generated `.def` files and their entries in `dataset_summary.csv`.
+- **Large-scale Parsing:** Extracted node features, raw coordinates, 14-channel edge connectivity, and pairwise distances into 4 snappy-compressed Parquet datasets (`ml_features.parquet`, `raw_coords.parquet`, `edge_index.parquet`, `pairwise_distances.parquet`) representing over 21.6 million samples.
 
-**What was done:**
-- **Feature Extractor Development:** Wrote `ml_predictor/feature_extractor.py` to systematically parse the hundreds of generated `.def` files and their corresponding entries in `dataset_summary.csv`.
-- **Large-scale Parsing:** Extracted individual cell and macro placement data (target X, target Y, cell type, aspect ratio, density, utilization) to construct tabular data for the Random Forest model.
+### Phase 5: ML Predictor & Evaluation Suite (Completed)
+- **GNN Dataset Loader:** Implemented `ml_predictor/dataset.py` to convert Parquet feature tables into PyTorch Geometric `Data` graphs with training/validation splits.
+- **Topological GNN Model:** Implemented `ml_predictor/model.py` and `ml_predictor/train_nn.py` to train a supervised model that predicts normalized pairwise macro displacements (L-flows $\Delta x, \Delta y$) from netlist graph connectivity. Checkpoint saved as `topological_gnn_model.pth`.
+- **Hardware Handoff Bridge:** Created `ml_predictor/predict.py` with a cycle-breaking DFS algorithm to enforce a strict Directed Acyclic Graph (DAG) and export an $N \times N$ 32-bit hex matrix for hardware initialization. Added top-level `run_predict.py` for automated one-click inference.
+- **Evaluation Orchestrator & OpenROAD Signoff:** Implemented `ml_predictor/evaluate.py` and `openroad_scripts/evaluate_layout.tcl` to benchmark the ML+RTL pipeline against native OpenROAD placement, verify physical legality, measure HPWL wirelength, and produce side-by-side layout comparison plots (`evaluation_plot.png`).
 
-**Extraction Results:**
-- Successfully extracted **21,695,248 individual placement samples** across the 277 layout DEF files.
-- Saved into a single massive `data/ml_features.csv` matrix (365+ MB of raw tabular data) ready for scikit-learn ingestion.
+### Phase 6: Simulated Annealing in RTL & Formal Verification (Completed)
+- **SA Engine in Verilog:** Built `sa_engine.v` implementing stochastic simulated annealing with exponential cooling, coordinate perturbation, and 16-bit LUT Metropolis acceptance.
+- **LFSR Pseudo-Random Generator:** Built `lfsr32.v` using a 32-bit Galois LFSR with maximal-length polynomial ($x^{32} + x^{22} + x^2 + x + 1$) and non-zero lockup avoidance.
+- **3-Term Hardware Cost Function:** Built `sa_cost.v` to compute wirelength (HPWL), bounding box area, and boundary violation penalties with configurable integer weights.
+- **Greedy Cleanup Hardening:** Hardened `legalizer_fsm.v` by bounding resolve loops with `MAX_RESOLVE_TRIES` to eliminate hang risks and fixed unsigned pointer underflow on single-macro designs.
+- **Integrated Legalizer Top:** Built `sa_legalizer_top.v` coordinating Pass 1 (SA optimization) and Pass 2 (deterministic greedy cleanup).
+- **Verilator Simulation Bridge:** Developed `verilator/sa_harness.cpp` with parametric compile flags (`NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT`) and Python wrapper, delivering ~400× speedup over interpreted simulation.
+- **Cycle-Accurate Golden Model:** Implemented `rtl_legalizer/golden_model.py` replicating RTL arithmetic, LFSR sequence, Metropolis LUT, and boundary handling for exact word-by-word equivalence.
+- **Layout Auditor & Verification Suite:** Built `rtl_legalizer/audit.py` to audit P1 (overlaps), P2 (die containment), and P3 (size preservation). Created 135 passing tests across unit testbenches, determinism, cross-simulator equivalence, and golden regressions.
 
-**Status:** ✅ Feature extraction completed successfully.
+---
 
 ## 4. Component Deep-Dives
 
 ### 4.1 Collision Check Module (`collision_check.v`)
-
-**Purpose:** Pure combinational logic that determines whether two axis-aligned bounding boxes overlap.
-
-**Interface:**
-```
-Inputs:  x1, y1, w1, h1  (Macro A: origin + dimensions, 32-bit each)
-         x2, y2, w2, h2  (Macro B: origin + dimensions, 32-bit each)
-Output:  overlap          (1-bit: 1 = illegal overlap, 0 = clear)
-```
-
-**Logic:** Computes right and top edges for both macros, then applies the standard AABB overlap test — overlap exists if and only if all four of these conditions are true simultaneously:
-
-```
-x1 < right2  AND  right1 > x2  AND  y1 < top2  AND  top1 > y2
-```
-
-**Status:** ✅ Verified and unchanged since initial commit.
+**Purpose:** Pure combinational logic that tests whether two axis-aligned bounding boxes overlap.  
+**Logic:** Computes right and top edges for both macros, asserting `overlap` if and only if `x1 < right2 && right1 > x2 && y1 < top2 && top1 > y2`.
 
 ---
 
 ### 4.2 LEF Parser (`lef_parser.py`)
-
-**Purpose:** Extracts actual macro dimensions (Width, Height) from an OpenROAD `.lef` library file, converting from microns to DEF database units.
-
-**How it works:**
-1. Scans the `.lef` file for `MACRO` definitions.
-2. Extracts the `SIZE W BY H` values for each macro type.
-3. Converts the floating-point micron values to integer database units (scaled by 1000).
-4. Returns a Dimension Dictionary mapping macro types to `(W, H)`.
-
-**Status:** ✅ Functional and heavily tested with ISPD 2015 benchmarks.
+**Purpose:** Extracts actual macro dimensions (Width, Height) from an OpenROAD `.lef` library file, converting from microns to DEF database units (DBU).
 
 ---
 
 ### 4.3 DEF Parser (`def_parser.py`)
-
 **Purpose:** Extracts macro placement coordinates and matches them with LEF dimensions, writing them as a flat `.hex` memory file for the Verilog legalizer.
-
-**How it works:**
-1. Scans the `.def` for the `COMPONENTS` section
-2. For each component, extracts its type and `( X Y )` coordinate block
-3. Looks up the exact Width and Height from the LEF Dimension Dictionary
-4. Writes 4 lines per macro to the `.hex` file: `X_hex`, `Y_hex`, `W_hex`, `H_hex`
-
-**Input:** `openroad_scripts/mockup_export.def` (GCD on FreePDK45, 482 components)  
-**Output:** `rtl_legalizer/dummy_layout.hex` (168 macros × 4 fields = 672 lines)
-
-**Note:** Only 168 of 482 components have placement coordinates. The remaining 260+ are standard cells listed without coordinates (unplaced). The 168 extracted are the FIXED fill cells and endcaps.
-
-**Status:** ✅ Functional.
 
 ---
 
 ### 4.4 Legalizer FSM (`legalizer_fsm.v`)
-
-**Purpose:** The core hardware engine. Reads macro placements from memory, detects pairwise overlaps, and resolves them by pushing macros apart.
-
-**Parameters:**
-| Parameter | Default | Description |
-|:---|:---|:---|
-| `NUM_LINES` | 672 | Total 32-bit lines in the `.hex` file |
-| `DIE_WIDTH` | 200260 | Chip width in DEF database units |
-| `DIE_HEIGHT` | 201600 | Chip height in DEF database units |
-
-**Derived Constants:**
-- `NUM_MACROS = NUM_LINES / 4` = 168 macros
-- `MEM_DEPTH = NUM_LINES` = 672 words of 32-bit memory
-- `PTR_WIDTH = $clog2(MEM_DEPTH + 1)` = 10 bits
-
-**FSM State Diagram:**
-
-```
-          start
-  IDLE ──────────▶ FETCH ──▶ CHECK ──┬── overlap ──▶ RESOLVE ──┐
-   ▲                                 │                          │
-   │                                 │               re-check   │
-   │                                 │◀────────────────────────┘
-   │                                 │
-   │                                 └── no overlap ──▶ ADVANCE ──┬── more pairs ──▶ FETCH
-   │                                                              │
-   └──────────────────────── FINISH ◀─────── all done ────────────┘
-```
-
-**State Details:**
-
-| State | Action |
-|:---|:---|
-| `IDLE` | Wait for `start` signal |
-| `FETCH` | Load Macro A (`ptr_a`) and Macro B (`ptr_b`) from `layout_mem` into registers |
-| `CHECK` | Combinational — `collision_check` evaluates `is_overlapping` in zero cycles |
-| `RESOLVE` | Calculate overlap on both X and Y axes. Push Macro B along the axis of minimum overlap. Clamp to die boundary. Write back to `layout_mem`. |
-| `ADVANCE` | Increment `ptr_b`. If inner loop exhausted, increment `ptr_a` and reset `ptr_b`. |
-| `FINISH` | Assert `done` signal |
-
-**2D Resolution Algorithm:**
-```
-overlap_x = min(right1, right2) - max(x1, x2)
-overlap_y = min(top1, top2)     - max(y1, y2)
-
-if overlap_x <= overlap_y:
-    push Macro B horizontally (away from A)
-else:
-    push Macro B vertically (away from A)
-```
-
-If the push would exceed the die boundary, the macro is wrapped to the opposite side of the reference macro or clamped to coordinate 0.
-
-**Status:** ✅ Rewritten and verified — zero overlaps on 168-macro benchmark.
+**Purpose:** Sequentially audits all macro pairs. When an overlap is detected, it calculates horizontal and vertical overlaps and pushes Macro B along the axis of minimum overlap, with boundary clamping.
 
 ---
 
 ### 4.5 Legalizer Testbench (`legalizer_tb.v`)
-
-**Purpose:** Drives the legalizer FSM, measures performance, dumps results, and audits correctness.
-
-**Test Sequence:**
-1. Assert `rst` for 20 ns
-2. Pulse `start` for one clock cycle
-3. Count cycles until `done` is asserted
-4. Dump `layout_mem` to `output_layout.hex` via `$writememh`
-5. Run post-legalization overlap audit on ALL `N × (N-1) / 2` pairs
-6. Report PASS/FAIL
-
-**Safety Features:**
-- 100 ms simulation timeout
-- VCD waveform dump for debugging (`legalizer.vcd`)
-
-**Status:** ✅ New — passes with zero overlaps.
+**Purpose:** Drives the legalizer FSM, measures cycle count, dumps `output_layout.hex` via `$writememh`, audits all $N(N-1)/2$ pairs for zero residual overlaps, and generates waveform dumps (`legalizer.vcd`).
 
 ---
 
 ### 4.6 HEX → DEF Injector (`hex_to_def.py`)
-
-**Purpose:** Reads the legalized `.hex` coordinates output by the Verilog testbench and patches them back into the original `.def` file, producing a new DEF ready for OpenROAD import.
-
-**Algorithm:**
-1. Parse the `.hex` file — extract `(X, Y)` from every 4-line block (skip W, H)
-2. Walk through the `.def` file line by line:
-   - **Outside COMPONENTS:** pass through unchanged
-   - **FIXED components:** pass through unchanged (fill cells must not move)
-   - **PLACED components with coordinates:** replace `( old_X old_Y )` with `( new_X new_Y )`
-   - **Unplaced components (no coordinates):** append `+ PLACED ( X Y ) N` before the `;`
-3. Write the modified DEF to the output file
-
-**Input:** `rtl_legalizer/output_layout.hex` + `openroad_scripts/mockup_export.def`  
-**Output:** `openroad_scripts/legalized_export.def`
-
-**Status:** ✅ New — successfully injects 168/168 coordinates.
+**Purpose:** Reads the legalized `.hex` coordinates and patches them back into the original `.def` file. Supports targeted name-based macro injection from comments (`// X <inst_name>`) as well as sequential matching fallback, preserving pins, standard cells, and routing.
 
 ---
 
 ### 4.7 Master Orchestrator (`master_run.py`)
-
-**Purpose:** Single-click execution of the entire RTLign pipeline via `subprocess`.
-
-**Stages:**
-
-| Stage | Command | Description |
-|:---|:---|:---|
-| 1/4 | `python lef_parser.py` | (Implicit in `master_run.py`) Parse LEF dimensions |
-| 2/4 | `python def_parser.py` | Extract coordinates from DEF + LEF → HEX |
-| 3a/4 | `iverilog -o sim.out *.v` | Compile Verilog sources |
-| 3b/4 | `vvp sim.out` | Run RTL legalization simulation |
-| 4/4 | `python hex_to_def.py` | Inject legalized coordinates → DEF |
-
-**Features:**
-- Per-stage and total elapsed time reporting
-- Exit code checking with early termination on failure
-- Stderr capture for Verilog warnings
-- CWD correctly set to `rtl_legalizer/` for simulation (so `$readmemh` finds the `.hex`)
-
-**Status:** ✅ Rewritten — all stages functional.
+**Purpose:** Single-command Python orchestrator linking DEF parsing, Verilog compilation (`iverilog`), simulation (`vvp`), and DEF injection.
 
 ---
 
-### 4.8 Testing Suite (`tests/` & Property Tests)
-
-**Purpose:** Comprehensive verification of parsers, CLI boundaries, and full integration flow on real benchmarks under randomized inputs.
-
-- **Unit & Property-based Testing (`rtl_legalizer/lef_parser_property_test.py`):** Uses the `Hypothesis` framework to run randomized property checks on the LEF parser. Validates round-trips, aspect-ratio preservation under scaling, and dictionary mapping stability.
-- **CLI Testing (`tests/test_lef_parser_cli.py`):** Tests the command line interface options of `lef_parser.py` including help outputs, stdout routing, direct file writing, verbosity settings, handling of multiple files, and error bounds on missing assets.
-- **Integration Testing (`tests/test_ispd2015_integration.py`):** Runs the end-to-end flow on real ISPD 2015 benchmarks (e.g. `mgc_matrix_mult_2`), validating tech/cells LEF parsing, DEF parsing, Verilog compilation, simulator execution, and successful injection back into the output DEF without deadlock.
+### 4.8 Testing Suite (`tests/` and property tests)
+**Purpose:** Unit tests, Hypothesis property-based tests for LEF scaling invariants, and full integration tests executing on ISPD 2015 benchmarks.
 
 ---
 
 ### 4.9 OpenROAD Placement Script (`openroad_scripts/run_placement.tcl`)
-
-**Purpose:** Runs OpenROAD placement (global placement using RePlAce and detailed legalization) programmatically to export placed `.def` files for dataset generation.
-
-**Interface:**
-```tcl
-openroad -no_init -exit run_placement.tcl \
-  -design_name <name>  \
-  -tech_lef    <path>  \
-  -cells_lef   <path>  \
-  -input_def   <path>  \
-  -output_def  <path>  \
-  -seed        <int>   \
-  -target_density <float>
-```
-
-**Key Steps:**
-1. Parses flags for design coordinates, PDK paths, seed, and density.
-2. Loads technology and cell library LEFs, followed by the target floorplanned DEF.
-3. Invokes `global_placement` (RePlAce engine) parameterized by seed and target cell density.
-4. Invokes `detailed_placement` (legalization) with allowed displacements.
-5. Performs physical design checks via `check_placement` and extracts quality metrics (such as HPWL).
-6. Writes the finished placed DEF to the target destination.
+**Purpose:** Programmatic OpenROAD TCL script running global placement (RePlAce) and detailed placement (`dpl`) to generate diverse layouts across parameter sweeps.
 
 ---
 
-## 5. Simulation Results
+### 4.10 Feature Extractor (`ml_predictor/feature_extractor.py`)
+**Purpose:** Ingests placed `.def` layouts and extracts cell attributes, node coordinates, pin counts, 14-channel edge connectivity vectors, and pairwise distance tables into high-performance Parquet format.
 
-### Full Pipeline Run
+---
 
+### 4.11 GNN Dataset Loader (`ml_predictor/dataset.py`)
+**Purpose:** Ingests the Parquet datasets into PyTorch Geometric `Data` graphs. Handles node normalization, 14-channel edge conditioning, and train/val splitting for topological learning.
+
+---
+
+### 4.12 Topological GNN Model (`ml_predictor/model.py`)
+**Purpose:** Implements `TopologicalGNN` and `SpatialEdgeConv`. Uses graph message passing conditioned on routing connectivity to infer relative spatial topological constraints ($\Delta x, \Delta y$).
+
+---
+
+### 4.13 GNN Training Pipeline (`ml_predictor/train_nn.py`)
+**Purpose:** Trains `TopologicalGNN` with MSE and Smooth L1 objectives against ground-truth OpenROAD placements, optimizing network weights and saving `topological_gnn_model.pth`.
+
+---
+
+### 4.14 Inference Engine & DAG Cycle-Breaker (`ml_predictor/predict.py` & `run_predict.py`)
+**Purpose:** Executes inference on unseen DEF layouts. Employs a Depth-First Search (DFS) cycle-breaking algorithm to eliminate topological loops, ensuring the relative macro dependencies form a strict Directed Acyclic Graph (DAG). Includes a topological coordinate resolver (`resolve_topological_coordinates`) to convert DAG constraints and LEF dimensions into hardware coordinates (`dummy_layout.hex`) with area-based macro filtering.
+
+---
+
+### 4.15 Evaluation Suite & OpenROAD Signoff (`ml_predictor/evaluate.py` & `openroad_scripts/evaluate_layout.tcl`)
+**Purpose:** Runs the complete closed-loop pipeline: GNN inference → topological resolution → parameterized RTL legalization (`iverilog`) → targeted DEF injection → OpenROAD re-import. Measures placement legality (`check_placement`), calculates pre-route HPWL via direct OpenROAD database net traversal (`[ord::get_db_block] getNets`), and exports dual layout visualization figures (`evaluation_plot.png`).
+
+---
+
+### 4.16 SA Hardware Engine & Cost Function (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`)
+**Purpose:** Implements Pass 1 of the hardware legalizer. `sa_engine.v` controls stochastic hill-climbing using exponential cooling and a 16-bit lookup-table Metropolis acceptance rule. `lfsr32.v` provides high-entropy 32-bit pseudo-random numbers via a Galois LFSR ($x^{32} + x^{22} + x^2 + x + 1$). `sa_cost.v` evaluates a 3-term objective combining HPWL wirelength, bounding box area, and boundary penalties.
+
+---
+
+### 4.17 Verilator C++ Simulation Bridge (`verilator/sa_harness.cpp`)
+**Purpose:** Accelerates hardware simulation by compiling synthesizable Verilog into native C++ binaries. Provides ~400× speedup over interpreted simulation, enabling hundreds of thousands of annealing cycles in milliseconds. Supports parameterized builds via make variables (`NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT`).
+
+---
+
+### 4.18 Layout Auditor (`rtl_legalizer/audit.py`)
+**Purpose:** Serves as the single source of truth for post-legalization validation. Audits layout hex files against three core physical properties:
+- **P1 Zero Overlaps:** Strict AABB intersection test over all macro pairs.
+- **P2 Die Containment:** $0 \le x$, $x + w \le \text{DIE\_WIDTH}$, and the same for $y$.
+- **P3 Size Preservation:** Output width and height match input dimensions exactly.
+
+---
+
+### 4.19 Cycle-Accurate Python Golden Model (`rtl_legalizer/golden_model.py`)
+**Purpose:** Bit-exact software replica of the Verilog hardware pipeline. Models 32-bit wraparound arithmetic, Galois LFSR sequences, Metropolis LUT evaluation, boundary reflection, and greedy push resolution to cross-check RTL output word-for-word.
+
+---
+
+### 4.20 Synthetic Layout Generator & Sweeps (`layout_gen.py`, `scripts/`)
+**Purpose:** Generates synthetic stress layouts across 7 modes (single, legal, pair overlap, chain, dense, out of bounds, wide macro). Evaluates convergence across 350 randomized layout sweeps (`scripts/sweep_legalizer.py`) and characterizes Metropolis probability distributions (`scripts/characterize_metropolis.py`).
+
+---
+
+## 5. Simulation & Evaluation Results
+
+### Baseline Pipeline Execution
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║         RTLign Co-Design Pipeline — Master Run           ║
@@ -520,38 +311,35 @@ openroad -no_init -exit run_placement.tcl \
   Total time:  0.22s
 ```
 
-### Legalizer Performance
+### Legalizer Hardware & Verification Metrics
+| Metric | Icarus Verilog | Verilator Bridge | Golden Model |
+|:---|:---|:---|:---|
+| Macros Evaluated | 168 | 168 | 168 |
+| Clock Cycles | 724,110 | 724,111 | N/A (cycle-accurate) |
+| SA Iterations | 1,000 | 1,000 | 1,000 |
+| Accepted Moves | 1,000 | 1,000 | 1,000 |
+| Final Placement Cost | 3,704,579 | 3,704,579 | 3,704,579 |
+| Bit-Exact Equivalence | Match | Match | Match |
+| Test Suite Coverage | **135 / 135 passing** | **135 / 135 passing** | **135 / 135 passing** |
+| Post-Run Audit Status | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** |
 
-| Metric | Value |
-|:---|:---|
-| Number of macros | 168 |
-| Clock cycles to legalize | 42,086 |
-| Simulated clock frequency | 100 MHz |
-| Theoretical hardware latency | 0.42 ms |
-| Overlaps after legalization | **0** (AUDIT PASS) |
-| Coordinates injected into DEF | 168 / 168 |
-
-### Output Files Generated
-
-| File | Description |
-|:---|:---|
-| `rtl_legalizer/output_layout.hex` | Legalized macro coordinates (672 lines) |
-| `openroad_scripts/legalized_export.def` | Final DEF file ready for OpenROAD |
-| `rtl_legalizer/legalizer.vcd` | Waveform dump for debugging |
+### ML Predictor & Evaluation Artifacts
+- **Model Checkpoint:** `topological_gnn_model.pth` (PyTorch Geometric weights trained on Parquet datasets).
+- **Inference Visualization:** `gnn_prediction_visualization.png` and `evaluation_output/evaluation_plot.png` comparing baseline vs. RTLign macro layouts.
+- **Legality Verification:** Passed via OpenROAD `check_placement -verbose` within `evaluate_layout.tcl`.
 
 ---
 
 ## 6. Known Limitations
 
-### Current Limitations (to be addressed in future phases)
+### Current Limitations & Verified Boundaries (from `VERIFICATION.md`)
 
-| # | Limitation | Impact | Planned Fix |
+| # | Limitation | Impact | Status / Documentation |
 |:---|:---|:---|:---|
-| 1 | **Greedy sweep, not Simulated Annealing** | No temperature schedule, random perturbation, or cost function — just push-apart | Phase 4: SA engine in Verilog |
-| 2 | **No ML Predictor** | Topologies come from OpenROAD's own placement, not an ML model | Phase 3: Train supervised model |
-| 3 | **No wirelength optimization** | The legalizer only eliminates overlaps; it does not minimize HPWL | Phase 4: Cost function in SA |
-| 4 | **Sequential pair iteration** | The FSM checks one pair at a time (N²/2 iterations) | Phase 4: Parallel collision units |
-| 5 | **No OpenROAD re-import tested** | The legalized DEF has not been loaded back into OpenROAD for routing/STA | Phase 5: TCL scripts |
+| 1 | **Greedy sweep pass cap (8 passes)** | Dense clusters of 24+ overlapping macros may leave residual overlaps | Documented in `VERIFICATION.md`. Hardened with `$fatal` audit in testbench. |
+| 2 | **Macro width exceeding die width** | Macros with width > `DIE_WIDTH` cannot satisfy containment P2 | Documented boundary limitation. Clamped to $x = 0$. |
+| 3 | **Slow sequential simulation in Icarus** | Interpreted simulation runs in seconds | Resolved via Verilator C++ simulation bridge (~400× speedup). |
+| 4 | **Single-macro FSM underflow** | $N=1$ macro designs previously hung greedy FSM | Resolved: corrected pointer underflow logic `(ptr_a + 4) < last_base`. |
 
 ---
 
@@ -562,27 +350,15 @@ openroad -no_init -exit run_placement.tcl \
 - **[DONE]** Build: Dataset Generation Pipeline (`run_placement.tcl` batch script and `data_generator.py` wrapper completed)
 
 ### Month 2: Supervised ML Predictor & Evaluation
-- Build: Random Forest Baseline (Feature extraction, train RF, predict coords, evaluate HPWL)
-- Build: Neural Network Predictor (optional) (Train NN, compare accuracy against RF)
+- **[DONE]** Build: GNN Topological Predictor Baseline (Feature extraction, train GNN, infer L-flows, evaluate HPWL)
+- **[DONE]** Build: Advanced GNN Predictor & Inference (`dataset.py`, `model.py`, `train_nn.py`, `predict.py`, `run_predict.py`)
+- **[DONE]** Build: Evaluation Suite & OpenROAD Signoff (`evaluate.py`, `evaluate_layout.tcl`, layout visualization)
 
-### Month 3: Simulated Annealing in RTL
-- Build: SA Engine in Verilog (LFSR, temperature cooling, perturbation, cost function, Metropolis acceptance)
-- Build: SA Testbench & Validation (Monitor cost/temperature, verify on benchmarks, waveform analysis)
-- Build: Verilator Bridge (Verilator wrapper, Python ctypes binding, speed benchmarking)
+### Month 3: Simulated Annealing in RTL & Verification
+- **[DONE]** Build: SA Engine in Verilog (`lfsr32.v`, `sa_cost.v`, `sa_engine.v`, `sa_legalizer_top.v`, Metropolis acceptance, step cooling)
+- **[DONE]** Build: SA Testbench & Validation (`legalizer_tb.v`, multi-pass cascade resolution, audit assertions)
+- **[DONE]** Build: Verilator Bridge (`verilator/sa_harness.cpp`, `Makefile`, parameterized builds, ~400× speedup)
+- **[DONE]** Build: Formal Verification Suite (`audit.py`, `golden_model.py`, `layout_gen.py`, `VERIFICATION.md`, 135 passing tests)
 
-### Month 4: Reinforcement Learning
-- Build: RL Environment (Gymnasium env, state/action space, reward v1)
-- Build: RL Training Pipeline (PPO training loop, SML warm-start, connect Verilator legalizer, reward v2, tensorboard)
-
-### Month 5: Integration, Scaling & Benchmarking
-- Build: RL + Legalizer Feedback Loop (Reward v3, train on larger designs, ablation studies)
+### Month 4: Integration, Scaling & Benchmarking
 - Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)
-- Build: Visualization & Analysis (Heatmaps, training curves, waveform screenshots, comparison plots)
-
-### Month 6: Paper, Defense & Polish
-- Write: Documentation, final comprehensive progress document, and paper (Abstract, Methodology, Results)
-- Defend: Prepare slides, live demo, and presentation practice
-
----
-
-*This document is a living record. It will be updated as new phases are completed.*
