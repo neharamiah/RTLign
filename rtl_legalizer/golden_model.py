@@ -162,17 +162,25 @@ def metropolis_threshold(delta, temperature):
 
 
 def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
-             lfsr_seed=None):
+             lfsr_seed=None, legal_moves=True):
     """Exact model of sa_engine (Pass 1) over a flat word list.
 
     Returns (out_mem, metrics_dict). metrics contains total_iters,
-    accepted_count, final_cost, final_temp. When `track` is a list, every
-    iteration appends (sel_macro, dx, dy, accepted, current_cost).
+    accepted_count, final_cost, final_temp, and illegal_rejects. When `track`
+    is a list, every iteration appends (sel_macro, dx, dy, accepted,
+    current_cost, is_illegal) — is_illegal marks iterations rejected by the
+    legality scan before Metropolis.
 
     metropolis="rtl" replicates the RTL LUT acceptance exactly.
     metropolis="true" replaces only the acceptance threshold with the exact
     Metropolis value 65535*exp(-delta/T) (same RNG stream, same moves), for
     quality comparisons in the verification report.
+
+    legal_moves=True replicates the RTL legality scan: a candidate move that
+    would overlap any other macro is rejected before cost evaluation (the
+    engine scans collision_check over all macros first). The RNG stream is
+    unaffected — the scan consumes no randomness. Set legal_moves=False for
+    the pre-scan behavior (kept for the Metropolis characterization tools).
 
     LFSR schedule (validated against an RTL trace): the engine makes TWO
     LFSR advances per iteration — lfsr_en stays high through the APPLY_MOVE
@@ -188,6 +196,7 @@ def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
     inner_count = 0
     total_iters = 0
     accepted = 0
+    illegal_rejects = 0
     rng = LFSR32(p["lfsr_seed"] if lfsr_seed is None else lfsr_seed)
 
     current_cost = cost_model(mem)[0]
@@ -221,28 +230,40 @@ def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
 
         mem[sel * 4] = new_x
         mem[sel * 4 + 1] = new_y
-        candidate_cost = cost_model(mem)[0]
 
-        # ST_METROPOLIS
         total_iters += 1
-        if candidate_cost <= current_cost:
-            accepted_flag = True
-        else:
-            delta = (candidate_cost - current_cost) & MASK64
-            if metropolis == "rtl":
-                threshold = metropolis_threshold(delta, temperature)
-            else:
-                threshold = int(65535 * math.exp(-delta / temperature)) if temperature > 0 else 0
-            accepted_flag = dice < threshold
-        if accepted_flag:
-            current_cost = candidate_cost
-            accepted += 1
-        else:
+        prev_illegal = illegal_rejects
+
+        # ST_LEGAL_SCAN: reject the candidate before cost evaluation when it
+        # would overlap any other macro. No LFSR advances, so the dice word
+        # sampled above is consumed but unused on this path (same as RTL).
+        if legal_moves and any_overlap(mem, sel, num_macros):
+            illegal_rejects += 1
+            accepted_flag = False
             mem[sel * 4] = saved_x
             mem[sel * 4 + 1] = saved_y
+        else:
+            # ST_METROPOLIS
+            candidate_cost = cost_model(mem)[0]
+            if candidate_cost <= current_cost:
+                accepted_flag = True
+            else:
+                delta = (candidate_cost - current_cost) & MASK64
+                if metropolis == "rtl":
+                    threshold = metropolis_threshold(delta, temperature)
+                else:
+                    threshold = int(65535 * math.exp(-delta / temperature)) if temperature > 0 else 0
+                accepted_flag = dice < threshold
+            if accepted_flag:
+                current_cost = candidate_cost
+                accepted += 1
+            else:
+                mem[sel * 4] = saved_x
+                mem[sel * 4 + 1] = saved_y
 
         if track is not None:
-            track.append((sel, new_x, new_y, accepted_flag, current_cost))
+            track.append((sel, new_x, new_y, accepted_flag, current_cost,
+                          illegal_rejects > prev_illegal))
 
         # ST_CHECK_INNER: cooling and termination (pre-decay T compare).
         if inner_count + 1 >= p["inner_iters"]:
@@ -257,8 +278,21 @@ def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
                 break
 
     metrics = dict(total_iters=total_iters, accepted_count=accepted,
-                   final_cost=current_cost, final_temp=temperature)
+                   final_cost=current_cost, final_temp=temperature,
+                   illegal_rejects=illegal_rejects)
     return mem, metrics
+
+
+def any_overlap(mem, sel, num_macros):
+    """True when macro `sel` overlaps any other macro in the flat word list."""
+    x, y, w, h = mem[sel * 4], mem[sel * 4 + 1], mem[sel * 4 + 2], mem[sel * 4 + 3]
+    for j in range(num_macros):
+        if j == sel:
+            continue
+        if boxes_overlap(x, y, w, h,
+                         mem[j * 4], mem[j * 4 + 1], mem[j * 4 + 2], mem[j * 4 + 3]):
+            return True
+    return False
 
 
 def boxes_overlap(x1, y1, w1, h1, x2, y2, w2, h2):
@@ -272,7 +306,7 @@ def greedy_model(mem):
     """Exact model of legalizer_fsm.v (Pass 2) over a flat word list.
 
     Includes the min-overlap-axis push, pass-parity and macro-parity
-    tie-breaks, die-edge wrap, the 9-sweep cap, and the MAX_RESOLVE_TRIES
+    tie-breaks, die-edge wrap, the 8-sweep cap, and the MAX_RESOLVE_TRIES
     per-pair cap added by the verification effort. A single macro returns
     unchanged (the RTL's pair loop is skipped after the outer-bound fix).
     """
