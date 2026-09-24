@@ -1,8 +1,10 @@
 # rtl_legalizer Verification Report
 
-Date: 2026-09-23. Scope: the two-pass Verilog legalizer (SA engine + greedy
-sweep) in `rtl_legalizer/`. Tools: Icarus Verilog 12.0, Verilator 5.025
-(oss-cad-suite), OpenROAD 26Q2 (not exercised here), Python 3.13.
+Date: 2026-09-23; updated 2026-09-24 (SA legality scan added, fixtures and
+profiles re-baselined, LIM-1 re-measured). Scope: the two-pass Verilog
+legalizer (SA engine + greedy sweep) in `rtl_legalizer/`. Tools: Icarus
+Verilog 12.0, Verilator 5.025 (oss-cad-suite), OpenROAD 26Q2 (not exercised
+here), Python 3.13.
 
 ## 1. Verification spec
 
@@ -63,28 +65,37 @@ Normal pairs resolve in 1-2 tries, so their behavior is unchanged. The pair
 stays overlapping and the audit layer reports it.
 Reproducer: `tests/test_unit_tbs.py::TestLegalizerFSM::test_unresolvable_pair_terminates`.
 
-### LIM-1 (documented, not fixed): dense layouts keep residual overlaps
+### LIM-1 (re-measured 2026-09-24): dense synthetic layouts keep residual overlaps
 
-The greedy cleanup runs at most 9 sweeps. Pushes can cascade (pushing B
-shoves it into C, D, ...), and 9 sweeps do not settle moderately dense
-layouts. A 350-run sweep of the RTL-validated golden model found:
+The SA engine now rejects any candidate move that would overlap another macro
+(a legality scan over `collision_check.v` before Metropolis acceptance), so
+Pass 1 never leaves the legal placement space and no longer *creates* the
+overlaps that Pass 2 must undo. The greedy cleanup still runs at most 8
+sweeps, and its push-only strategy cannot untangle dense synthetic clusters:
 
-- `dense`: overlaps on every seed at N >= 24 (up to ~3800 residual pairs at N=168).
-- `chain`: overlaps on every seed at N >= 24.
-- `pair_overlap`, `out_of_bounds`: occasional overlaps at N >= 64.
+- `dense`: P1 violations on 23 of 50 runs (was 29); up to ~4500 residual
+  pairs at N=168.
+- `chain`: P1 violations on 4 of 50 runs (was 22); P2 boundary violations
+  can also remain (the sweep cannot pull wrapped macros back inside).
+- `pair_overlap`: clean (was occasional violations).
+- `out_of_bounds`: P1 on 1 of 50 runs (was 6).
 - `single`, `legal`: always clean.
+- `wide_macro`: P1 clean; P2 violations remain by design (LIM-2).
 - P3 (size preservation): zero violations in all 350 runs.
-- P2 violations only for `wide_macro` (unfixable by design, see LIM-2).
+
+Real-design result: with the legality scan, the closed loop (GNN prediction →
+RTL legalization → DEF injection) produces macro-vs-macro-legal output on
+`mgc_pci_bridge32_b` where the pre-scan RTL left 3 residual overlaps and
+aborted. Remaining macro-vs-standard-cell overlaps after macro movement are a
+downstream-flow responsibility (cell re-placement + macro site alignment;
+Phase 7).
 
 RTL confirmation: the full SA + greedy pipeline on `dense/24/seed0` leaves
-exactly 2 overlaps; the hardened testbench exits non-zero via `$fatal`
+exactly 3 overlaps; the hardened testbench exits non-zero via `$fatal`
 (`tests/test_phase6_verification.py::TestSweepFindings`).
 
-The README previously claimed "Zero overlaps guaranteed". That claim is now
-removed; the guarantee holds only for layouts the sweep can settle (sparse
-inputs, small N). Fixing this needs an algorithm change (more sweeps, a
-progressive-resolution scheme, or row-based legalization) and is a design
-decision, not a bug fix.
+Fixing the dense case needs an algorithm change (progressive-resolution or
+row-based legalization) and is a design decision, not a bug fix.
 
 ### LIM-2 (documented): a macro wider than the die can never be legal
 
@@ -92,7 +103,6 @@ The engine clamps it to x=0 and keeps its size; containment stays violated.
 The audit flags it. This is inherent to the input, not an engine bug.
 
 ### QUIRK-1 (characterized): Metropolis acceptance deviates from exp(-delta/T)
-
 Measured with the golden model (`scripts/characterize_metropolis.py`):
 
 | delta/T | true Metropolis | RTL acceptance |
@@ -142,7 +152,7 @@ and calls `$fatal(1)` on any violation, so `vvp` exits 1. CI-ready.
 
 | Property | Result | Evidence |
 |----------|--------|----------|
-| P1 zero overlaps | Pass on sparse/realistic layouts. Fails on dense layouts >= 24 macros (LIM-1). | sweep + RTL confirmation |
+| P1 zero overlaps | Pass on sparse/realistic layouts and on real-design closed-loop runs. Fails on dense synthetic clusters >= 24 macros (LIM-1). | sweep + RTL confirmation + closed-loop check |
 | P2 die containment | Pass everywhere except unfittable `wide_macro` inputs (LIM-2). | sweep |
 | P3 size preservation | Pass in all 350 sweep runs and all RTL runs. | sweep + audits |
 | P4 determinism | Byte-identical outputs across repeated runs on both simulators. | `TestDeterminism` |
