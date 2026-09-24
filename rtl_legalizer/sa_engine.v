@@ -4,6 +4,10 @@
 // Explores the macro placement solution space using stochastic hill-climbing
 // with an adaptive temperature schedule and true Metropolis acceptance.
 // Minimizes C_total = w_wl*HPWL + w_area*Area_bbox + C_boundary.
+// A legality scan (collision_check over all macros) rejects any candidate
+// move that would overlap another macro before cost evaluation, so the SA
+// pass never leaves the legal placement space. Greedy cleanup (Pass 2)
+// remains responsible for the final overlap guarantee.
 // ============================================================================
 
 `timescale 1ns / 1ps
@@ -149,6 +153,7 @@ module sa_engine #(
     localparam ST_METROPOLIS    = 4'd6;
     localparam ST_CHECK_INNER   = 4'd7;
     localparam ST_DONE          = 4'd8;
+    localparam ST_LEGAL_SCAN    = 4'd9;
 
     reg [3:0]  state;
     reg [31:0] temperature;
@@ -162,6 +167,23 @@ module sa_engine #(
     reg [31:0] saved_y;
     reg [31:0] macro_w;
     reg [31:0] macro_h;
+
+    // Legality scan: walks the layout memory one macro per cycle and rejects
+    // the candidate move if it overlaps any other macro. Consumes no LFSR
+    // advances, so the random stream and cooling schedule are unchanged.
+    reg  [31:0] scan_addr;
+    wire        scan_skip = (scan_addr == sel_macro);
+    wire [31:0] scan_x = layout_mem[scan_addr * 4];
+    wire [31:0] scan_y = layout_mem[scan_addr * 4 + 1];
+    wire [31:0] scan_w = layout_mem[scan_addr * 4 + 2];
+    wire [31:0] scan_h = layout_mem[scan_addr * 4 + 3];
+    wire        scan_hit;
+
+    collision_check scan_inst (
+        .x1(cand_x[31:0]), .y1(cand_y[31:0]), .w1(macro_w), .h1(macro_h),
+        .x2(scan_x), .y2(scan_y), .w2(scan_w), .h2(scan_h),
+        .overlap(scan_hit)
+    );
 
     // Displacement calculation registers
     reg signed [31:0] disp_scale;
@@ -195,6 +217,7 @@ module sa_engine #(
             saved_y        <= 32'd0;
             macro_w        <= 32'd0;
             macro_h        <= 32'd0;
+            scan_addr      <= 32'd0;
         end else begin
             case (state)
                 ST_IDLE: begin
@@ -258,13 +281,34 @@ module sa_engine #(
                     if (cand_y < 0) cand_y = 0;
                     if (cand_y + macro_h > DIE_HEIGHT) cand_y = (DIE_HEIGHT >= macro_h) ? (DIE_HEIGHT - macro_h) : 0;
 
-                        // Apply trial move to layout memory
-                        layout_mem[sel_macro * 4]     <= cand_x[31:0];
-                        layout_mem[sel_macro * 4 + 1] <= cand_y[31:0];
+                    // Apply trial move to layout memory, then legality-scan it
+                    layout_mem[sel_macro * 4]     <= cand_x[31:0];
+                    layout_mem[sel_macro * 4 + 1] <= cand_y[31:0];
+                    scan_addr                     <= 32'd0;
+                    state                         <= ST_LEGAL_SCAN;
+                end
 
-                        // Trigger cost evaluation
+                // ----------------------------------------------------------
+                // ST_LEGAL_SCAN: reject the candidate before cost evaluation
+                // when it would overlap any other macro. One macro per cycle;
+                // the moved macro itself is skipped (its slot holds the
+                // candidate coordinates written in ST_APPLY_MOVE).
+                // ----------------------------------------------------------
+                ST_LEGAL_SCAN: begin
+                    if (!scan_skip && scan_hit) begin
+                        // Illegal candidate: restore and skip cost evaluation.
+                        // Counts as an iteration for the cooling schedule.
+                        layout_mem[sel_macro * 4]     <= saved_x;
+                        layout_mem[sel_macro * 4 + 1] <= saved_y;
+                        total_iters                   <= total_iters + 1;
+                        state                         <= ST_CHECK_INNER;
+                    end else if (scan_addr == NUM_MACROS - 1) begin
+                        // Legal candidate: evaluate the cost as before.
                         cost_start <= 1'b1;
                         state      <= ST_WAIT_EVAL;
+                    end else begin
+                        scan_addr <= scan_addr + 32'd1;
+                    end
                 end
 
                 ST_WAIT_EVAL: begin
