@@ -109,6 +109,8 @@ class TestStage3SA:
     def test_sa_full_trajectory_matches_rtl(self, tmp_path):
         # 8-macro dense layout, 1000 iterations: selection stream, cost
         # sequence, and final metrics must all match the RTL trace exactly.
+        # MET lines are legal iterations (Metropolis accept/reject); ILLEGAL
+        # lines are candidates rejected by the RTL legality scan.
         macros = layout_gen.gen_layout("dense", 8, seed=42)
         layout_gen.write_hex(macros, str(tmp_path / "dummy_layout.hex"))
         rc, out, err = compile_and_run(
@@ -121,14 +123,28 @@ class TestStage3SA:
         lines = out.splitlines()
         final = next(l for l in lines if l.startswith("FINAL")).split()
         met = [l.split() for l in lines if l.startswith("MET")]
+        illegal = [l.split() for l in lines if l.startswith("ILLEGAL")]
 
         words = [v for m in macros for v in m]
         track = []
         _, metrics = gm.sa_model(words, track=track)
 
-        cost_mismatches = sum(1 for i in range(len(met) - 1)
-                              if int(met[i + 1][4]) != track[i][4])
+        # The RTL interleaves MET/ILLEGAL lines in iteration order; the golden
+        # side knows which iterations were illegal. Walk both streams.
+        met_iter = iter(met)
+        illegal_iter = iter(illegal)
+        cost_mismatches = 0
+        for entry in track:
+            if entry[5]:  # legality-scan reject
+                line = next(illegal_iter, None)
+                if line is None or int(line[1]) != entry[4]:
+                    cost_mismatches += 1
+            else:
+                line = next(met_iter, None)
+                if line is None or int(line[4]) != entry[4]:
+                    cost_mismatches += 1
         assert cost_mismatches == 0, f"{cost_mismatches} cost transitions diverged"
+        assert metrics["illegal_rejects"] == len(illegal)
         assert metrics["final_cost"] == int(final[1])
         assert metrics["final_temp"] == int(final[2])
         assert metrics["total_iters"] == int(final[3])
