@@ -45,6 +45,32 @@ read_lef $cells_lef
 puts "\[EVAL\] Loading DEF: $input_def"
 read_def $input_def
 
+# Optional standard-cell healing. RTLign only legalizes macros; a real flow
+# re-places the standard cells around the moved macros. Set HEAL_GP=1 to run
+# global + detailed placement (the production co-flow), or HEAL_DPL=1 for
+# detailed placement only (a no-op on clean DEFs).
+if {[info exists ::env(HEAL_GP)] && $::env(HEAL_GP) eq "1"} {
+    puts "\[EVAL\] Running global placement (standard-cell re-placement)..."
+    if {[catch {global_placement} err]} {
+        puts "\[EVAL\] global_placement failed: $err"
+    } else {
+        puts "\[EVAL\] global_placement finished."
+    }
+    puts "\[EVAL\] Running detailed placement..."
+    if {[catch {detailed_placement} err]} {
+        puts "\[EVAL\] detailed_placement failed: $err"
+    } else {
+        puts "\[EVAL\] detailed_placement finished."
+    }
+} elseif {[info exists ::env(HEAL_DPL)] && $::env(HEAL_DPL) eq "1"} {
+    puts "\[EVAL\] Running detailed placement (standard-cell healing)..."
+    if {[catch {detailed_placement} err]} {
+        puts "\[EVAL\] detailed_placement failed: $err"
+    } else {
+        puts "\[EVAL\] detailed_placement finished."
+    }
+}
+
 puts "\[EVAL\] Calculating Placement Legality..."
 set overlap_count 0
 # check_placement returns output that we might need to parse, or we can just run it.

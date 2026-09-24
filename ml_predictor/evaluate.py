@@ -54,10 +54,12 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
     env["TECH_LEF"] = tech_lef
     env["CELLS_LEF"] = cells_lef
     env["INPUT_DEF"] = def_file
-    
+    # RTLign legalizes macros; cells are re-placed around them (production co-flow)
+    env["HEAL_GP"] = "1"
+
     cmd = ["openroad", "-no_init", "-exit", EVAL_TCL]
     stdout = run_cmd(cmd, env=env)
-    
+
     hpwl = "N/A"
     legal = False
     for line in stdout.split('\n'):
@@ -65,7 +67,7 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
             hpwl = line.split(":")[-1].strip()
         if "check_placement finished (legal)." in line:
             legal = True
-            
+
     return hpwl, legal
 
 
