@@ -76,17 +76,19 @@ This will:
 #### Run ML Predictor & Evaluation Flow
 
 ```bash
-# 1. Train the Topological GNN (requires extracted Parquet data)
-python ml_predictor/train_nn.py --data_dir data/parquet_dataset --epochs 100
+# 1. Train the Topological GNN (requires the Parquet tables in data/)
+#    Note: train_nn.py takes no CLI flags; epochs default to 100.
+python ml_predictor/train_nn.py
 
 # 2. Run inference & export DAG constraints to hex
-python run_predict.py
+python run_predict.py --def_file <placed.def> --lef_file <cells.lef>
 
 # 3. Benchmark pipeline against OpenROAD baseline & visualize layout
+#    (any placed DEF whose cell types match the given LEF)
 python ml_predictor/evaluate.py \
-  --def_file openroad_scripts/mockup_export.def \
-  --tech_lef data/tech.lef \
-  --cells_lef data/cells.lef \
+  --def_file data/generated_defs/mgc_pci_bridge32_b/mgc_pci_bridge32_b_ar1.0_u60_d0.7.def \
+  --tech_lef data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/tech.lef \
+  --cells_lef data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/cells.lef \
   --model_path topological_gnn_model.pth \
   --output_dir evaluation_output
 ```
@@ -189,9 +191,9 @@ Trains a Graph Neural Network (`model.py`) to infer pairwise relative topologica
 
 ### 5. Two-Pass Hardware Legalizer, Verilator Bridge & Verification
 A heterogeneous two-pass placement engine implemented in synthesizable Verilog:
-- **Pass 1: Simulated Annealing Optimizer (`sa_engine.v`):** Explores the placement solution space using stochastic hill-climbing, 32-bit Galois LFSR pseudo-random perturbations (`lfsr32.v`), and Metropolis acceptance ($P = e^{-\Delta C / T}$). Minimizes a 3-term cost function (`sa_cost.v`): wirelength (HPWL), bounding box area, and boundary penalties.
-- **Pass 2: Deterministic Greedy Cleanup (`legalizer_fsm.v`):** Resolves residual overlaps via axis-of-minimum-overlap push with multi-pass cascade resolution, guaranteeing 100% legal, zero-overlap macro layouts.
-- **Verilator Simulation Bridge (`verilator/`):** A high-speed C++ simulation harness (`sa_harness.cpp`, `verilator_bridge.py`) delivering ~400x speedup over interpreted simulation (executing 9.7M clock cycles in 0.35s).
+- **Pass 1: Simulated Annealing Optimizer (`sa_engine.v`):** Explores the placement solution space using stochastic hill-climbing, 32-bit Galois LFSR pseudo-random perturbations (`lfsr32.v`), and Metropolis acceptance ($P = e^{-\Delta C / T}$). A built-in legality scan rejects any candidate move that would overlap another macro, so SA never leaves the legal placement space. Minimizes a 3-term cost function (`sa_cost.v`): wirelength (HPWL), bounding box area, and boundary penalties.
+- **Pass 2: Deterministic Greedy Cleanup (`legalizer_fsm.v`):** Resolves residual overlaps via axis-of-minimum-overlap push with multi-pass cascade resolution, guaranteeing overlap-free macro layouts for realistic (sparse to moderate) placements. Dense synthetic clusters may retain residual overlaps (see `rtl_legalizer/VERIFICATION.md`, LIM-1).
+- **Verilator Simulation Bridge (`verilator/`):** A high-speed C++ simulation harness (`sa_harness.cpp`, `verilator_bridge.py`) delivering 10×–1000× speedup over interpreted simulation depending on design size (the 168-macro mockup measures ~40×; larger designs amortize better).
 - **Formal Verification & Auditing (`audit.py`, `golden_model.py`, `VERIFICATION.md`):** Bit-exact Python golden model reproducing RTL arithmetic, automated 3-property layout auditor (P1: overlaps, P2: die containment, P3: size preservation), and a 135-test verification suite with cross-simulator equivalence (Icarus vs. Verilator).
 
 ### 6. HEX → DEF Injector (`hex_to_def.py`)
