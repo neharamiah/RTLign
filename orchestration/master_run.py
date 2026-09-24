@@ -46,8 +46,10 @@ LEF_FILES = [
     os.path.join(PROJECT_ROOT, "data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/cells.lef"),
 ]
 
-# DEF file paths - using mockup_export.def (168 components) for testing
-# The ISPD 2015 benchmark has 155K components which is too large for current legalizer
+# DEF file paths - using mockup_export.def for testing.
+# The DEF has 482 components total; 168 are placed (fill cells) and become the
+# legalizer's 672-word (4 x 168) HEX input. The ISPD 2015 benchmark has 155K
+# components which is too large for the current legalizer.
 INPUT_DEF    = os.path.join(PROJECT_ROOT, "openroad_scripts", "mockup_export.def")
 INPUT_HEX    = os.path.join(PROJECT_ROOT, "rtl_legalizer", "dummy_layout.hex")
 OUTPUT_HEX   = os.path.join(PROJECT_ROOT, "rtl_legalizer", "output_layout.hex")
@@ -147,6 +149,21 @@ def main():
         "[4/4] HEX → DEF Injector (Patch legalized coordinates)",
         [sys.executable, HEX_INJECTOR, INPUT_DEF, OUTPUT_HEX, OUTPUT_DEF],
     )
+
+    # ------------------------------------------------------------------
+    # Stage 5: Audit the legalization (P1 overlaps, P2 die bounds, P3 sizes)
+    # ------------------------------------------------------------------
+    from rtl_legalizer import audit
+
+    in_macros = audit.to_macros(audit.read_hex_words(INPUT_HEX))
+    out_macros = audit.to_macros(audit.read_hex_words(OUTPUT_HEX))
+    result = audit.check_layout(in_macros, out_macros)
+    print()
+    for line in result.summary_lines():
+        print(f"  {line}")
+    if not result.passed:
+        print("\n  ERROR: Post-legalization audit failed.")
+        sys.exit(1)
 
     # ------------------------------------------------------------------
     # Summary
