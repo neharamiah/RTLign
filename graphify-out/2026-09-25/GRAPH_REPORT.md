@@ -1,17 +1,17 @@
-# Graph Report - RTLign  (2026-09-25)
+# Graph Report - RTLign  (2026-09-23)
 
 ## Corpus Check
-- 61 files · ~59,695 words
+- 57 files · ~46,735 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 16 file(s) not represented in the graph (top: .parquet 5, (none) 4, .tcl 4)
 
 ## Summary
-- 756 nodes · 1014 edges · 61 communities (49 shown, 9 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 72 edges (avg confidence: 0.85)
+- 626 nodes · 767 edges · 50 communities (39 shown, 8 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4b0e2ac1`
+- Built from commit: `7311b6d0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,7 +21,7 @@
 - test_ispd2015_integration.py
 - golden_model.py
 - extract_database_units
-- main
+- parse_def_to_hex
 - RTLign — 6-Month Comprehensive Roadmap
 - test_lef_parser_cli.py
 - 4. Component Deep-Dives
@@ -46,7 +46,7 @@
 - TestCheckLayout
 - run_verilator_legalizer
 - TestLegalizerFSM
-- parse_lef_files
+- parse_lef_file
 - 3. Findings
 - test_golden_model.py
 - TopologicalMacroDataset
@@ -63,46 +63,35 @@
 - conftest.py
 - lfsr32.v
 - sa_cost.v
-- run_cmd
-- run_audit.py
-- Results by tier
-- a4_verilator
-- a1_inventory
-- a2_doc_drift
-- a4_hex_to_def
-- tb_iter_div
-- a5_retrain
-- a3_pytest
-- iter_div.v
 
 ## God Nodes (most connected - your core abstractions)
-1. `run_check()` - 28 edges
-2. `main()` - 28 edges
-3. `run_cmd()` - 22 edges
-4. `4. Component Deep-Dives` - 21 edges
-5. `parse_lef_files()` - 16 edges
-6. `FeatureExtractor` - 15 edges
-7. `parse_lef_file()` - 14 edges
-8. `extract_macro_dimensions()` - 13 edges
-9. `convert_to_db_units()` - 12 edges
-10. `extract_database_units()` - 11 edges
+1. `4. Component Deep-Dives` - 21 edges
+2. `FeatureExtractor` - 15 edges
+3. `parse_lef_file()` - 14 edges
+4. `parse_lef_files()` - 13 edges
+5. `extract_macro_dimensions()` - 13 edges
+6. `convert_to_db_units()` - 12 edges
+7. `extract_database_units()` - 11 edges
+8. `TestCheckLayout` - 11 edges
+9. `TestLayoutGen` - 10 edges
+10. `TestLegalizerFSM` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `a4_def_to_hex()` --calls--> `parse_def_to_hex()`  [EXTRACTED]
-  scripts/run_audit.py → ml_predictor/def_parser.py
-- `_hex()` --calls--> `parse_def_to_hex()`  [EXTRACTED]
-  scripts/run_audit.py → ml_predictor/def_parser.py
 - `main()` --calls--> `parse_lef_files()`  [EXTRACTED]
   ml_predictor/evaluate.py → rtl_legalizer/lef_parser.py
 - `main()` --calls--> `run_verilator_legalizer()`  [EXTRACTED]
   ml_predictor/evaluate.py → rtl_legalizer/verilator/verilator_bridge.py
-- `a5_predict()` --calls--> `get_die_bounds()`  [EXTRACTED]
-  scripts/run_audit.py → ml_predictor/predict.py
+- `main()` --calls--> `parse_lef_files()`  [EXTRACTED]
+  orchestration/master_run.py → rtl_legalizer/lef_parser.py
+- `main()` --calls--> `parse_def_to_hex()`  [EXTRACTED]
+  orchestration/master_run.py → ml_predictor/def_parser.py
+- `run_icarus_legalizer()` --calls--> `read_hex_words()`  [EXTRACTED]
+  tests/test_phase6_verification.py → rtl_legalizer/audit.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (61 total, 9 thin omitted)
+## Communities (50 total, 8 thin omitted)
 
 ### Community 0 - "convert_to_db_units"
 Cohesion: 0.19
@@ -117,16 +106,16 @@ Cohesion: 0.07
 Nodes (17): Integration tests with ISPD 2015 benchmarks. Tests Requirements 6.1, 6.2, 6.3,…, Requirement 7.1: Verify extreme aspect ratio cells handled correctly. WHEN…, Test 16.2: Full pipeline integration with real dimensions, Requirement 6.3: Legalizer FSM completes without deadlock. WHEN running the…, Requirement 6.4: Output HEX contains non-uniform dimensions. WHEN legalization…, Test 16.3: Error handling scenarios, Requirement 5.3: Invalid LEF file path aborts pipeline. WHEN the LEF_Parser…, Test 16.1: LEF parsing with mgc_matrix_mult_2 design data (+9 more)
 
 ### Community 3 - "golden_model.py"
-Cohesion: 0.07
-Nodes (32): Random, any_overlap(), boxes_overlap(), cost_model(), greedy_model(), legalize_model(), LFSR32, metropolis_threshold() (+24 more)
+Cohesion: 0.08
+Nodes (30): Random, boxes_overlap(), cost_model(), greedy_model(), legalize_model(), LFSR32, metropolis_threshold(), Cycle-accurate Python golden model of the rtl_legalizer Verilog pipeline.… (+22 more)
 
 ### Community 4 - "extract_database_units"
 Cohesion: 0.15
 Nodes (11): extract_database_units(), Extract DATABASE MICRONS value from UNITS block. LEF format: UNITS DATABASE…, Unit tests for extract_database_units function., Test parsing a standard UNITS block with DATABASE MICRONS 1000., Test parsing with a different multiplier value., Test that None is returned when UNITS block is missing., Test that None is returned when DATABASE MICRONS is missing from UNITS block., Test that parsing is case-insensitive. (+3 more)
 
-### Community 5 - "main"
-Cohesion: 0.13
-Nodes (18): a0_imports(), _imports(), a2_doc_commands(), a3_metropolis(), _metropolis(), a3_sweep(), _sweep(), a4_audit_cli() (+10 more)
+### Community 5 - "parse_def_to_hex"
+Cohesion: 0.17
+Nodes (11): parse_def_to_hex(), Dimension_Dict, Parse a DEF file and generate a .hex memory file for the hardware legalizer.…, main(), RTLign — Master Orchestration Script =====================================…, Run a subprocess command with timing and error handling., run_step(), Additional integration tests for LEF + DEF pipeline (+3 more)
 
 ### Community 6 - "RTLign — 6-Month Comprehensive Roadmap"
 Cohesion: 0.11
@@ -185,12 +174,12 @@ Cohesion: 0.18
 Nodes (10): 1. Product Summary, 1. Think Before Coding, 2. Simplicity First, 2. Technology Stack, 3. Project Structure, 3. Surgical Changes, 4. Agent Operational Guidelines, 4. Goal-Driven Execution (+2 more)
 
 ### Community 24 - "audit.py"
-Cohesion: 0.05
-Nodes (36): parse_def_to_hex(), Dimension_Dict, Parse a DEF file and generate a .hex memory file for the hardware legalizer.…, main(), RTLign — Master Orchestration Script =====================================…, Run a subprocess command with timing and error handling., run_step(), audit_layout() (+28 more)
+Cohesion: 0.08
+Nodes (24): audit_layout(), AuditResult, check_layout(), main(), Layout auditor for the RTL legalizer. This module is the single source of truth…, Audit an output hex file against its input hex file., Outcome of one layout audit. Empty lists mean the property passed., True when no property failed and no structural error exists. (+16 more)
 
 ### Community 25 - "RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement"
 Cohesion: 0.25
-Nodes (7): Datasets, Pipeline Architecture, Project Background & Problem Statement, Project Timeline, RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement, Team P124, Tools & Technologies
+Nodes (7): Datasets, Pipeline Architecture, Project Background & Problem Statement, Project Timeline & Current Status, RTLign: ML-Assisted Simulated Annealing for RTL-Accelerated VLSI Macro Placement, Team P124, Tools & Technologies
 
 ### Community 26 - "ML Predictor"
 Cohesion: 0.25
@@ -201,8 +190,8 @@ Cohesion: 0.33
 Nodes (5): Direct CLI Usage, Evaluating a Placed Layout:, Files, OpenROAD Scripts, Running Placement:
 
 ### Community 28 - "RTL Legalizer & Simulated Annealing Engine"
-Cohesion: 0.13
-Nodes (14): 1. Accelerated Verilator Execution (Recommended), 2. Interpreted Icarus Verilog Simulation, 3. FPGA Synthesis (PYNQ / Vivado), Architecture Overview, Build the executable:, Execution Modes, File Manifest, Hardware Memory Contract (+6 more)
+Cohesion: 0.14
+Nodes (13): 1. Accelerated Verilator Execution (Recommended), 2. Interpreted Icarus Verilog Simulation, Architecture Overview, Build the executable:, Execution Modes, File Manifest, Hardware Memory Contract, Hardware Parameters (+5 more)
 
 ### Community 29 - "TestCheckLayout"
 Cohesion: 0.07
@@ -213,12 +202,12 @@ Cohesion: 0.10
 Nodes (15): build_verilator(), Any, Verilator Bridge for RTLign Simulated Annealing Legalizer. Provides high-speed…, Compile the Verilator simulation binary if needed., Execute the Verilator Simulated Annealing legalizer. Args: input_hex: Path to…, run_verilator_legalizer(), Phase 6 Automated Test Suite — Verilog Simulated Annealing Engine & Verilator…, Verify Verilator builds and legalizes dummy_layout.hex with 0 overlaps. (+7 more)
 
 ### Community 31 - "TestLegalizerFSM"
-Cohesion: 0.16
-Nodes (7): Unit testbenches for the rtl_legalizer Verilog modules (Icarus). -…, Compile a TB with iverilog, run with vvp, return (rc, stdout, stderr). sim_cwd…, run_icarus(), TestCollisionCheck, TestIterDiv, TestLegalizerFSM, TestSaCost
+Cohesion: 0.18
+Nodes (6): Unit testbenches for the rtl_legalizer Verilog modules (Icarus). -…, Compile a TB with iverilog, run with vvp, return (rc, stdout, stderr). sim_cwd…, run_icarus(), TestCollisionCheck, TestLegalizerFSM, TestSaCost
 
-### Community 32 - "parse_lef_files"
-Cohesion: 0.21
-Nodes (13): extract_macro_dimensions(), parse_lef_file(), parse_lef_files(), extreme_aspect_ratio_strategy(), Property-based tests for LEF Parser Module These tests verify universal…, Generates extreme aspect ratio dimensions: - Tall cells: width:height > 3:1…, Dimension_Dict, LEF Parser Module for Real Cell Dimensions This module parses Library Exchange… (+5 more)
+### Community 32 - "parse_lef_file"
+Cohesion: 0.23
+Nodes (12): extract_macro_dimensions(), parse_lef_file(), parse_lef_files(), extreme_aspect_ratio_strategy(), Property-based tests for LEF Parser Module These tests verify universal…, Generates extreme aspect ratio dimensions: - Tall cells: width:height > 3:1…, Dimension_Dict, LEF Parser Module for Real Cell Dimensions This module parses Library Exchange… (+4 more)
 
 ### Community 33 - "3. Findings"
 Cohesion: 0.13
@@ -250,75 +239,35 @@ Nodes (4): check, tb_collision_check, check, collision_check
 
 ### Community 40 - "tb_sa_cost"
 Cohesion: 0.40
-Nodes (4): tb_sa_cost, run_case, run_case, sa_cost
+Nodes (4): tb_sa_cost, run_case, sa_cost, run_case
 
 ### Community 41 - "sa_engine"
-Cohesion: 0.33
-Nodes (5): lfsr32, sa_engine, collision_check, iter_div, sa_cost
+Cohesion: 0.50
+Nodes (3): lfsr32, sa_engine, sa_cost
 
 ### Community 42 - "sa_legalizer_top"
 Cohesion: 0.50
 Nodes (3): sa_legalizer_top, legalizer_fsm, sa_engine
 
-### Community 50 - "run_cmd"
-Cohesion: 0.14
-Nodes (18): _run(), a5_predict(), _containment(), _run(), a5_run_predict(), _full(), _no_args(), a6_evaluate() (+10 more)
-
-### Community 51 - "run_audit.py"
-Cohesion: 0.18
-Nodes (16): a0_python(), a0_tools(), _openroad(), _verilator(), a2_python_compile(), _compile(), a2_todos(), _todos() (+8 more)
-
-### Community 52 - "Results by tier"
-Cohesion: 0.17
-Nodes (11): Claims ledger (A7), e2e, env, inventory, Manual review findings (agent per-file pass), ml, Results by tier, RTLign Audit Report (+3 more)
-
-### Community 53 - "a4_verilator"
-Cohesion: 0.22
-Nodes (9): a0_sim_binary(), _fresh(), _present(), _golden(), a4_verilator(), _determinism(), _run(), find_sim_binary() (+1 more)
-
-### Community 54 - "a1_inventory"
-Cohesion: 0.20
-Nodes (5): a1_inventory(), _git(), _structure(), parse_readme_structure(), Extract full paths from the README '## Project Structure' tree block.
-
-### Community 55 - "a2_doc_drift"
-Cohesion: 0.25
-Nodes (4): a2_doc_drift(), build_claims(), add(), obs()
-
-### Community 56 - "a4_hex_to_def"
-Cohesion: 0.33
-Nodes (6): a4_hex_to_def(), _inject(), parse_def_components(), Return {inst_name: full_line} for lines inside COMPONENTS...END COMPONENTS., Simulate hex_to_def.py's sequential fallback: the first n_coords non-FIXED…, sequential_injection_targets()
-
-### Community 57 - "tb_iter_div"
-Cohesion: 0.40
-Nodes (4): tb_iter_div, run_case, iter_div, run_case
-
-### Community 58 - "a5_retrain"
-Cohesion: 0.40
-Nodes (3): a5_retrain(), _retrain(), CheckResult
-
-### Community 59 - "a3_pytest"
-Cohesion: 0.50
-Nodes (4): a3_pytest(), _pytest(), _claim(), Read the verdict of an earlier check for claims-style reporting.
-
 ## Knowledge Gaps
-- **165 isolated node(s):** `collision_check`, `iter_div`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit` (+160 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 409 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **149 isolated node(s):** `collision_check`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit`, `run_overlap_audit` (+144 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 360 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `parse_lef_files()` connect `parse_lef_files` to `FeatureExtractor`, `main`, `TestParseLefFiles`, `run_audit.py`, `audit.py`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
-- **Why does `get_die_bounds()` connect `FeatureExtractor` to `run_cmd`, `run_audit.py`, `test_phase5_integration.py`?**
-  _High betweenness centrality (0.079) - this node is a cross-community bridge._
-- **Why does `parse_def_to_hex()` connect `audit.py` to `run_audit.py`, `main`?**
-  _High betweenness centrality (0.057) - this node is a cross-community bridge._
-- **Are the 24 inferred relationships involving `main()` (e.g. with `a0_imports()` and `a0_python()`) actually correct?**
-  _`main()` has 24 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `collision_check`, `iter_div`, `collision_check` to the rest of the system?**
-  _165 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `parse_lef_files()` connect `parse_lef_file` to `FeatureExtractor`, `parse_def_to_hex`, `TestParseLefFiles`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Why does `TestLEFDEFIntegration` connect `parse_def_to_hex` to `test_ispd2015_integration.py`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **What connects `collision_check`, `collision_check`, `sa_legalizer_top` to the rest of the system?**
+  _149 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `FeatureExtractor` be split into smaller, more focused modules?**
   _Cohesion score 0.08139534883720931 - nodes in this community are weakly interconnected._
 - **Should `test_ispd2015_integration.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._
+- **Should `golden_model.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.07657657657657657 - nodes in this community are weakly interconnected._
+- **Should `RTLign — 6-Month Comprehensive Roadmap` be split into smaller, more focused modules?**
+  _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
