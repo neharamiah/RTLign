@@ -31,6 +31,7 @@ HEX_INJECTOR = os.path.join(PROJECT_ROOT, "ml_predictor", "hex_to_def.py")
 
 VERILOG_SRC  = [
     os.path.join(PROJECT_ROOT, "rtl_legalizer", "collision_check.v"),
+    os.path.join(PROJECT_ROOT, "rtl_legalizer", "iter_div.v"),
     os.path.join(PROJECT_ROOT, "rtl_legalizer", "lfsr32.v"),
     os.path.join(PROJECT_ROOT, "rtl_legalizer", "sa_cost.v"),
     os.path.join(PROJECT_ROOT, "rtl_legalizer", "sa_engine.v"),

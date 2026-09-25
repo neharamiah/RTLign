@@ -197,8 +197,9 @@ def main():
             f"-Plegalizer_tb.DIE_WIDTH={die_w}",
             f"-Plegalizer_tb.DIE_HEIGHT={die_h}",
             "-o", sim_out,
-            "collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-            "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"
+            "collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+            "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v",
+            "legalizer_tb.v"
         ]
         run_cmd(iverilog_cmd, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
         vvp_out = run_cmd(["vvp", sim_out], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))

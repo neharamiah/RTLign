@@ -31,10 +31,11 @@ sys.path.insert(0, PROJECT_ROOT)
 TIER_ORDER = ["env", "inventory", "static", "tests", "stage", "ml", "e2e"]
 
 # Canonical design sources, in link order (mirrors master_run.py / evaluate.py).
-DESIGN_V = ["collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-            "legalizer_fsm.v", "sa_legalizer_top.v"]
+DESIGN_V = ["collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+            "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v"]
 TB_V = ["legalizer_tb.v", "tb_collision_check.v", "tb_sa_cost.v",
-        "tb_legalizer_fsm.v", "tb_sa_trace.v", "tb_cost_vectors.v"]
+        "tb_legalizer_fsm.v", "tb_sa_trace.v", "tb_cost_vectors.v",
+        "tb_iter_div.v"]
 
 ISPD_DIR = os.path.join(PROJECT_ROOT, "data", "ispd_benchmarks", "ispd2015",
                         "hidden", "mgc_matrix_mult_2")
@@ -43,12 +44,14 @@ CELLS_LEF = os.path.join(ISPD_DIR, "cells.lef")
 MOCKUP_DEF = os.path.join(PROJECT_ROOT, "openroad_scripts", "mockup_export.def")
 CHECKPOINT = os.path.join(PROJECT_ROOT, "topological_gnn_model.pth")
 
-# Expected mockup metrics, from PROGRESS.md section 5 (post legality scan).
-EXP_CYCLES = 889115
+# Expected mockup metrics, from PROGRESS.md section 5 (post legality scan,
+# re-baselined after the FPGA synthesizability restructure: multi-cycle
+# iterative divider, synchronous-read BRAM memories, reset synchronizer).
+EXP_CYCLES = 1120446
 EXP_COST = 3704579
 EXP_ITERATIONS = 1000
 EXP_HEX_LINES = 672   # 4 words x 168 macros
-EXP_TEST_COUNT = 135  # README / PROGRESS claim
+EXP_TEST_COUNT = 136  # README / PROGRESS claim
 
 
 # ---------------------------------------------------------------------------
@@ -1260,7 +1263,8 @@ def build_claims(results):
     add("Full test suite green", "README, PROGRESS", "A3.1")
     add("135 tests pass", "README, PROGRESS", "A3.2")
     add("SA legalizer produces audit-clean mockup placement", "PROGRESS §5", "A4.3")
-    add("889,115 clock cycles (mockup, post legality scan)", "PROGRESS §5", "A4.4")
+    add("1,120,446 clock cycles (mockup, post synthesizability restructure)",
+        "PROGRESS §5", "A4.4")
     add("SA never leaves the legal placement space (legality scan)",
         "VERIFICATION, README", "A4.3")
     add("Final placement cost 3,704,579", "PROGRESS §5", "A4.3")
@@ -1382,8 +1386,10 @@ def write_report(results, claims, out_path, elapsed, args):
     lines.append("unplaced components is documented in the audit; `evaluate.py` still")
     lines.append("pip-installs packages as a side effect (harmless, open).")
     lines.append("")
-    lines.append("**R7 (re-baselined) — Cycle counts.** With the legality scan: Icarus")
-    lines.append("889,115, Verilator 889,114 cycles; cost 3,704,579 unchanged; 4 illegal")
+    lines.append("**R7 (re-baselined) — Cycle counts.** With the legality scan and the")
+    lines.append("FPGA synthesizability restructure (iterative Metropolis divider,")
+    lines.append("synchronous-read BRAM memories, reset synchronizer): Icarus 1,120,446,")
+    lines.append("Verilator 1,120,445 cycles; cost 3,704,579 unchanged; 4 illegal")
     lines.append("moves rejected on the mockup. Docs updated.")
     lines.append("")
     lines.append("**R8 — RTL code quality.** `collision_check.v`, `lfsr32.v`, `sa_cost.v`,")
