@@ -12,6 +12,7 @@ DIE_HEIGHT ?= 201600
 
 VERILOG_DIR = ..
 VERILOG_SRCS = $(VERILOG_DIR)/collision_check.v \
+               $(VERILOG_DIR)/iter_div.v \
                $(VERILOG_DIR)/lfsr32.v \
                $(VERILOG_DIR)/sa_cost.v \
                $(VERILOG_DIR)/sa_engine.v \

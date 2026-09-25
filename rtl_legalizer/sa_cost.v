@@ -39,7 +39,10 @@ module sa_cost #(
 
     localparam NUM_MACROS = NUM_LINES / 4;
 
-    // FSM states
+    // FSM states. mem_rdata has one cycle of synchronous-read latency: each
+    // state consumes the word requested by the PREVIOUS state, so address
+    // issuance runs one state ahead of consumption (S_PRIME primes the
+    // pipeline with the first X word).
     localparam S_IDLE    = 3'd0;
     localparam S_READ_X  = 3'd1;
     localparam S_READ_Y  = 3'd2;
@@ -47,6 +50,7 @@ module sa_cost #(
     localparam S_READ_H  = 3'd4;
     localparam S_CALC    = 3'd5;
     localparam S_DONE    = 3'd6;
+    localparam S_PRIME   = 3'd7;
 
     reg [2:0] state;
     reg [31:0] macro_idx;
@@ -78,8 +82,10 @@ module sa_cost #(
     wire [31:0] span_cy = (max_cy > min_cy) ? (max_cy - min_cy) : 32'd0;
     wire [31:0] hpwl    = span_cx + span_cy;
 
-    wire [63:0] bbox_w  = (max_right > min_left)  ? (max_right - min_left)  : 64'd0;
-    wire [63:0] bbox_h  = (max_top > min_bottom)  ? (max_top - min_bottom)  : 64'd0;
+    // Operands are 32-bit coordinate spans; declaring them 32-bit keeps the
+    // product a 32x32->64 multiply (single DSP cascade) instead of 64x64.
+    wire [31:0] bbox_w  = (max_right > min_left)  ? (max_right - min_left)  : 32'd0;
+    wire [31:0] bbox_h  = (max_top > min_bottom)  ? (max_top - min_bottom)  : 32'd0;
     wire [63:0] bbox_area = bbox_w * bbox_h;
 
     always @(posedge clk or posedge rst) begin
@@ -121,26 +127,36 @@ module sa_cost #(
                         accum_boundary <= 32'd0;
                         macro_idx      <= 32'd0;
                         mem_addr       <= 32'd0; // Request X of macro 0
-                        state          <= S_READ_X;
+                        state          <= S_PRIME;
                     end
+                end
+
+                S_PRIME: begin
+                    // X of macro 0 is live next cycle; issue Y's address now.
+                    mem_addr <= macro_idx * 4 + 1;
+                    state    <= S_READ_X;
                 end
 
                 S_READ_X: begin
                     cur_x    <= mem_rdata;
-                    mem_addr <= macro_idx * 4 + 1; // Request Y
+                    mem_addr <= macro_idx * 4 + 2; // Request W
                     state    <= S_READ_Y;
                 end
 
                 S_READ_Y: begin
                     cur_y    <= mem_rdata;
-                    mem_addr <= macro_idx * 4 + 2; // Request W
+                    mem_addr <= macro_idx * 4 + 3; // Request H
                     state    <= S_READ_W;
                 end
 
                 S_READ_W: begin
-                    cur_w    <= mem_rdata;
-                    mem_addr <= macro_idx * 4 + 3; // Request H
-                    state    <= S_READ_H;
+                    cur_w <= mem_rdata;
+                    // Request X of the next macro (consumed one state after
+                    // S_READ_H, matching the synchronous-read latency).
+                    if (macro_idx + 1 < NUM_MACROS) begin
+                        mem_addr <= (macro_idx + 1) * 4;
+                    end
+                    state <= S_READ_H;
                 end
 
                 S_READ_H: begin
@@ -161,8 +177,11 @@ module sa_cost #(
                     if (macro_idx + 1 >= NUM_MACROS) begin
                         state <= S_CALC;
                     end else begin
+                        // Issue Y of the next macro (X was issued by
+                        // S_READ_W; each state issues the word consumed two
+                        // states later, matching the synchronous-read flow).
+                        mem_addr  <= (macro_idx + 1) * 4 + 1;
                         macro_idx <= macro_idx + 1;
-                        mem_addr  <= (macro_idx + 1) * 4; // Request X of next macro
                         state     <= S_READ_X;
                     end
                 end

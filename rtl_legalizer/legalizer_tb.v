@@ -59,6 +59,8 @@ module legalizer_tb;
         .rst            (rst),
         .start          (start),
         .done           (done),
+        .out_addr       (10'd0),
+        .out_data       (),
         .final_cost     (final_cost),
         .final_temp     (final_temp),
         .total_iters    (total_iters),
