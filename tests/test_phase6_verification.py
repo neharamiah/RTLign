@@ -22,8 +22,9 @@ RTL_DIR = os.path.join(PROJECT_ROOT, "rtl_legalizer")
 SIM = os.path.join(RTL_DIR, "verilator", "legalizer_sim")
 GOLDEN_DIR = os.path.join(PROJECT_ROOT, "tests", "data", "golden")
 
-RTL_SOURCES = ["collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-               "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"]
+RTL_SOURCES = ["collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+               "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v",
+               "legalizer_tb.v"]
 
 
 def run_icarus_legalizer(input_hex, tmp_path, timeout=600):

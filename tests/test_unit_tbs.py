@@ -56,6 +56,17 @@ class TestSaCost:
         assert "ALL COST CHECKS PASSED" in out
 
 
+class TestIterDiv:
+    def test_iterative_divider_matches_verilog_quotient(self, tmp_path):
+        # Directed corners + pseudo-random vectors, each compared against the
+        # combinational `/` operator on the same operands.
+        rc, out, err = run_icarus(
+            "tb_iter_div", ["iter_div.v", "tb_iter_div.v"], tmp_path,
+            timeout=300)
+        assert rc == 0, f"stdout:\n{out}\nstderr:\n{err}"
+        assert "ALL DIVIDER CHECKS PASSED" in out
+
+
 class TestLegalizerFSM:
     def run_fsm(self, macros, tmp_path, die_w=DIE_W, die_h=DIE_H):
         num_lines = 4 * len(macros)

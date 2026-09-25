@@ -97,7 +97,7 @@ module cost_tb;
     );
 
     always #5 clk = ~clk;
-    always @(*) mem_rdata = mem[mem_addr];
+    always @(posedge clk) mem_rdata <= mem[mem_addr];
 
     initial begin
         mem[0] = 100; mem[1] = 200; mem[2] = 50; mem[3] = 60;
@@ -171,6 +171,7 @@ class TestIcarusSAPipeline:
 
         srcs = [
             os.path.join(RTL_DIR, "collision_check.v"),
+            os.path.join(RTL_DIR, "iter_div.v"),
             os.path.join(RTL_DIR, "lfsr32.v"),
             os.path.join(RTL_DIR, "sa_cost.v"),
             os.path.join(RTL_DIR, "sa_engine.v"),

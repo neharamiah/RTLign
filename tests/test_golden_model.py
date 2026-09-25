@@ -115,8 +115,8 @@ class TestStage3SA:
         layout_gen.write_hex(macros, str(tmp_path / "dummy_layout.hex"))
         rc, out, err = compile_and_run(
             "tb_sa_trace",
-            ["collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-             "tb_sa_trace.v"],
+            ["collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+             "sa_engine.v", "tb_sa_trace.v"],
             tmp_path, params={"NUM_LINES": 32}, sim_cwd=tmp_path)
         assert rc == 0, err
 
@@ -158,8 +158,9 @@ class TestStage3SA:
         layout_gen.write_hex(audit.to_macros(words), str(tmp_path / "dummy_layout.hex"))
         rc, out, err = compile_and_run(
             "legalizer_tb",
-            ["collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-             "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"],
+            ["collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+             "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v",
+             "legalizer_tb.v"],
             tmp_path, params={"NUM_LINES": 672}, sim_cwd=tmp_path, timeout=600)
         assert rc == 0, f"{out}\n{err}"
 
