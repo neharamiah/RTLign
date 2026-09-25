@@ -33,7 +33,7 @@ OpenROAD DEF ──▶ ML Predictor ──▶ RTL Legalizer ──▶ OpenROAD I
 - Phase 3 complete: Dataset Generation Pipeline and Robust Testing
 - Phase 4 complete: ML Feature Extraction (Parquet datasets generated)
 - Phase 5 complete: ML Predictor & Evaluation Suite (GNN trained, DAG prediction, hex export, OpenROAD evaluation & plotting implemented)
-- Phase 6 complete: Verilog Simulated Annealing engine (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`, `sa_legalizer_top.v`), Verilator bridge, bit-exact golden model (`golden_model.py`), layout auditor (`audit.py`), directed verification testbenches, and test suite (135 passing tests)
+- Phase 6 complete: Verilog Simulated Annealing engine (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`, `iter_div.v`, `sa_legalizer_top.v`), Verilator bridge, bit-exact golden model (`golden_model.py`), layout auditor (`audit.py`), directed verification testbenches, and test suite (136 passing tests)
 - Phase 7 planned: Full benchmark scaling across ISPD 2015 designs and signoff
 
 ---
@@ -49,7 +49,7 @@ OpenROAD DEF ──▶ ML Predictor ──▶ RTL Legalizer ──▶ OpenROAD I
 - **RTL Simulation:** Icarus Verilog (`iverilog`, `vvp`) and Verilator (C++ compilation for ~400× faster simulation). Used for legalizer FSM and SA simulation with VCD waveform output.
 - **EDA Tools:** OpenROAD - Physical design suite (GUI, routing, STA). DEF/LEF file import/export, placement visualization, signoff analysis.
 - **ML/AI:** PyTorch, PyTorch Geometric (Topological GNN), scikit-learn, pandas, matplotlib.
-- **Testing & Verification:** pytest (135 unit, integration, and verification tests), Hypothesis (Property-based testing), Python golden model, and standalone layout auditor.
+- **Testing & Verification:** pytest (136 unit, integration, and verification tests), Hypothesis (Property-based testing), Python golden model, and standalone layout auditor.
 
 **Build & Run Commands**
 *Full Baseline Pipeline:*
@@ -72,7 +72,7 @@ python ml_predictor/evaluate.py --def_file data/generated_defs/mgc_pci_bridge32_
 ```
 *Verification & Auditing:*
 ```bash
-# Run the complete test suite (135 tests):
+# Run the complete test suite (136 tests):
 pytest tests/ rtl_legalizer/ -v
 
 # Audit layout hex outputs for overlaps, die containment, and size preservation:
@@ -87,7 +87,7 @@ python scripts/characterize_metropolis.py
 *Individual Stages:*
 - **LEF Parsing:** `python rtl_legalizer/lef_parser.py data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/tech.lef data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/cells.lef --verbose`
 - **DEF → HEX:** `python ml_predictor/def_parser.py`
-- **RTL Legalizer (Icarus):** `cd rtl_legalizer && iverilog -o sim.out collision_check.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v && vvp sim.out`
+- **RTL Legalizer (Icarus):** `cd rtl_legalizer && iverilog -o sim.out collision_check.v iter_div.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v && vvp sim.out`
 - **RTL Legalizer (Verilator):** `make -C rtl_legalizer/verilator && ./rtl_legalizer/verilator/legalizer_sim rtl_legalizer/output_layout.hex`
 - **HEX → DEF:** `python ml_predictor/hex_to_def.py`
 

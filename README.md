@@ -96,7 +96,7 @@ python ml_predictor/evaluate.py \
 #### Verification & Test Suite
 
 ```bash
-# Run the complete test suite (135 tests):
+# Run the complete test suite (136 tests):
 pytest tests/ rtl_legalizer/ -v
 
 # Run the layout auditor (P1: overlaps, P2: die bounds, P3: size preservation):
@@ -194,7 +194,7 @@ A heterogeneous two-pass placement engine implemented in synthesizable Verilog:
 - **Pass 1: Simulated Annealing Optimizer (`sa_engine.v`):** Explores the placement solution space using stochastic hill-climbing, 32-bit Galois LFSR pseudo-random perturbations (`lfsr32.v`), and Metropolis acceptance ($P = e^{-\Delta C / T}$). A built-in legality scan rejects any candidate move that would overlap another macro, so SA never leaves the legal placement space. Minimizes a 3-term cost function (`sa_cost.v`): wirelength (HPWL), bounding box area, and boundary penalties.
 - **Pass 2: Deterministic Greedy Cleanup (`legalizer_fsm.v`):** Resolves residual overlaps via axis-of-minimum-overlap push with multi-pass cascade resolution, guaranteeing overlap-free macro layouts for realistic (sparse to moderate) placements. Dense synthetic clusters may retain residual overlaps (see `rtl_legalizer/VERIFICATION.md`, LIM-1).
 - **Verilator Simulation Bridge (`verilator/`):** A high-speed C++ simulation harness (`sa_harness.cpp`, `verilator_bridge.py`) delivering 10×–1000× speedup over interpreted simulation depending on design size (the 168-macro mockup measures ~40×; larger designs amortize better).
-- **Formal Verification & Auditing (`audit.py`, `golden_model.py`, `VERIFICATION.md`):** Bit-exact Python golden model reproducing RTL arithmetic, automated 3-property layout auditor (P1: overlaps, P2: die containment, P3: size preservation), and a 135-test verification suite with cross-simulator equivalence (Icarus vs. Verilator).
+- **Formal Verification & Auditing (`audit.py`, `golden_model.py`, `VERIFICATION.md`):** Bit-exact Python golden model reproducing RTL arithmetic, automated 3-property layout auditor (P1: overlaps, P2: die containment, P3: size preservation), and a 136-test verification suite with cross-simulator equivalence (Icarus vs. Verilator).
 
 ### 6. HEX → DEF Injector (`hex_to_def.py`)
 Reads the legalized `.hex` output and patches coordinates back into the original `.def` file via targeted macro name matching, preserving standard cells and physical design data (pins, nets, routing, special nets).

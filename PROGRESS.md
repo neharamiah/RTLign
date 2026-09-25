@@ -182,7 +182,7 @@ RTLign/
 - **Integrated Legalizer Top:** Built `sa_legalizer_top.v` coordinating Pass 1 (SA optimization) and Pass 2 (deterministic greedy cleanup).
 - **Verilator Simulation Bridge:** Developed `verilator/sa_harness.cpp` with parametric compile flags (`NUM_LINES`, `DIE_WIDTH`, `DIE_HEIGHT`) and Python wrapper, delivering 10×–1000× speedup over interpreted simulation depending on design size (the 168-macro mockup measures ~40×).
 - **Cycle-Accurate Golden Model:** Implemented `rtl_legalizer/golden_model.py` replicating RTL arithmetic, LFSR sequence, Metropolis LUT, and boundary handling for exact word-by-word equivalence.
-- **Layout Auditor & Verification Suite:** Built `rtl_legalizer/audit.py` to audit P1 (overlaps), P2 (die containment), and P3 (size preservation). Created 135 passing tests across unit testbenches, determinism, cross-simulator equivalence, and golden regressions.
+- **Layout Auditor & Verification Suite:** Built `rtl_legalizer/audit.py` to audit P1 (overlaps), P2 (die containment), and P3 (size preservation). Created 136 passing tests across unit testbenches, determinism, cross-simulator equivalence, and golden regressions.
 
 ---
 
@@ -315,13 +315,13 @@ RTLign/
 | Metric | Icarus Verilog | Verilator Bridge | Golden Model |
 |:---|:---|:---|:---|
 | Macros Evaluated | 168 | 168 | 168 |
-| Clock Cycles | 889,115 | 889,114 | N/A (cycle-accurate) |
+| Clock Cycles | 1,120,446 | 1,120,445 | N/A (cycle-accurate) |
 | SA Iterations | 1,000 | 1,000 | 1,000 |
 | Accepted Moves | 996 | 996 | 996 |
 | Legality-Scan Rejects | 4 | 4 | 4 |
 | Final Placement Cost | 3,704,579 | 3,704,579 | 3,704,579 |
 | Bit-Exact Equivalence | Match | Match | Match |
-| Test Suite Coverage | **135 / 135 passing** | **135 / 135 passing** | **135 / 135 passing** |
+| Test Suite Coverage | **136 / 136 passing** | **136 / 136 passing** | **136 / 136 passing** |
 | Post-Run Audit Status | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** | **PASS (P1, P2, P3)** |
 
 ### ML Predictor & Evaluation Artifacts
@@ -360,7 +360,7 @@ RTLign/
 - **[DONE]** Build: SA Engine in Verilog (`lfsr32.v`, `sa_cost.v`, `sa_engine.v`, `sa_legalizer_top.v`, Metropolis acceptance, step cooling)
 - **[DONE]** Build: SA Testbench & Validation (`legalizer_tb.v`, multi-pass cascade resolution, audit assertions)
 - **[DONE]** Build: Verilator Bridge (`verilator/sa_harness.cpp`, `Makefile`, parameterized builds, 10×–1000× speedup)
-- **[DONE]** Build: Formal Verification Suite (`audit.py`, `golden_model.py`, `layout_gen.py`, `VERIFICATION.md`, 135 passing tests)
+- **[DONE]** Build: Formal Verification Suite (`audit.py`, `golden_model.py`, `layout_gen.py`, `VERIFICATION.md`, 136 passing tests)
 
 ### Month 4: Integration, Scaling & Benchmarking
 - Build: Full Benchmarking Suite (Run on ISPD 2015, OpenROAD re-import, routing & STA, compile metrics)
