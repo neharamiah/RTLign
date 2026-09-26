@@ -1,12 +1,12 @@
-# Graph Report - RTLign  (2026-09-25)
+# Graph Report - RTLign  (2026-09-26)
 
 ## Corpus Check
-- 60 files · ~62,345 words
+- 60 files · ~64,382 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 17 file(s) not represented in the graph (top: .parquet 5, .tcl 5, (none) 4)
 
 ## Summary
-- 747 nodes · 1007 edges · 59 communities (47 shown, 9 thin omitted)
+- 752 nodes · 1018 edges · 60 communities (47 shown, 10 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 72 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
@@ -16,7 +16,7 @@
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- convert_to_db_units
+- TestConvertToDbUnits
 - predict.py
 - test_ispd2015_integration.py
 - golden_model.py
@@ -28,7 +28,7 @@
 - validate_dimension
 - TestExtractMacroDimensions
 - How It Works
-- test_phase5_integration.py
+- FeatureExtractor
 - data_generator.py
 - rtl_to_def.py
 - legalizer_tb
@@ -49,7 +49,8 @@
 - parse_lef_files
 - 3. Findings
 - test_golden_model.py
-- test_dimension_dict_matches_source
+- test_phase6_sa.py
+- extreme_aspect_ratio_strategy
 - TestParseLefFile
 - TestParseLefFiles
 - tb_collision_check
@@ -100,15 +101,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (59 total, 9 thin omitted)
+## Communities (60 total, 10 thin omitted)
 
-### Community 0 - "convert_to_db_units"
-Cohesion: 0.19
-Nodes (9): convert_to_db_units(), Convert a dimension from microns to database units. Args: value_microns:…, Unit tests for convert_to_db_units function., Test basic unit conversion with 1000 multiplier., Test that None db_units defaults to 1000., Test conversion with fractional micron values., Test that rounding is applied correctly., Test conversion with different database unit multipliers. (+1 more)
+### Community 0 - "TestConvertToDbUnits"
+Cohesion: 0.17
+Nodes (7): Unit tests for convert_to_db_units function., Test basic unit conversion with 1000 multiplier., Test that None db_units defaults to 1000., Test conversion with fractional micron values., Test that rounding is applied correctly., Test conversion with different database unit multipliers., TestConvertToDbUnits
 
 ### Community 1 - "predict.py"
-Cohesion: 0.06
-Nodes (28): DiGraph, InMemoryDataset, TopologicalMacroDataset, FeatureExtractor, get_die_diagonal(), Any, Parses LEFs to return macro dimensions and pin directions. Returns: {design:…, Feature Extractor for RTLign ML Predictor Pipeline Bridges OpenROAD physical… (+20 more)
+Cohesion: 0.05
+Nodes (38): DiGraph, InMemoryDataset, TopologicalMacroDataset, get_die_diagonal(), Feature Extractor for RTLign ML Predictor Pipeline Bridges OpenROAD physical…, Safely extracts DIEAREA to compute the bounding box diagonal., inject_coords_into_def(), main() (+30 more)
 
 ### Community 2 - "test_ispd2015_integration.py"
 Cohesion: 0.07
@@ -116,7 +117,7 @@ Nodes (17): Integration tests with ISPD 2015 benchmarks. Tests Requirements 6.1,
 
 ### Community 3 - "golden_model.py"
 Cohesion: 0.07
-Nodes (32): Random, any_overlap(), boxes_overlap(), cost_model(), greedy_model(), legalize_model(), LFSR32, metropolis_threshold() (+24 more)
+Nodes (37): Random, any_overlap(), boxes_overlap(), cost_model(), greedy_model(), legalize_model(), LFSR32, metropolis_threshold() (+29 more)
 
 ### Community 4 - "extract_database_units"
 Cohesion: 0.15
@@ -150,9 +151,9 @@ Nodes (7): Unit tests for extract_macro_dimensions function., Test extraction of
 Cohesion: 0.08
 Nodes (23): 1. LEF Parser (`lef_parser.py`), 2. Dataset Generator (`data_generator.py`), 3. Feature Extractor (`feature_extractor.py`), 4. Topological GNN Training & Inference (`train_nn.py`, `predict.py`), 5. Two-Pass Hardware Legalizer, Verilator Bridge & Verification, 6. HEX → DEF Injector (`hex_to_def.py`), 7. Closed-Loop Evaluation (`evaluate.py` & `evaluate_layout.tcl`), How It Works (+15 more)
 
-### Community 12 - "test_phase5_integration.py"
-Cohesion: 0.13
-Nodes (14): inject_coords_into_def(), main(), RTLign — HEX → DEF Injector ============================ Reads a legalized .hex…, Read the .hex file and return coords (and optionally macro names). Each macro…, Patch legalized coordinates into a DEF file. Two matching modes: 1. By Name: If…, read_hex_coordinates(), Integration tests for Phase 5 ML Predictor and Evaluation Pipeline., run_predict.py requires --def_file and --lef_file. (+6 more)
+### Community 12 - "FeatureExtractor"
+Cohesion: 0.23
+Nodes (4): FeatureExtractor, Any, Parses LEFs to return macro dimensions and pin directions. Returns: {design:…, Uses sparse matrix exponentiation to extract k-path and undirected graph edges.
 
 ### Community 13 - "data_generator.py"
 Cohesion: 0.48
@@ -207,16 +208,16 @@ Cohesion: 0.07
 Nodes (5): parametrize, Unit tests for rtl_legalizer/audit.py and rtl_legalizer/layout_gen.py., TestCheckLayout, TestHexIO, TestLayoutGen
 
 ### Community 30 - "evaluate.py"
-Cohesion: 0.09
-Nodes (22): main(), plot_layouts(), evaluate.py — RTLign Pipeline Evaluation Orchestrator Runs the full ML -> RTL…, run_cmd(), run_openroad_eval(), get_die_bounds(), Returns (die_width, die_height) in database units., build_verilator() (+14 more)
+Cohesion: 0.18
+Nodes (13): main(), plot_layouts(), evaluate.py — RTLign Pipeline Evaluation Orchestrator Runs the full ML -> RTL…, run_cmd(), run_openroad_eval(), get_die_bounds(), Returns (die_width, die_height) in database units., build_verilator() (+5 more)
 
 ### Community 31 - "TestLegalizerFSM"
 Cohesion: 0.16
 Nodes (7): Unit testbenches for the rtl_legalizer Verilog modules (Icarus). -…, Compile a TB with iverilog, run with vvp, return (rc, stdout, stderr). sim_cwd…, run_icarus(), TestCollisionCheck, TestIterDiv, TestLegalizerFSM, TestSaCost
 
 ### Community 32 - "parse_lef_files"
-Cohesion: 0.21
-Nodes (13): extract_macro_dimensions(), parse_lef_file(), parse_lef_files(), extreme_aspect_ratio_strategy(), Property-based tests for LEF Parser Module These tests verify universal…, Generates extreme aspect ratio dimensions: - Tall cells: width:height > 3:1…, Dimension_Dict, LEF Parser Module for Real Cell Dimensions This module parses Library Exchange… (+5 more)
+Cohesion: 0.16
+Nodes (21): given, convert_to_db_units(), extract_macro_dimensions(), parse_lef_file(), parse_lef_files(), Property-based tests for LEF Parser Module These tests verify universal…, Property 14: Dimension Dict Matches Source Validates: Requirements 8.1 FOR ALL…, Property 15: Round-Trip Parsing Validates: Requirements 8.2 WHEN parsing then… (+13 more)
 
 ### Community 33 - "3. Findings"
 Cohesion: 0.13
@@ -226,9 +227,9 @@ Nodes (14): 1. Verification spec, 2. Infrastructure added, 3. Findings, 4. Prope
 Cohesion: 0.22
 Nodes (6): compile_and_run(), parametrize, Staged validation of the Python golden model against the RTL. Stage 1:…, TestStage1Cost, TestStage2Greedy, TestStage3SA
 
-### Community 36 - "test_dimension_dict_matches_source"
-Cohesion: 0.32
-Nodes (8): given, Property 14: Dimension Dict Matches Source Validates: Requirements 8.1 FOR ALL…, Property 15: Round-Trip Parsing Validates: Requirements 8.2 WHEN parsing then…, Property 13: Extreme Aspect Ratio Preservation Validates: Requirements 7.1 WHEN…, test_dimension_dict_matches_source(), test_extreme_aspect_ratio_preservation(), test_round_trip_parsing(), settings
+### Community 35 - "test_phase6_sa.py"
+Cohesion: 0.14
+Nodes (9): Phase 6 Automated Test Suite — Verilog Simulated Annealing Engine & Verilator…, Verify Verilator builds and legalizes dummy_layout.hex with 0 overlaps., Verify Icarus Verilog compiles and runs SA + Greedy Cleanup with 0 overlaps., Verify lfsr32 compiles with iverilog and produces non-repeating values., Verify sa_cost accurately computes HPWL, area, and boundary penalties., TestIcarusSAPipeline, TestLFSR32, TestSACost (+1 more)
 
 ### Community 37 - "TestParseLefFile"
 Cohesion: 0.25
@@ -292,16 +293,16 @@ Nodes (4): a3_pytest(), _pytest(), _claim(), Read the verdict of an earlier chec
 
 ## Knowledge Gaps
 - **156 isolated node(s):** `collision_check`, `iter_div`, `collision_check`, `sa_legalizer_top`, `run_overlap_audit` (+151 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 401 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 402 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `parse_lef_files()` connect `parse_lef_files` to `main`, `TestParseLefFiles`, `run_audit.py`, `audit.py`, `evaluate.py`?**
   _High betweenness centrality (0.099) - this node is a cross-community bridge._
-- **Why does `get_die_bounds()` connect `evaluate.py` to `predict.py`, `run_cmd`, `run_audit.py`, `test_phase5_integration.py`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Why does `get_die_bounds()` connect `evaluate.py` to `predict.py`, `run_cmd`, `run_audit.py`?**
+  _High betweenness centrality (0.084) - this node is a cross-community bridge._
 - **Why does `parse_def_to_hex()` connect `audit.py` to `run_audit.py`, `main`?**
   _High betweenness centrality (0.059) - this node is a cross-community bridge._
 - **Are the 24 inferred relationships involving `main()` (e.g. with `a0_imports()` and `a0_python()`) actually correct?**
@@ -309,6 +310,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `collision_check`, `iter_div`, `collision_check` to the rest of the system?**
   _156 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `predict.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.06009783368273934 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05021173623714459 - nodes in this community are weakly interconnected._
 - **Should `test_ispd2015_integration.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._

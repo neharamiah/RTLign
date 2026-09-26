@@ -712,7 +712,7 @@
       "file_type": "code",
       "norm_label": "break_cycles_dfs()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L204"
+      "source_location": "L194"
     },
     {
       "id": "ml_predictor_predict_break_cycles_dfs_dfs",
@@ -724,7 +724,7 @@
       "file_type": "code",
       "norm_label": "dfs()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L215"
+      "source_location": "L205"
     },
     {
       "id": "ml_predictor_predict_build_pyg_graph",
@@ -736,7 +736,7 @@
       "file_type": "code",
       "norm_label": "build_pyg_graph()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L161"
+      "source_location": "L151"
     },
     {
       "id": "ml_predictor_predict_compute_macro_barycenters",
@@ -748,7 +748,7 @@
       "file_type": "code",
       "norm_label": "compute_macro_barycenters()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L399"
+      "source_location": "L389"
     },
     {
       "id": "ml_predictor_predict_extract_features",
@@ -772,7 +772,7 @@
       "file_type": "code",
       "norm_label": "get_def_dbu()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L367"
+      "source_location": "L357"
     },
     {
       "id": "ml_predictor_predict_resolve_topological_coordinates",
@@ -784,7 +784,7 @@
       "file_type": "code",
       "norm_label": "resolve_topological_coordinates()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L458"
+      "source_location": "L448"
     },
     {
       "id": "ml_predictor_predict_resolve_topological_coordinates_find_overlap",
@@ -796,7 +796,7 @@
       "file_type": "code",
       "norm_label": "find_overlap()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L478"
+      "source_location": "L468"
     },
     {
       "id": "ml_predictor_predict_run_prediction",
@@ -808,7 +808,7 @@
       "file_type": "code",
       "norm_label": "run_prediction()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L242"
+      "source_location": "L232"
     },
     {
       "id": "ml_predictor_train_nn_check_dependencies",
@@ -976,7 +976,7 @@
       "file_type": "code",
       "norm_label": "write_parquet()",
       "source_file": "ml_predictor/feature_extractor.py",
-      "source_location": "L576"
+      "source_location": "L566"
     },
     {
       "id": "ml_predictor_feature_extractor_featureextractor_find_lef_file",
@@ -2188,7 +2188,7 @@
       "file_type": "code",
       "norm_label": "get_die_bounds()",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L382"
+      "source_location": "L372"
     },
     {
       "id": "rtl_legalizer_verilator_verilator_bridge_build_verilator",
@@ -4249,7 +4249,7 @@
       "source_location": "L1"
     },
     {
-      "id": "ml_predictor_predict_rationale_162",
+      "id": "ml_predictor_predict_rationale_152",
       "label": "Scale features and construct a torch_geometric Data object.",
       "_origin": "ast",
       "community": 1,
@@ -4257,10 +4257,10 @@
       "file_type": "rationale",
       "norm_label": "scale features and construct a torch_geometric data object.",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L162"
+      "source_location": "L152"
     },
     {
-      "id": "ml_predictor_predict_rationale_205",
+      "id": "ml_predictor_predict_rationale_195",
       "label": "Removes back-edges discovered during DFS traversal. When a back-edge is found,\u2026",
       "_origin": "ast",
       "community": 1,
@@ -4268,10 +4268,10 @@
       "file_type": "rationale",
       "norm_label": "removes back-edges discovered during dfs traversal. when a back-edge is found,...",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L205"
+      "source_location": "L195"
     },
     {
-      "id": "ml_predictor_predict_rationale_368",
+      "id": "ml_predictor_predict_rationale_358",
       "label": "Extract UNITS DISTANCE MICRONS from DEF file, defaulting to 1000.",
       "_origin": "ast",
       "community": 1,
@@ -4279,10 +4279,10 @@
       "file_type": "rationale",
       "norm_label": "extract units distance microns from def file, defaulting to 1000.",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L368"
+      "source_location": "L358"
     },
     {
-      "id": "ml_predictor_predict_rationale_400",
+      "id": "ml_predictor_predict_rationale_390",
       "label": "Computes a wirelength anchor per macro: the median (x, y) of the standard cells\u2026",
       "_origin": "ast",
       "community": 1,
@@ -4290,10 +4290,10 @@
       "file_type": "rationale",
       "norm_label": "computes a wirelength anchor per macro: the median (x, y) of the standard cells...",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L400"
+      "source_location": "L390"
     },
     {
-      "id": "ml_predictor_predict_rationale_459",
+      "id": "ml_predictor_predict_rationale_449",
       "label": "Resolves DAG topological constraints into initial (x, y, w, h) coordinates for\u2026",
       "_origin": "ast",
       "community": 1,
@@ -4301,7 +4301,7 @@
       "file_type": "rationale",
       "norm_label": "resolves dag topological constraints into initial (x, y, w, h) coordinates for...",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L459"
+      "source_location": "L449"
     },
     {
       "id": "ml_predictor_predict_rationale_51",
@@ -6566,7 +6566,7 @@
       "source_location": "L2"
     },
     {
-      "id": "ml_predictor_predict_rationale_383",
+      "id": "ml_predictor_predict_rationale_373",
       "label": "Returns (die_width, die_height) in database units.",
       "_origin": "ast",
       "community": 30,
@@ -6574,7 +6574,7 @@
       "file_type": "rationale",
       "norm_label": "returns (die_width, die_height) in database units.",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L383"
+      "source_location": "L373"
     },
     {
       "id": "rtl_legalizer_verilator_verilator_bridge_rationale_1",
@@ -9052,7 +9052,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/feature_extractor.py",
-      "source_location": "L498",
+      "source_location": "L488",
       "weight": 1.0
     },
     {
@@ -9064,7 +9064,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/feature_extractor.py",
-      "source_location": "L500",
+      "source_location": "L490",
       "weight": 1.0
     },
     {
@@ -9076,7 +9076,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/feature_extractor.py",
-      "source_location": "L569",
+      "source_location": "L559",
       "weight": 1.0
     },
     {
@@ -9148,7 +9148,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L228",
+      "source_location": "L218",
       "weight": 1.0
     },
     {
@@ -9160,7 +9160,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L248",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
@@ -9172,7 +9172,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L265",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -9184,7 +9184,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L269",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -9196,7 +9196,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L298",
+      "source_location": "L288",
       "weight": 1.0
     },
     {
@@ -9208,7 +9208,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L324",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -9220,7 +9220,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L349",
+      "source_location": "L339",
       "weight": 1.0
     },
     {
@@ -9232,7 +9232,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L350",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -9244,7 +9244,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L352",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -9256,7 +9256,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L353",
+      "source_location": "L343",
       "weight": 1.0
     },
     {
@@ -11488,7 +11488,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/feature_extractor.py",
-      "source_location": "L576",
+      "source_location": "L566",
       "weight": 1.0
     },
     {
@@ -11512,7 +11512,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L215",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -11524,7 +11524,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L478",
+      "source_location": "L468",
       "weight": 1.0
     },
     {
@@ -12268,7 +12268,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L458",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -12292,7 +12292,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L204",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -12930,7 +12930,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L161",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -12941,7 +12941,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L204",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -12952,7 +12952,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L242",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -12963,7 +12963,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L367",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -12974,7 +12974,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L382",
+      "source_location": "L372",
       "weight": 1.0
     },
     {
@@ -12985,7 +12985,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L399",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -12996,7 +12996,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L458",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -18060,69 +18060,69 @@
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_162",
+      "source": "ml_predictor_predict_rationale_152",
       "target": "ml_predictor_predict_build_pyg_graph",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L162",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_205",
+      "source": "ml_predictor_predict_rationale_195",
       "target": "ml_predictor_predict_break_cycles_dfs",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L205",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_368",
+      "source": "ml_predictor_predict_rationale_358",
       "target": "ml_predictor_predict_get_def_dbu",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L368",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_383",
+      "source": "ml_predictor_predict_rationale_373",
       "target": "ml_predictor_predict_get_die_bounds",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L383",
+      "source_location": "L373",
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_400",
+      "source": "ml_predictor_predict_rationale_390",
       "target": "ml_predictor_predict_compute_macro_barycenters",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L400",
+      "source_location": "L390",
       "weight": 1.0
     },
     {
-      "source": "ml_predictor_predict_rationale_459",
+      "source": "ml_predictor_predict_rationale_449",
       "target": "ml_predictor_predict_resolve_topological_coordinates",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "ml_predictor/predict.py",
-      "source_location": "L459",
+      "source_location": "L449",
       "weight": 1.0
     },
     {
