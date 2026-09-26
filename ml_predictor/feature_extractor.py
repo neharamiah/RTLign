@@ -311,14 +311,22 @@ class FeatureExtractor:
         current_net_pins = []
 
         def _process_net():
-            if not current_net_pins or len(current_net_pins) > max_fanout:
+            # Macro-pair co-membership is recorded even for oversized nets:
+            # high-fanout nets (clock, reset, supply-adjacent buses) are often
+            # the only macro-macro connection in a design, and dropping them
+            # leaves the GNN with zero edges. The O(pins^2) adjacency fill is
+            # still skipped for oversized nets.
+            if not current_net_pins:
                 return
-                
+
             macro_hits = set([p[0] for p in current_net_pins]) & macro_inst_names
             if len(macro_hits) >= 2:
                 for a, b in combinations(sorted(macro_hits), 2):
                     direct_net_count[(a, b)] += 1
                     shared_pins[(a, b)] += 1
+
+            if len(current_net_pins) > max_fanout:
+                return
                     
             # Build edges
             for src_inst, src_pin in current_net_pins:
@@ -476,7 +484,17 @@ class FeatureExtractor:
 
             design_name = str(row["design"])
             m_data = macro_data_map.get(design_name) if macro_data_map else None
-            
+
+            if macro_only and not m_data:
+                # Design's LEF has no cell at/above the area threshold (or no
+                # LEF at all): there are no hard macros here. Skip loudly —
+                # parsing with an empty macro map would just yield zero rows,
+                # silently dropping the design from the dataset.
+                print(f"WARNING: {design_name} has no cells >= {area_threshold} "
+                      f"um^2 in its LEF — skipping {def_path} (no hard macros to model)")
+                files_missing += 1
+                continue
+
             die_diag = get_die_diagonal(def_path)
 
             components = self.parse_def_components(def_path, macro_data=m_data)
@@ -484,6 +502,7 @@ class FeatureExtractor:
 
             row_meta = {
                 "design": design_name,
+                "def_path": def_path,
                 "seed": str(row.get("seed", "N/A")),
                 "snapshot_threshold": str(row.get("snapshot_threshold", "N/A")),
                 "ar_param": float(row["aspect_ratio"]),
@@ -514,6 +533,7 @@ class FeatureExtractor:
                 
                 raw_coords_dataset.append({
                     "design": design_name,
+                    "def_path": def_path,
                     "seed": str(row.get("seed", "N/A")),
                     "inst_name": comp["inst_name"],
                     "cell_type": comp["cell_type"],
@@ -533,6 +553,7 @@ class FeatureExtractor:
                         d = dist_matrix[i, j]
                         pairwise_dataset.append({
                             "design": design_name,
+                            "def_path": def_path,
                             "seed": str(row.get("seed", "N/A")),
                             "inst_i": a,
                             "inst_j": b,
@@ -547,7 +568,7 @@ class FeatureExtractor:
                 
                 edges = self.parse_def_nets_kpath(def_path, macro_inst_names, inst_macro_data, max_kpath_depth, max_fanout)
                 for edge in edges:
-                    e_rec = {"design": design_name, **edge}
+                    e_rec = {"design": design_name, "def_path": def_path, **edge}
                     edge_dataset.append(e_rec)
 
         os.makedirs(os.path.dirname(os.path.abspath(output_parquet)), exist_ok=True)
