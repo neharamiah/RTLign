@@ -54,6 +54,7 @@ class LFSR32:
 DEFAULTS = dict(
     num_lines=672, die_width=200260, die_height=201600,
     t_init=1000000, t_min=100, cool_shift=3, inner_iters=100, max_iters=1000,
+    t0_samples=16, t0_scale_shift=2, t0_attempt_cap=64,
     w_wl=4, w_area=1, w_boundary=8, area_scale_shift=14,
     lfsr_seed=0xDEADBEEF,
 )
@@ -203,6 +204,62 @@ def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
 
     max_iters = p["max_iters"] if num_iters_limit is None else num_iters_limit
 
+    # ------------------------------------------------------------------
+    # Scale-aware T0 sampling (mirrors sa_engine ST_SET_TEMP): propose
+    # candidate moves with the same LFSR schedule, accumulate |delta cost|
+    # over legal candidates (always restored), then
+    # T0 = clamp((accum >> log2(t0_samples)) << t0_scale_shift, t_min, 2^32-1).
+    # Falls back to t_init when no legal candidate was sampled. Sampling
+    # consumes no cooling: total_iters/inner_count/accepted are untouched.
+    # ------------------------------------------------------------------
+    accum = 0
+    samples = 0
+    attempts = 0
+    while samples < p["t0_samples"] and attempts < p["t0_attempt_cap"]:
+        attempts += 1
+        sel = (rng.peek() & 0xFFFF) % num_macros
+        rng.advance()
+        mv = rng.peek()
+
+        saved_x = mem[sel * 4]
+        saved_y = mem[sel * 4 + 1]
+        macro_w = mem[sel * 4 + 2]
+        macro_h = mem[sel * 4 + 3]
+
+        disp_scale = temperature >> 14
+        if disp_scale == 0:
+            disp_scale = 1
+        raw_dx = s32((((mv >> 16) & 0xFF) - 128) * disp_scale) & MASK32
+        raw_dy = s32((((mv >> 24) & 0xFF) - 128) * disp_scale) & MASK32
+        cand_x = (saved_x + raw_dx) & MASK32
+        cand_y = (saved_y + raw_dy) & MASK32
+        new_x = _reflect(cand_x, macro_w, p["die_width"])
+        new_y = _reflect(cand_y, macro_h, p["die_height"])
+
+        rng.advance()  # dice word consumed, unused during sampling
+
+        mem[sel * 4] = new_x
+        mem[sel * 4 + 1] = new_y
+
+        if legal_moves and any_overlap(mem, sel, num_macros):
+            mem[sel * 4] = saved_x
+            mem[sel * 4 + 1] = saved_y
+            continue
+
+        candidate_cost = cost_model(mem)[0]
+        delta = abs(candidate_cost - current_cost)
+        accum += delta
+        samples += 1
+        mem[sel * 4] = saved_x
+        mem[sel * 4 + 1] = saved_y
+
+    if samples == 0:
+        temperature = p["t_init"]
+    else:
+        mean = accum >> (p["t0_samples"].bit_length() - 1)
+        t0 = mean << p["t0_scale_shift"]
+        temperature = min(max(t0, p["t_min"]), MASK32)
+
     while True:
         # ST_PERTURB: select macro from the pre-advance LFSR value.
         sel = (rng.peek() & 0xFFFF) % num_macros
@@ -270,6 +327,10 @@ def sa_model(mem, num_iters_limit=None, track=None, metropolis="rtl",
             inner_count = 0
             old_t = temperature
             temperature = (temperature - (temperature >> p["cool_shift"])) & MASK32
+            if accepted == 0:
+                # Frozen SA (mirrors sa_engine ST_CHECK_INNER): zero accepts
+                # over a whole inner block; cooling can only reject more.
+                break
             if old_t <= p["t_min"] or total_iters >= max_iters:
                 break
         else:

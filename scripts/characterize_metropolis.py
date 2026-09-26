@@ -107,3 +107,88 @@ rtl_mean = sum(c for c, _ in stats["rtl"]) / 8
 true_mean = sum(c for c, _ in stats["true"]) / 8
 print(f"dense_24: exact Metropolis is {(rtl_mean - true_mean) / rtl_mean * 100:+.1f}% "
       f"vs RTL acceptance in mean final cost")
+
+print("\n=== C3: scrambled starts — greedy-only vs SA (RTL LUT vs true Metropolis) ===")
+# The C2 starts are already-good layouts where SA has nothing to anneal.
+# Here every start is deliberately bad (random positions, heavy overlaps), so
+# the three variants have real work to do and the differences between them
+# become visible. SA variants run the full RTL-mirroring pipeline
+# (SA then greedy cleanup) so they are comparable to ENABLE_SA=1 hardware;
+# the greedy variant mirrors ENABLE_SA=0.
+
+import random
+
+
+def scramble(words: list, die_w: int, die_h: int, seed: int) -> list:
+    """Replace every macro position with a random in-die position (sizes kept)."""
+    rng = random.Random(seed)
+    out = [w & 0xFFFFFFFF for w in words]
+    for i in range(len(out) // 4):
+        w, h = out[4 * i + 2], out[4 * i + 3]
+        out[4 * i] = rng.randint(0, max(0, die_w - w)) & 0xFFFFFFFF
+        out[4 * i + 1] = rng.randint(0, max(0, die_h - h)) & 0xFFFFFFFF
+    return out
+
+
+def count_overlaps(words: list) -> int:
+    m = [tuple(words[4 * i:4 * i + 4]) for i in range(len(words) // 4)]
+    c = 0
+    for i in range(len(m)):
+        for j in range(i + 1, len(m)):
+            x1, y1, w1, h1 = m[i]
+            x2, y2, w2, h2 = m[j]
+            if x1 < x2 + w2 and x2 < x1 + w1 and y1 < y2 + h2 and y2 < y1 + h1:
+                c += 1
+    return c
+
+
+def run_variant(words, variant, seed):
+    if variant == "greedy":
+        out = gm.greedy_model(words)
+        return out, {"accepted_count": 0}
+    out, m = gm.sa_model(words, metropolis="rtl" if variant == "sa_rtl" else "true",
+                         lfsr_seed=0xDEADBEEF + seed * 7919)
+    return gm.greedy_model(out), m
+
+
+def report(label, words, n_seeds):
+    die_w, die_h = gm.DEFAULTS["die_width"], gm.DEFAULTS["die_height"]
+    init_over = count_overlaps(words)
+    print(f"\n--- {label}: {len(words)//4} macros, initial overlaps={init_over} "
+          f"(die {die_w}x{die_h}) ---")
+    print(f"{'variant':>8} {'cost mean':>12} {'cost min':>12} {'HPWL mean':>11} "
+          f"{'overlaps':>9} {'accepted':>9}")
+    summary = {}
+    for variant in ("greedy", "sa_rtl", "sa_true"):
+        costs, hpwls, overs, accs = [], [], [], []
+        seeds = range(n_seeds) if variant != "greedy" else [0]
+        for seed in seeds:
+            out, m = run_variant(words, variant, seed)
+            cost, hpwl = gm.cost_model(out)[:2]
+            costs.append(cost)
+            hpwls.append(hpwl)
+            overs.append(count_overlaps(out))
+            accs.append(m.get("accepted_count", 0))
+        summary[variant] = sum(costs) / len(costs)
+        print(f"{variant:>8} {sum(costs)/len(costs):>12.0f} {min(costs):>12} "
+              f"{sum(hpwls)/len(hpwls):>11.0f} {sum(overs)/len(overs):>9.1f} "
+              f"{sum(accs)/len(accs):>9.0f}")
+    print(f"{label}: SA(rtl) vs greedy-only: "
+          f"{(summary['sa_rtl'] - summary['greedy']) / summary['greedy'] * 100:+.1f}% cost | "
+          f"true vs rtl LUT: {(summary['sa_true'] - summary['sa_rtl']) / summary['sa_rtl'] * 100:+.1f}% cost")
+
+
+# Start 1: the 168-macro golden mockup, positions scrambled.
+words168 = audit.read_hex_words("/home/ratik/Projects/RTLign/tests/data/golden/golden_input_168.hex")
+report("scrambled_168", scramble(words168, gm.DEFAULTS["die_width"], gm.DEFAULTS["die_height"], 123), 4)
+
+# Start 2: dense_24 — already heavily overlapped, now also scattered.
+macros24 = layout_gen.gen_layout("dense", 24, seed=0)
+words24 = [v & 0xFFFFFFFF for m in macros24 for v in m]
+report("scrambled_dense24", scramble(words24, gm.DEFAULTS["die_width"], gm.DEFAULTS["die_height"], 456), 8)
+
+# Start 3: the held-out pci32_a GNN layout, scrambled, at its real die size.
+gm.DEFAULTS["die_width"], gm.DEFAULTS["die_height"] = 388205, 388205
+words_a = audit.read_hex_words("/home/ratik/Projects/RTLign/evaluation_output_pci32a/gnn_raw_v5.hex")
+report("scrambled_pci32a", scramble(words_a, 388205, 388205, 789), 8)
+gm.DEFAULTS["die_width"], gm.DEFAULTS["die_height"] = 200260, 201600
