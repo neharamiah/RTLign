@@ -55,6 +55,7 @@ def train():
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
     criterion = nn.L1Loss()
+    dir_criterion = nn.BCEWithLogitsLoss()
 
     best_val_loss = float('inf')
     num_epochs = 100
@@ -64,23 +65,25 @@ def train():
         total_loss = 0
         total_mae_norm = 0
         total_mae_denorm = 0
+        total_dir_correct = 0
+        total_dir_labels = 0
         total_edges = 0
 
         for data in train_loader:
             data = data.to(device)
             optimizer.zero_grad()
-            
-            out = model(data.x, data.edge_index, data.edge_attr)
-            loss = criterion(out, data.y)
+
+            out, dir_logits = model(data.x, data.edge_index, data.edge_attr)
+            loss = criterion(out, data.y) + dir_criterion(dir_logits, data.dir_y)
             loss.backward()
             optimizer.step()
-            
+
             total_loss += loss.item() * data.num_edges
-            
+
             with torch.no_grad():
                 mae_norm = torch.abs(out - data.y)
                 total_mae_norm += mae_norm.sum().item()
-                
+
                 # Compute denormalized MAE
                 # true_die_diag = raw_dist / dist_norm (where dist_norm > 0)
                 # mask for valid normalization
@@ -89,7 +92,11 @@ def train():
                     true_die_diag = data.raw_y[valid_mask] / data.y[valid_mask]
                     mae_denorm = mae_norm[valid_mask] * true_die_diag
                     total_mae_denorm += mae_denorm.sum().item()
-                
+
+                dir_pred = (torch.sigmoid(dir_logits) > 0.5).float()
+                total_dir_correct += (dir_pred == data.dir_y).sum().item()
+                total_dir_labels += data.dir_y.numel()
+
             total_edges += data.num_edges
 
         scheduler.step()
@@ -97,40 +104,50 @@ def train():
         train_loss = total_loss / total_edges
         train_mae_norm = total_mae_norm / total_edges
         train_mae_denorm = total_mae_denorm / total_edges if total_edges > 0 else 0
+        train_dir_acc = total_dir_correct / total_dir_labels if total_dir_labels > 0 else 0
 
         # Validation
         model.eval()
         val_loss = 0
         val_mae_norm = 0
         val_mae_denorm = 0
+        val_dir_correct = 0
+        val_dir_labels = 0
         val_edges = 0
 
         with torch.no_grad():
             for data in val_loader:
                 data = data.to(device)
-                out = model(data.x, data.edge_index, data.edge_attr)
-                loss = criterion(out, data.y)
-                
+                out, dir_logits = model(data.x, data.edge_index, data.edge_attr)
+                loss = criterion(out, data.y) + dir_criterion(dir_logits, data.dir_y)
+
                 val_loss += loss.item() * data.num_edges
                 mae_norm = torch.abs(out - data.y)
                 val_mae_norm += mae_norm.sum().item()
-                
+
                 valid_mask = (data.y > 0).view(-1)
                 if valid_mask.sum() > 0:
                     true_die_diag = data.raw_y[valid_mask] / data.y[valid_mask]
                     mae_denorm = mae_norm[valid_mask] * true_die_diag
                     val_mae_denorm += mae_denorm.sum().item()
-                    
+
+                dir_pred = (torch.sigmoid(dir_logits) > 0.5).float()
+                val_dir_correct += (dir_pred == data.dir_y).sum().item()
+                val_dir_labels += data.dir_y.numel()
+
                 val_edges += data.num_edges
 
         val_loss = val_loss / val_edges if val_edges > 0 else 0
         val_mae_norm = val_mae_norm / val_edges if val_edges > 0 else 0
         val_mae_denorm = val_mae_denorm / val_edges if val_edges > 0 else 0
+        val_dir_acc = val_dir_correct / val_dir_labels if val_dir_labels > 0 else 0
 
-        print(f"Epoch {epoch+1:03d} | Train Loss: {train_loss:.4f} | Train MAE: {train_mae_norm:.4f} (Denorm: {train_mae_denorm:.2f}) | Val Loss: {val_loss:.4f} | Val MAE: {val_mae_norm:.4f} (Denorm: {val_mae_denorm:.2f})")
+        print(f"Epoch {epoch+1:03d} | Train Loss: {train_loss:.4f} | Train MAE: {train_mae_norm:.4f} (Denorm: {train_mae_denorm:.2f}) | Train DirAcc: {train_dir_acc:.4f} | Val Loss: {val_loss:.4f} | Val MAE: {val_mae_norm:.4f} (Denorm: {val_mae_denorm:.2f}) | Val DirAcc: {val_dir_acc:.4f}")
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
+        # Select on val distance MAE: the hardware consumes the distance
+        # matrix; the direction head is an auxiliary regularizer.
+        if val_mae_norm < best_val_loss:
+            best_val_loss = val_mae_norm
             torch.save(model.state_dict(), 'topological_gnn_model.pth')
 
     print("Training complete. Best model saved to topological_gnn_model.pth.")
