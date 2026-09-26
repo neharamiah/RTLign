@@ -1,5 +1,5 @@
-  Clock Cycles    : 889114
+  Clock Cycles    : 1137689
   SA Iterations   : 1000
-  Accepted Moves  : 996
-  Final Cost      : 3704579
-  Final Temp      : 263078
+  Accepted Moves  : 997
+  Final Cost      : 2839569
+  Final Temp      : 28022

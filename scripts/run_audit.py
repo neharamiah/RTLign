@@ -47,8 +47,8 @@ CHECKPOINT = os.path.join(PROJECT_ROOT, "topological_gnn_model.pth")
 # Expected mockup metrics, from PROGRESS.md section 5 (post legality scan,
 # re-baselined after the FPGA synthesizability restructure: multi-cycle
 # iterative divider, synchronous-read BRAM memories, reset synchronizer).
-EXP_CYCLES = 1120446
-EXP_COST = 3704579
+EXP_CYCLES = 1137689
+EXP_COST = 2839569
 EXP_ITERATIONS = 1000
 EXP_HEX_LINES = 672   # 4 words x 168 macros
 EXP_TEST_COUNT = 136  # README / PROGRESS claim
@@ -313,10 +313,11 @@ def a1_inventory(checks):
         readable = {k: v for k, v in counts.items()
                     if isinstance(v, int) and v > 0}
         total = sum(readable.values())
-        # Corrected claim (PROGRESS Phase 4): mockup-scale snapshot, ~4.2k rows.
-        claim = 4_248
+        # Per-DEF snapshot (2026-09-25): 164 training DEFs, macro-pair edges
+        # recovered from high-fanout nets, def_path key added to all parquets.
+        claim = 5_412
         detail = (f"row counts: {counts}; files total {total:,} rows (matches the "
-                  "corrected PROGRESS claim; the original 21.6M-sample extraction "
+                  "per-DEF dataset claim; the original 21.6M-sample extraction "
                   "is not part of the shipped snapshot)")
         verdict = "PASS" if abs(total - claim) <= max(100, 0.1 * claim) else "DOC-DRIFT"
         return verdict, detail
