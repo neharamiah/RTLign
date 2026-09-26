@@ -103,11 +103,21 @@ def extract_features(def_file: str, lef_file: str, area_threshold: float = 1000.
     # Filter macros by area threshold if specified
     if area_threshold > 0:
         filtered = {k: v for k, v in macro_data.items() if v['area'] >= area_threshold}
-        if filtered:
-            macro_data = filtered
+        macro_data = filtered
+
+    if not macro_data:
+        # A design whose LEF has no cell above the threshold has no hard
+        # macros to place. Passing an unfiltered or None macro map would make
+        # parse_def_components treat every cell in the DEF as a macro
+        # (NaN dimensions) — an all-cells degenerate graph.
+        raise ValueError(
+            f"No cells with area >= {area_threshold} um^2 found in {lef_file}: "
+            f"{def_file} has no hard macros to place. Aborting instead of "
+            f"degrading to an all-cells macro graph."
+        )
 
     # Parse DEF for component placements
-    components = ext.parse_def_components(def_file, macro_data=macro_data if macro_data else None)
+    components = ext.parse_def_components(def_file, macro_data=macro_data)
 
     if not components:
         raise ValueError(f"No macro components found in {def_file}. Check LEF and DEF files.")
@@ -265,9 +275,12 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
 
     with torch.no_grad():
         if data.edge_index.shape[1] > 0:
-            preds = model(data.x, data.edge_index, data.edge_attr).cpu().numpy().flatten()
+            dist_out, dir_logits = model(data.x, data.edge_index, data.edge_attr)
+            preds = dist_out.cpu().numpy().flatten()
+            dir_probs = torch.sigmoid(dir_logits).cpu().numpy()
         else:
             preds = np.array([])
+            dir_probs = np.zeros((0, 2))
 
     # Map (src_inst, tgt_inst) -> predicted dist_norm
     pred_map = {}
@@ -286,6 +299,26 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
 
     assert nx.is_directed_acyclic_graph(G), "Cycle breaking failed — DAG check did not pass!"
     print(f"[predict] DAG verified. Edges retained: {G.number_of_edges()} / {len(edge_keys)}.")
+
+    # Direction gates: edge rows carry the sorted pair (a, b) and the model's
+    # P(b right-of a), P(b below-of a). A DAG edge pred->node claims
+    # "node right-of and below pred", so it is only enforced when the model's
+    # predicted direction agrees with that claim.
+    dir_lookup = {}
+    for i, (a, b) in enumerate(edge_keys):
+        if i < len(dir_probs):
+            dir_lookup[(a, b)] = (float(dir_probs[i][0]), float(dir_probs[i][1]))
+    edge_gates = {}
+    for (src, tgt) in G.edges():
+        a, b = min(src, tgt), max(src, tgt)
+        p = dir_lookup.get((a, b), (0.5, 0.5))
+        if src == a:
+            agree = p[0] >= 0.5 and p[1] >= 0.5
+        else:
+            agree = p[0] <= 0.5 and p[1] <= 0.5
+        edge_gates[(src, tgt)] = agree
+    n_gated = sum(1 for v in edge_gates.values() if v)
+    print(f"[predict] Direction gates: {n_gated}/{len(edge_gates)} DAG edges agree with predicted order.")
 
     # 6. Denormalize and build N×N matrix
     die_diag = get_die_diagonal(def_file)
@@ -315,7 +348,9 @@ def run_prediction(def_file, lef_file, model_path, output_hex, scaler_dir='data'
     if output_coords_hex:
         die_w, die_h = get_die_bounds(def_file)
         dbu = get_def_dbu(def_file)
-        resolved = resolve_topological_coordinates(G, node_df, inst_names, die_w, die_h, dbu_per_micron=dbu)
+        print("[predict] Computing macro barycenters from connected cells...")
+        barycenters = compute_macro_barycenters(def_file, inst_names)
+        resolved = resolve_topological_coordinates(G, node_df, inst_names, die_w, die_h, dbu_per_micron=dbu, barycenters=barycenters, edge_gates=edge_gates)
         os.makedirs(os.path.dirname(os.path.abspath(output_coords_hex)), exist_ok=True)
         with open(output_coords_hex, 'w') as f:
             for i, (x, y, w, h) in enumerate(resolved):
@@ -361,16 +396,91 @@ def get_die_bounds(def_path: str):
     return (max(xs) - min(xs), max(ys) - min(ys))
 
 
-def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, die_width: int, die_height: int, spacing: int = 1000, dbu_per_micron: int = 1) -> list:
+def compute_macro_barycenters(def_path: str, macro_inst_names: list) -> dict:
+    """
+    Computes a wirelength anchor per macro: the median (x, y) of the standard
+    cells that share a net with the macro, using the input DEF's cell placement.
+    Returns {macro_name: (bx, by)} in database units. Macros with no connected
+    cells are omitted.
+    """
+    if not os.path.exists(def_path) or not macro_inst_names:
+        return {}
+
+    macro_set = set(macro_inst_names)
+    inst_coords = {}
+    in_components = False
+    with open(def_path, 'r') as f:
+        for line in f:
+            s = line.strip()
+            if s.startswith("COMPONENTS"):
+                in_components = True
+                continue
+            if s.startswith("END COMPONENTS"):
+                break
+            if in_components and s.startswith("-"):
+                m = re.match(r'^\s*-\s+(\S+)\s+(\S+)', s)
+                c = re.search(r'\(\s*(-?\d+)\s+(-?\d+)\s*\)', s)
+                if m and c:
+                    inst_coords[m.group(1)] = (int(c.group(1)), int(c.group(2)))
+
+    # Collect connected-cell coordinates per macro from the NETS section
+    net_cells = {name: [] for name in macro_set}
+    in_nets = False
+    with open(def_path, 'r') as f:
+        for line in f:
+            s = line.strip()
+            if s.startswith("NETS"):
+                in_nets = True
+                continue
+            if in_nets and (s.startswith("END NETS") or s == "}"):
+                break
+            if in_nets and s.startswith("-"):
+                pins = re.findall(r'\(\s*(\S+)[^)]*\)', s)
+                pin_set = {p for p in pins if p in inst_coords}
+                nets_macros = pin_set & macro_set
+                cells = pin_set - macro_set
+                for mname in nets_macros:
+                    net_cells[mname].extend(inst_coords[p] for p in cells)
+
+    barycenters = {}
+    for name, pts in net_cells.items():
+        if not pts:
+            continue
+        xs = sorted(p[0] for p in pts)
+        ys = sorted(p[1] for p in pts)
+        mid = len(xs) // 2
+        bx = xs[mid] if len(xs) % 2 else (xs[mid - 1] + xs[mid]) // 2
+        by = ys[mid] if len(ys) % 2 else (ys[mid - 1] + ys[mid]) // 2
+        barycenters[name] = (bx, by)
+    return barycenters
+
+
+def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, die_width: int, die_height: int, spacing: int = 1000, dbu_per_micron: int = 1, barycenters: dict = None, edge_gates: dict = None) -> list:
     """
     Resolves DAG topological constraints into initial (x, y, w, h) coordinates
     for all macros, ordered by inst_names.
+
+    When `barycenters` is given, each macro is anchored at the median position
+    of its connected cells (wirelength-aware) instead of a pure row-packing
+    cursor. DAG predecessor relations are soft constraints: an edge is
+    enforced only when `edge_gates` (predicted-direction agreement) allows it
+    AND the anchor orders agree with the L-flow relation; otherwise the
+    wirelength anchor wins. Overlaps are resolved by pushing right, then
+    down, then up, then left.
     """
     coords = {}
     topo_order = list(nx.topological_sort(G))
+    placed = []
     cur_x = 0
     cur_y = 0
     row_h = 0
+
+    def find_overlap(x, y, w, h):
+        for p in placed:
+            if (x < p['x'] + p['w'] + spacing and p['x'] < x + w + spacing and
+                    y < p['y'] + p['h'] + spacing and p['y'] < y + h + spacing):
+                return p
+        return None
 
     for name in topo_order:
         raw_w = float(node_df.loc[name, 'width']) if (name in node_df.index and not np.isnan(node_df.loc[name, 'width'])) else 100.0
@@ -378,21 +488,49 @@ def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, di
         w = max(1, int(round(raw_w * dbu_per_micron)))
         h = max(1, int(round(raw_h * dbu_per_micron)))
 
+        # Wirelength anchor: median position of connected cells, macro centered on it
+        if barycenters and name in barycenters:
+            bx, by = barycenters[name]
+            anchor_x = max(0, min(bx - w // 2, max(0, die_width - w)))
+            anchor_y = max(0, min(by - h // 2, max(0, die_height - h)))
+        else:
+            anchor_x = None  # fall back to the row-packing cursor below
+
         in_edges = list(G.predecessors(name))
         if not in_edges:
-            if cur_x + w > die_width and cur_x > 0:
-                cur_x = 0
-                cur_y = cur_y + row_h + spacing
-                row_h = 0
-            x = cur_x
-            y = cur_y
-            cur_x = x + w + spacing
-            row_h = max(row_h, h)
+            if anchor_x is not None:
+                x, y = anchor_x, anchor_y
+            else:
+                if cur_x + w > die_width and cur_x > 0:
+                    cur_x = 0
+                    cur_y = cur_y + row_h + spacing
+                    row_h = 0
+                x = cur_x
+                y = cur_y
+                cur_x = x + w + spacing
+                row_h = max(row_h, h)
         else:
             min_x = 0
             min_y = 0
             for pred in in_edges:
+                # Soft constraint gate 1: model-predicted direction must agree
+                # with the edge's L-flow claim (edges without a prediction
+                # default to enforced).
+                if edge_gates and not edge_gates.get((pred, name), True):
+                    continue
                 pred_c = coords[pred]
+                # Soft constraint gate 2: when barycenter anchors exist, an
+                # edge is only enforced if the anchor orders agree with the
+                # L-flow relation (predecessor center left-of and above the
+                # macro's barycenter). Conflicting edges are skipped — a hard
+                # push against the wirelength anchor costs more than the
+                # topology signal is worth, and the SA stage still sees the
+                # full constraint matrix.
+                if anchor_x is not None:
+                    pred_cx = pred_c['x'] + pred_c['w'] / 2
+                    pred_cy = pred_c['y'] + pred_c['h'] / 2
+                    if not (pred_cx <= bx and pred_cy <= by):
+                        continue
                 px = pred_c['x'] + pred_c['w'] + spacing
                 py = pred_c['y']
                 if px + w > die_width:
@@ -402,19 +540,42 @@ def resolve_topological_coordinates(G: nx.DiGraph, node_df, inst_names: list, di
                     min_x = px
                 if py > min_y:
                     min_y = py
-            x = max(min_x, cur_x) if min_y <= cur_y else min_x
-            y = max(min_y, cur_y)
-            if x + w > die_width and x > 0:
-                x = 0
-                y = cur_y + row_h + spacing
-                row_h = 0
-            cur_x = x + w + spacing
-            cur_y = y
-            row_h = max(row_h, h)
+            # A wrapped predecessor can demand a position past the die edge;
+            # the DAG constraint is then infeasible, so clamp it and let the
+            # overlap resolver find the nearest feasible spot.
+            min_x = min(min_x, max(0, die_width - w))
+            min_y = min(min_y, max(0, die_height - h))
+            if anchor_x is not None:
+                x = max(min_x, anchor_x)
+                y = max(min_y, anchor_y)
+            else:
+                x = max(min_x, cur_x) if min_y <= cur_y else min_x
+                y = max(min_y, cur_y)
+                cur_x = x + w + spacing
+                cur_y = y
+                row_h = max(row_h, h)
 
+        # Resolve overlaps with already-placed macros: push right, then down,
+        # then up, then left. Each candidate is clamped into the die before the
+        # next overlap check, so a push can never be undone by the final clamp.
+        for _ in range(4 * len(placed) + 4):
+            hit = find_overlap(x, y, w, h)
+            if hit is None:
+                break
+            if hit['x'] + hit['w'] + spacing + w <= die_width:
+                x = hit['x'] + hit['w'] + spacing
+            elif y + hit['h'] + spacing + h <= die_height:
+                y = hit['y'] + hit['h'] + spacing
+            elif hit['y'] - spacing - h >= 0:
+                y = hit['y'] - spacing - h
+            else:
+                x = hit['x'] - spacing - w
+            x = max(0, min(x, max(0, die_width - w)))
+            y = max(0, min(y, max(0, die_height - h)))
         x = max(0, min(x, max(0, die_width - w)))
         y = max(0, min(y, max(0, die_height - h)))
         coords[name] = {'x': x, 'y': y, 'w': w, 'h': h}
+        placed.append(coords[name])
 
     result = []
     for name in inst_names:
