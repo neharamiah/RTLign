@@ -27,6 +27,9 @@ module sa_engine #(
     parameter DIE_HEIGHT       = 201600,
     parameter T_INIT           = 1000000,
     parameter T_MIN            = 100,
+    parameter T0_SAMPLES       = 16,
+    parameter T0_SCALE_SHIFT   = 2,
+    parameter T0_ATTEMPT_CAP   = 64,
     parameter COOL_SHIFT       = 3,
     parameter INNER_ITERS      = 100,
     parameter MAX_ITERS        = 1000,
@@ -58,6 +61,7 @@ module sa_engine #(
     localparam NUM_MACROS = NUM_LINES / 4;
     localparam MEM_DEPTH  = NUM_LINES;
     localparam MEM_AW     = $clog2(MEM_DEPTH);
+    localparam T0_SAMPLES_SHIFT = $clog2(T0_SAMPLES);
 
     // -----------------------------------------------------------------------
     // FSM States
@@ -76,12 +80,25 @@ module sa_engine #(
     localparam ST_FETCH_YH      = 4'd11;
     localparam ST_FETCH_H       = 4'd12;
     localparam ST_DIV           = 4'd13;
+    localparam ST_SET_TEMP      = 4'd14;
 
     reg [3:0]  state;
     reg [31:0] temperature;
     reg [31:0] inner_count;
     reg [63:0] current_cost;
     reg [63:0] candidate_cost;
+
+    // Scale-aware initial temperature: before annealing, T0_SAMPLES legal
+    // candidate moves are proposed (same LFSR schedule, always restored) and
+    // |delta cost| accumulated. T0 = clamp((accum >> log2(T0_SAMPLES))
+    // << T0_SCALE_SHIFT, T_MIN, 32'hFFFFFFFF), so the initial acceptance
+    // probability is design-scale independent. Sampling consumes no cooling:
+    // total_iters, inner_count and accepted_count are untouched.
+    reg        sampling;
+    reg [31:0] sample_count;
+    reg [31:0] attempt_count;
+    reg [63:0] delta_accum;
+    reg [63:0] delta_abs;
 
     // Saved state of perturbed macro for rollback
     reg [31:0] sel_macro;
@@ -269,8 +286,12 @@ module sa_engine #(
     // event is ever dropped; only the perturbed macro's row is ever written,
     // and the legality scan skips that row, so no pending write is ever
     // read by the verdict logic.
-    wire met_reject = (state == ST_METROPOLIS) && (candidate_cost > current_cost) &&
-                      !(rand_val[15:0] < threshold);
+    // met_reject restores the saved coordinates through the write muxes.
+    // During T0 sampling every candidate is restored unconditionally, so the
+    // sampled deltas are all measured against the same initial layout.
+    wire met_reject = (state == ST_METROPOLIS) &&
+                      (sampling || ((candidate_cost > current_cost) &&
+                                    !(rand_val[15:0] < threshold)));
     wire mem_ev_we  = (state == ST_APPLY_MOVE) || scan_dec_reject || met_reject;
     wire [31:0] ev_wd_a = (state == ST_APPLY_MOVE) ? cand_x[31:0] : saved_x;
     wire [31:0] ev_wd_b = (state == ST_APPLY_MOVE) ? cand_y[31:0] : saved_y;
@@ -382,6 +403,11 @@ module sa_engine #(
             inner_count    <= 32'd0;
             total_iters    <= 32'd0;
             accepted_count <= 32'd0;
+            sampling       <= 1'b0;
+            sample_count   <= 32'd0;
+            attempt_count  <= 32'd0;
+            delta_accum    <= 64'd0;
+            delta_abs      <= 64'd0;
             current_cost   <= 64'd0;
             candidate_cost <= 64'd0;
             final_cost     <= 64'd0;
@@ -430,6 +456,11 @@ module sa_engine #(
                     if (cost_done) begin
                         current_cost <= cost_total;
                         lfsr_en      <= 1'b1;
+                        // Enter the T0 sampling phase before annealing.
+                        sampling     <= 1'b1;
+                        sample_count <= 32'd0;
+                        attempt_count<= 32'd0;
+                        delta_accum  <= 64'd0;
                         state        <= ST_PERTURB;
                     end
                 end
@@ -493,9 +524,20 @@ module sa_engine #(
                     end else if (scan_dec_reject) begin
                         // Illegal candidate: restore (port write muxes) and
                         // skip cost evaluation.
-                        total_iters <= total_iters + 1;
-                        scan_valid  <= 1'b0;
-                        state       <= ST_CHECK_INNER;
+                        if (sampling) begin
+                            attempt_count <= attempt_count + 1;
+                            scan_valid    <= 1'b0;
+                            if (attempt_count + 1 >= T0_ATTEMPT_CAP) begin
+                                state <= ST_SET_TEMP;
+                            end else begin
+                                lfsr_en <= 1'b1;
+                                state   <= ST_PERTURB;
+                            end
+                        end else begin
+                            total_iters <= total_iters + 1;
+                            scan_valid  <= 1'b0;
+                            state       <= ST_CHECK_INNER;
+                        end
                     end else if (scan_valid && (sc_idx == NUM_MACROS - 1)) begin
                         // Legal candidate: evaluate the cost as before.
                         scan_valid <= 1'b0;
@@ -535,19 +577,63 @@ module sa_engine #(
                 end
 
                 ST_METROPOLIS: begin
-                    total_iters <= total_iters + 1;
-                    if (candidate_cost <= current_cost) begin
-                        // Downhill move: Accept
-                        current_cost   <= candidate_cost;
-                        accepted_count <= accepted_count + 1;
-                    end else if (rand_val[15:0] < threshold) begin
-                        // Uphill move accepted by the Metropolis condition
-                        current_cost   <= candidate_cost;
-                        accepted_count <= accepted_count + 1;
+                    if (sampling) begin
+                        // T0 sampling: accumulate |delta| over legal
+                        // candidates and always restore the macro.
+                        delta_abs <= (candidate_cost > current_cost)
+                                   ? (candidate_cost - current_cost)
+                                   : (current_cost - candidate_cost);
+                        delta_accum <= delta_accum
+                                     + ((candidate_cost > current_cost)
+                                        ? (candidate_cost - current_cost)
+                                        : (current_cost - candidate_cost));
+                        sample_count <= sample_count + 1;
+                        if (sample_count + 1 >= T0_SAMPLES) begin
+                            state <= ST_SET_TEMP;
+                        end else begin
+                            lfsr_en <= 1'b1;
+                            state   <= ST_PERTURB;
+                        end
+                    end else begin
+                        total_iters <= total_iters + 1;
+                        if (candidate_cost <= current_cost) begin
+                            // Downhill move: Accept
+                            current_cost   <= candidate_cost;
+                            accepted_count <= accepted_count + 1;
+                        end else if (rand_val[15:0] < threshold) begin
+                            // Uphill move accepted by the Metropolis condition
+                            current_cost   <= candidate_cost;
+                            accepted_count <= accepted_count + 1;
+                        end
+                        // else: reject — previous position restored through the
+                        // port-A/B write muxes (met_reject).
+                        state <= ST_CHECK_INNER;
                     end
-                    // else: reject — previous position restored through the
-                    // port-A/B write muxes (met_reject).
-                    state <= ST_CHECK_INNER;
+                end
+
+                ST_SET_TEMP: begin
+                    // T0 = clamp(mean|delta| << T0_SCALE_SHIFT, T_MIN, max),
+                    // where mean = delta_accum >> T0_SAMPLES_SHIFT. With the
+                    // LUT's effective exp(-4*delta/T) acceptance this puts a
+                    // typical move at delta/T ~ 0.25 (~37% initial acceptance)
+                    // regardless of design scale. Falls back to T_INIT when no
+                    // legal candidate was sampled.
+                    sampling   <= 1'b0;
+                    scan_valid <= 1'b0;
+                    lfsr_en    <= 1'b1;
+                    if (sample_count == 32'd0) begin
+                        temperature <= T_INIT;
+                    end else if ((delta_accum >> T0_SAMPLES_SHIFT)
+                                 > (32'hFFFFFFFF >> T0_SCALE_SHIFT)) begin
+                        temperature <= 32'hFFFFFFFF;
+                    end else if ((delta_accum >> T0_SAMPLES_SHIFT)
+                                 < (T_MIN >> T0_SCALE_SHIFT)) begin
+                        temperature <= T_MIN;
+                    end else begin
+                        temperature <= (delta_accum >> T0_SAMPLES_SHIFT)
+                                       << T0_SCALE_SHIFT;
+                    end
+                    state <= ST_PERTURB;
                 end
 
                 ST_CHECK_INNER: begin
@@ -555,7 +641,12 @@ module sa_engine #(
                         // Step-based temperature decay
                         inner_count <= 32'd0;
                         temperature <= temperature - (temperature >> COOL_SHIFT);
-                        if ((temperature <= T_MIN) || (total_iters >= MAX_ITERS)) begin
+                        if (accepted_count == 32'd0) begin
+                            // Frozen SA: zero accepts over a whole inner block
+                            // means every proposed move was rejected; cooling
+                            // further can only reject more. Skip to cleanup.
+                            state <= ST_DONE;
+                        end else if ((temperature <= T_MIN) || (total_iters >= MAX_ITERS)) begin
                             state <= ST_DONE;
                         end else begin
                             lfsr_en <= 1'b1;

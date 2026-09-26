@@ -44,7 +44,9 @@ module tb_sa_trace;
     localparam ST_LEGAL_SCAN  = 4'd9;
 
     always @(posedge clk) begin
-        if (rst == 1'b0) begin
+        if (rst == 1'b0 && !dut.sampling) begin
+            // The T0 sampling phase precedes annealing and has no golden-model
+            // counterpart in this trace; only the annealing loop is traced.
             if (dut.state == ST_PERTURB)
                 $display("SEL %0d %h", dut.sel_macro, dut.rand_val);
             if (dut.state == ST_APPLY_MOVE)
