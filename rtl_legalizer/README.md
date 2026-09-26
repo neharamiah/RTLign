@@ -138,7 +138,7 @@ iverilog \
   -Plegalizer_tb.DIE_HEIGHT=741850 \
   -Plegalizer_tb.ENABLE_SA=1 \
   -o sim.out \
-  collision_check.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v
+  collision_check.v iter_div.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v
 
 # Run simulation
 vvp sim.out
@@ -149,12 +149,33 @@ gtkwave legalizer.vcd
 
 ---
 
+### 3. FPGA Synthesis (PYNQ / Vivado)
+
+All six design files (`collision_check.v`, `iter_div.v`, `lfsr32.v`,
+`sa_cost.v`, `sa_engine.v`, `legalizer_fsm.v`, plus `sa_legalizer_top.v` as
+the top module) are Vivado-synthesizable:
+
+- `layout_mem` in `sa_engine.v`, `legalizer_fsm.v`, and `sa_legalizer_top.v`
+  infers as true-dual-port / simple-dual-port BRAM (synchronous reads).
+- The Metropolis ratio uses the multi-cycle `iter_div.v` divider (no
+  combinational divide).
+- Reset is synchronized (async assert, sync release) inside
+  `sa_legalizer_top.v`; drive the `rst` pin from a button or PS GPIO.
+- The legalized layout can be read back on hardware through the registered
+  `out_addr`/`out_data` port on `sa_legalizer_top`.
+- `$readmemh` initialization uses the `INIT_FILE` parameter (default
+  `dummy_layout.hex`, resolved against the simulator/synthesis working
+  directory). For Vivado, either add the hex file to the project as a design
+  source or override `INIT_FILE` with an absolute path.
+
+---
+
 ## Unit, Property, and Verification Testing
 
 Run pytest across the unit tests, property tests, golden model equivalence, and formal verification suite:
 
 ```bash
-# Run all legalizer and verification tests (135 tests):
+# Run all legalizer and verification tests (136 tests):
 pytest tests/ rtl_legalizer/ -v
 
 # Run directed Verilog unit testbenches:

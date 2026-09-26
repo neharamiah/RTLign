@@ -38,14 +38,25 @@ class TopologicalMacroDataset(InMemoryDataset):
         joblib.dump(scaler, os.path.join(raw_dir, 'node_scaler.joblib'))
 
         # 2. Build pairwise distances dictionary for fast lookup
-        # Key: (design, min(inst1, inst2), max(inst1, inst2)) -> Value: (dist_norm, raw_dist)
+        # Key: (design, def_path, min(inst1, inst2), max(inst1, inst2)) ->
+        # Value: (dist_norm, raw_dist). def_path identifies the individual
+        # placed DEF: each DEF is one training graph with its own labels.
         dist_dict = {}
         for _, row in pairwise_dist.iterrows():
             design = row['design']
+            def_path = row['def_path']
             inst_i = row['inst_i']
             inst_j = row['inst_j']
-            key = (design, min(inst_i, inst_j), max(inst_i, inst_j))
+            key = (design, def_path, min(inst_i, inst_j), max(inst_i, inst_j))
             dist_dict[key] = (row['dist_norm'], row['raw_dist'])
+
+        # 2b. Per-DEF macro positions for direction labels. Direction of the
+        # sorted pair (a, b) is (b right-of a, b below-of a) by center
+        # coordinates; unlike distance, this is placement-invariant and thus
+        # learnable from netlist features.
+        raw_coords = pd.read_parquet(os.path.join(raw_dir, 'raw_coords.parquet'))
+        pos = {(r['design'], r['def_path'], r['inst_name']): (r['target_x'], r['target_y'])
+               for _, r in raw_coords.iterrows()}
 
         # Edge feature columns
         edge_feature_cols = [
@@ -61,15 +72,16 @@ class TopologicalMacroDataset(InMemoryDataset):
 
         data_list = []
         
-        # Group by design
-        grouped_features = ml_features.groupby('design')
-        grouped_edges = edge_index_df.groupby('design')
+        # Group by design AND def_path: every placed DEF is its own graph, so
+        # each macro appears once per graph and edge labels are unambiguous.
+        grouped_features = ml_features.groupby(['design', 'def_path'])
+        grouped_edges = edge_index_df.groupby(['design', 'def_path'])
 
-        for design, node_df in grouped_features:
-            if design not in grouped_edges.groups:
+        for (design, def_path), node_df in grouped_features:
+            if (design, def_path) not in grouped_edges.groups:
                 continue
-                
-            edge_df = grouped_edges.get_group(design)
+
+            edge_df = grouped_edges.get_group((design, def_path))
             
             if len(edge_df) == 0:
                 continue
@@ -87,27 +99,41 @@ class TopologicalMacroDataset(InMemoryDataset):
             edge_attrs = []
             targets_norm = []
             targets_raw = []
+            targets_dir = []
 
             for _, row in edge_df.iterrows():
                 src = row['source_inst']
                 tgt = row['target_inst']
-                
+
                 if src not in inst_name_to_idx or tgt not in inst_name_to_idx:
                     continue
-                    
+
                 src_idx = inst_name_to_idx[src]
                 tgt_idx = inst_name_to_idx[tgt]
-                
+
                 # Lookup distance
-                key = (design, min(src, tgt), max(src, tgt))
+                key = (design, def_path, min(src, tgt), max(src, tgt))
                 if key in dist_dict:
                     d_norm, d_raw = dist_dict[key]
-                    
+
                     source_indices.append(src_idx)
                     target_indices.append(tgt_idx)
                     edge_attrs.append(row[edge_feature_cols].values.astype(np.float32))
                     targets_norm.append(d_norm)
                     targets_raw.append(d_raw)
+
+                    # Direction labels: edge rows always store the sorted pair
+                    # (src < tgt), so the label is (tgt right-of src, tgt
+                    # below-of src) by placement centers.
+                    p_src = pos.get((design, def_path, src))
+                    p_tgt = pos.get((design, def_path, tgt))
+                    if p_src is not None and p_tgt is not None:
+                        targets_dir.append([
+                            1.0 if p_tgt[0] > p_src[0] else 0.0,
+                            1.0 if p_tgt[1] > p_src[1] else 0.0,
+                        ])
+                    else:
+                        targets_dir.append([0.5, 0.5])
 
             if len(source_indices) == 0:
                 continue
@@ -116,9 +142,10 @@ class TopologicalMacroDataset(InMemoryDataset):
             edge_attr = torch.tensor(np.array(edge_attrs), dtype=torch.float32)
             y = torch.tensor(targets_norm, dtype=torch.float32).unsqueeze(-1)
             raw_y = torch.tensor(targets_raw, dtype=torch.float32).unsqueeze(-1)
+            dir_y = torch.tensor(targets_dir, dtype=torch.float32)
 
             # Create PyG Data object
-            data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y, design=design, raw_y=raw_y)
+            data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y, design=design, def_path=def_path, raw_y=raw_y, dir_y=dir_y)
             data_list.append(data)
 
         if self.pre_filter is not None:

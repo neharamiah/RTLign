@@ -22,8 +22,9 @@ RTL_DIR = os.path.join(PROJECT_ROOT, "rtl_legalizer")
 SIM = os.path.join(RTL_DIR, "verilator", "legalizer_sim")
 GOLDEN_DIR = os.path.join(PROJECT_ROOT, "tests", "data", "golden")
 
-RTL_SOURCES = ["collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-               "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"]
+RTL_SOURCES = ["collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+               "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v",
+               "legalizer_tb.v"]
 
 
 def run_icarus_legalizer(input_hex, tmp_path, timeout=600):
@@ -135,16 +136,17 @@ class TestSweepFindings:
         assert not res.size_mismatches
 
     def test_dense_layout_residual_overlaps_known_limitation(self, tmp_path):
-        # The 9-sweep greedy cap cannot untangle dense clusters. RTL-confirmed
-        # on seed 0: the full SA+greedy pipeline leaves exactly 2 overlaps and
-        # the hardened testbench exits non-zero ($fatal). If a future RTL
-        # change fixes convergence, this test should be updated to require
-        # zero overlaps instead.
+        # The 8-sweep greedy cap cannot untangle dense clusters. RTL-confirmed
+        # on seed 0: with the SA legality scan (SA no longer wanders into
+        # overlapping states), the pipeline leaves exactly 3 overlaps on this
+        # input and the hardened testbench exits non-zero ($fatal). If a
+        # future RTL change fixes convergence, this test should be updated to
+        # require zero overlaps instead.
         macros = layout_gen.gen_layout("dense", 24, seed=0)
         words = [v & 0xFFFFFFFF for m in macros for v in m]
         out, _ = gm.legalize_model(words)
         res = audit.check_layout(audit.to_macros(words), audit.to_macros(out))
-        assert len(res.overlaps) == 2
+        assert len(res.overlaps) == 3
         assert not res.boundary_violations and not res.size_mismatches
 
     def test_dense_residual_overlaps_confirmed_on_rtl(self, tmp_path):
@@ -159,5 +161,5 @@ class TestSweepFindings:
         res_r = subprocess.run(["vvp", str(sim_out)], capture_output=True,
                                text=True, cwd=tmp_path, timeout=600)
         assert res_r.returncode == 1, "expected $fatal on residual overlaps"
-        assert "AUDIT FAIL: 2 overlaps remain" in res_r.stdout
+        assert "AUDIT FAIL: 3 overlaps remain" in res_r.stdout
         assert "AUDIT PASS: All macro sizes preserved." in res_r.stdout

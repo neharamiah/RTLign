@@ -7,6 +7,15 @@
 //           box area, and boundary violations.
 //   Pass 2: Deterministic Greedy Cleanup (legalizer_fsm.v)
 //           Guarantees 100% legal, zero-overlap layout via minimum-axis push.
+//
+// FPGA (PYNQ/Vivado) implementation notes:
+//   - rst is synchronized (2-FF, async assert / sync release) before reaching
+//     the FSMs and submodules.
+//   - The legalized result stays readable on hardware through the registered
+//     out_addr/out_data read port (also keeps layout_mem from being pruned).
+//   - The SA->cleanup and cleanup->output copy loops absorb the one-cycle
+//     synchronous-read latency of the BRAM memories with a skewed
+//     address-issue / data-capture schedule.
 // ============================================================================
 
 `timescale 1ns / 1ps
@@ -25,12 +34,20 @@ module sa_legalizer_top #(
     parameter W_AREA           = 1,
     parameter W_BOUNDARY       = 8,
     parameter AREA_SCALE_SHIFT = 14,
-    parameter LFSR_SEED        = 32'hDEAD_BEEF
+    parameter LFSR_SEED        = 32'hDEAD_BEEF,
+    parameter INIT_FILE        = "dummy_layout.hex"
 )(
     input  wire        clk,
     input  wire        rst,
     input  wire        start,
     output reg         done,
+
+    // Hardware read-back port for the legalized layout: registered
+    // synchronous read, data for out_addr appears one cycle later.
+    // Addresses past the memory alias to row 0 (keeps the read port pure
+    // and BRAM-inferable).
+    input  wire [9:0]  out_addr,
+    output reg  [31:0] out_data,
 
     // SA Metrics
     output wire [63:0] final_cost,
@@ -42,9 +59,33 @@ module sa_legalizer_top #(
     localparam NUM_MACROS = NUM_LINES / 4;
     localparam MEM_DEPTH  = NUM_LINES;
 
-    // Top-level memory exposed for testbench dumping & verification
+    // -----------------------------------------------------------------------
+    // Reset synchronizer: assert asynchronously, release synchronously so
+    // recovery/removal timing on the reset pins is never violated.
+    // -----------------------------------------------------------------------
+    reg [1:0] rst_sync;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            rst_sync <= 2'b11;
+        end else begin
+            rst_sync <= {1'b0, rst_sync[1]};
+        end
+    end
+    wire rst_int = rst_sync[0];
+
+    // -----------------------------------------------------------------------
+    // Top-level memory exposed for testbench dumping & verification.
+    // Write port: final copy FSM. Read port: out_addr/out_data below.
+    // -----------------------------------------------------------------------
     reg [31:0] layout_mem [0:MEM_DEPTH-1] /* verilator public */;
-    initial $readmemh("dummy_layout.hex", layout_mem);
+    initial $readmemh(INIT_FILE, layout_mem);
+
+    always @(posedge clk) begin
+        if (final_we) begin
+            layout_mem[final_wa] <= final_wd;
+        end
+        out_data <= layout_mem[out_addr < MEM_DEPTH ? out_addr : 10'd0];
+    end
 
     // -----------------------------------------------------------------------
     // Internal Signals
@@ -77,10 +118,11 @@ module sa_legalizer_top #(
         .W_AREA(W_AREA),
         .W_BOUNDARY(W_BOUNDARY),
         .AREA_SCALE_SHIFT(AREA_SCALE_SHIFT),
-        .LFSR_SEED(LFSR_SEED)
+        .LFSR_SEED(LFSR_SEED),
+        .INIT_FILE(INIT_FILE)
     ) sa_inst (
         .clk(clk),
-        .rst(rst),
+        .rst(rst_int),
         .start(sa_start),
         .done(sa_done),
         .final_cost(final_cost),
@@ -94,10 +136,11 @@ module sa_legalizer_top #(
     legalizer_fsm #(
         .NUM_LINES(NUM_LINES),
         .DIE_WIDTH(DIE_WIDTH),
-        .DIE_HEIGHT(DIE_HEIGHT)
+        .DIE_HEIGHT(DIE_HEIGHT),
+        .INIT_FILE(INIT_FILE)
     ) clean_inst (
         .clk(clk),
-        .rst(rst),
+        .rst(rst_int),
         .start(clean_start),
         .done(clean_done),
         .ext_we(clean_ext_we),
@@ -115,12 +158,20 @@ module sa_legalizer_top #(
     localparam S_RUN_CLEAN       = 3'd3;
     localparam S_COPY_TO_FINAL   = 3'd4;
     localparam S_DONE            = 3'd5;
+    localparam S_DONE2           = 3'd6;
 
     reg [2:0]  state;
     reg [31:0] copy_idx;
 
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
+    // Registered memory write channel. The write lives in its own reset-free
+    // always block (below) so the memory infers as BRAM; writes inside the
+    // async-reset FSM block would defeat inference.
+    reg        final_we;
+    reg [9:0]  final_wa;
+    reg [31:0] final_wd;
+
+    always @(posedge clk or posedge rst_int) begin
+        if (rst_int) begin
             state           <= S_IDLE;
             done            <= 1'b0;
             sa_start        <= 1'b0;
@@ -130,6 +181,9 @@ module sa_legalizer_top #(
             clean_ext_waddr <= 32'd0;
             clean_ext_wdata <= 32'd0;
             copy_idx        <= 32'd0;
+            final_we        <= 1'b0;
+            final_wa        <= 10'd0;
+            final_wd        <= 32'd0;
         end else begin
             case (state)
                 S_IDLE: begin
@@ -155,18 +209,23 @@ module sa_legalizer_top #(
                     end
                 end
 
+                // Stream the SA layout into the greedy legalizer. The SA
+                // engine's read port is synchronous: the address issued in
+                // one cycle yields data on sa_ext_rdata two edges later, so
+                // the write for word copy_idx-1 rides the same cycle that
+                // issues the address for word copy_idx.
                 S_COPY_TO_CLEAN: begin
-                    // Stream SA layout into greedy legalizer memory
-                    clean_ext_we    <= 1'b1;
-                    clean_ext_waddr <= copy_idx;
-                    clean_ext_wdata <= sa_ext_rdata;
-
-                    if (copy_idx + 1 >= MEM_DEPTH) begin
+                    if (copy_idx != 32'd0) begin
+                        clean_ext_we    <= 1'b1;
+                        clean_ext_waddr <= copy_idx - 32'd1;
+                        clean_ext_wdata <= sa_ext_rdata;
+                    end
+                    if (copy_idx == MEM_DEPTH) begin
                         sa_ext_addr <= 32'd0;
                         state       <= S_RUN_CLEAN;
                     end else begin
-                        copy_idx    <= copy_idx + 1;
-                        sa_ext_addr <= copy_idx + 1;
+                        copy_idx    <= copy_idx + 32'd1;
+                        sa_ext_addr <= copy_idx + 32'd1;
                     end
                 end
 
@@ -186,16 +245,32 @@ module sa_legalizer_top #(
                     end
                 end
 
+                // Read the legalized layout back word by word. The
+                // legalizer's read port is synchronous: clean_ext_rdata
+                // carries word copy_idx-1 while clean_ext_waddr presents
+                // the address for word copy_idx. The write itself goes
+                // through the registered final_* channel so the memory
+                // stays BRAM-inferable; S_DONE2 lets the last write land
+                // before asserting done.
                 S_DONE: begin
-                    // Write legalized coordinates to top-level layout_mem
-                    layout_mem[copy_idx] <= clean_ext_rdata;
-                    if (copy_idx + 1 >= MEM_DEPTH) begin
-                        done  <= 1'b1;
-                        state <= S_IDLE;
+                    if (copy_idx != 32'd0) begin
+                        final_we <= 1'b1;
+                        final_wa <= copy_idx[9:0] - 10'd1;
+                        final_wd <= clean_ext_rdata;
                     end else begin
-                        copy_idx        <= copy_idx + 1;
-                        clean_ext_waddr <= copy_idx + 1;
+                        final_we <= 1'b0;
                     end
+                    if (copy_idx == MEM_DEPTH) begin
+                        state <= S_DONE2;
+                    end else begin
+                        copy_idx        <= copy_idx + 32'd1;
+                        clean_ext_waddr <= copy_idx + 32'd1;
+                    end
+                end
+
+                S_DONE2: begin
+                    done  <= 1'b1;
+                    state <= S_IDLE;
                 end
 
                 default: state <= S_IDLE;

@@ -54,10 +54,12 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
     env["TECH_LEF"] = tech_lef
     env["CELLS_LEF"] = cells_lef
     env["INPUT_DEF"] = def_file
-    
+    # RTLign legalizes macros; cells are re-placed around them (production co-flow)
+    env["HEAL_GP"] = "1"
+
     cmd = ["openroad", "-no_init", "-exit", EVAL_TCL]
     stdout = run_cmd(cmd, env=env)
-    
+
     hpwl = "N/A"
     legal = False
     for line in stdout.split('\n'):
@@ -65,7 +67,7 @@ def run_openroad_eval(def_file, tech_lef, cells_lef):
             hpwl = line.split(":")[-1].strip()
         if "check_placement finished (legal)." in line:
             legal = True
-            
+
     return hpwl, legal
 
 
@@ -195,8 +197,9 @@ def main():
             f"-Plegalizer_tb.DIE_WIDTH={die_w}",
             f"-Plegalizer_tb.DIE_HEIGHT={die_h}",
             "-o", sim_out,
-            "collision_check.v", "lfsr32.v", "sa_cost.v", "sa_engine.v",
-            "legalizer_fsm.v", "sa_legalizer_top.v", "legalizer_tb.v"
+            "collision_check.v", "iter_div.v", "lfsr32.v", "sa_cost.v",
+            "sa_engine.v", "legalizer_fsm.v", "sa_legalizer_top.v",
+            "legalizer_tb.v"
         ]
         run_cmd(iverilog_cmd, cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))
         vvp_out = run_cmd(["vvp", sim_out], cwd=os.path.join(PROJECT_ROOT, "rtl_legalizer"))

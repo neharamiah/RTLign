@@ -41,7 +41,9 @@ module tb_sa_cost;
     );
 
     always #5 clk = ~clk;
-    always @(*) mem_rdata = mem[mem_addr];
+    // Synchronous-read memory model (matches the BRAM interface: data for
+    // mem_addr appears one cycle after the address is presented).
+    always @(posedge clk) mem_rdata <= mem[mem_addr];
 
     integer errors;
 

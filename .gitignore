@@ -23,7 +23,8 @@ datasets/
 *.err
 openroad_scripts/results/
 openroad_scripts/reports/
-evaluation_output/
+evaluation_output*/
+evaluation_output*.txt
 
 # 3. Verilog Simulation & Synthesis
 *.hex

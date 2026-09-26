@@ -185,8 +185,13 @@ if {[catch {
     if {[catch {
         place_pins -hor_layers met3 -ver_layers met4
     } err2]} {
-        log "ERROR during pin placement: $err2"
-        exit 1
+        log "WARNING: Pin placement with met3/met4 failed ($err2). Retrying with metal3/metal4 (ISPD LEF naming)..."
+        if {[catch {
+            place_pins -hor_layers {metal3 metal5} -ver_layers {metal2 metal4}
+        } err3]} {
+            log "ERROR during pin placement: $err3"
+            exit 1
+        }
     }
 }
 
@@ -216,9 +221,7 @@ if {[catch {
     global_placement \
         -density                         $target_density    \
         -pad_left                        0                  \
-        -pad_right                       0                  \
-        -routability_driven                                 \
-        -routability_snapshot_overflow   $snapshot_threshold
+        -pad_right                       0
 } err]} {
     log "ERROR during global placement: $err"
     exit 1

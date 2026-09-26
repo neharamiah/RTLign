@@ -41,13 +41,18 @@ module tb_sa_trace;
     localparam ST_PERTURB     = 4'd3;
     localparam ST_APPLY_MOVE  = 4'd4;
     localparam ST_METROPOLIS  = 4'd6;
+    localparam ST_LEGAL_SCAN  = 4'd9;
 
     always @(posedge clk) begin
-        if (rst == 1'b0) begin
+        if (rst == 1'b0 && !dut.sampling) begin
+            // The T0 sampling phase precedes annealing and has no golden-model
+            // counterpart in this trace; only the annealing loop is traced.
             if (dut.state == ST_PERTURB)
                 $display("SEL %0d %h", dut.sel_macro, dut.rand_val);
             if (dut.state == ST_APPLY_MOVE)
                 $display("MOVE %0d %0d", dut.raw_dx, dut.raw_dy);
+            if (dut.state == ST_LEGAL_SCAN && !dut.scan_skip && dut.scan_hit)
+                $display("ILLEGAL %0d %0d", dut.current_cost, dut.temperature);
             if (dut.state == ST_METROPOLIS)
                 $display("MET %0d %0d %0d %0d %0d", dut.rand_val[15:0], dut.threshold,
                          dut.candidate_cost, dut.current_cost, dut.temperature);

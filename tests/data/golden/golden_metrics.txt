@@ -1,10 +1,5 @@
-========================================
-  RTLign Legalizer — Verilator Finished
-========================================
-  Clock Cycles    : 724111
+  Clock Cycles    : 1137689
   SA Iterations   : 1000
-  Accepted Moves  : 1000
-  Final Cost      : 3704579
-  Final Temp      : 263078
-========================================
-  Output written to: /home/ratik/Projects/RTLign/tests/data/golden/golden_output_168.hex
+  Accepted Moves  : 997
+  Final Cost      : 2839569
+  Final Temp      : 28022

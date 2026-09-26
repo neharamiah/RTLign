@@ -33,7 +33,7 @@ OpenROAD DEF ──▶ ML Predictor ──▶ RTL Legalizer ──▶ OpenROAD I
 - Phase 3 complete: Dataset Generation Pipeline and Robust Testing
 - Phase 4 complete: ML Feature Extraction (Parquet datasets generated)
 - Phase 5 complete: ML Predictor & Evaluation Suite (GNN trained, DAG prediction, hex export, OpenROAD evaluation & plotting implemented)
-- Phase 6 complete: Verilog Simulated Annealing engine (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`, `sa_legalizer_top.v`), Verilator bridge, bit-exact golden model (`golden_model.py`), layout auditor (`audit.py`), directed verification testbenches, and test suite (135 passing tests)
+- Phase 6 complete: Verilog Simulated Annealing engine (`sa_engine.v`, `sa_cost.v`, `lfsr32.v`, `iter_div.v`, `sa_legalizer_top.v`), Verilator bridge, bit-exact golden model (`golden_model.py`), layout auditor (`audit.py`), directed verification testbenches, and test suite (136 passing tests)
 - Phase 7 planned: Full benchmark scaling across ISPD 2015 designs and signoff
 
 ---
@@ -49,7 +49,7 @@ OpenROAD DEF ──▶ ML Predictor ──▶ RTL Legalizer ──▶ OpenROAD I
 - **RTL Simulation:** Icarus Verilog (`iverilog`, `vvp`) and Verilator (C++ compilation for ~400× faster simulation). Used for legalizer FSM and SA simulation with VCD waveform output.
 - **EDA Tools:** OpenROAD - Physical design suite (GUI, routing, STA). DEF/LEF file import/export, placement visualization, signoff analysis.
 - **ML/AI:** PyTorch, PyTorch Geometric (Topological GNN), scikit-learn, pandas, matplotlib.
-- **Testing & Verification:** pytest (135 unit, integration, and verification tests), Hypothesis (Property-based testing), Python golden model, and standalone layout auditor.
+- **Testing & Verification:** pytest (136 unit, integration, and verification tests), Hypothesis (Property-based testing), Python golden model, and standalone layout auditor.
 
 **Build & Run Commands**
 *Full Baseline Pipeline:*
@@ -58,21 +58,21 @@ python orchestration/master_run.py
 ```
 *GNN Training:*
 ```bash
-python ml_predictor/train_nn.py --data_dir data/parquet_dataset --epochs 100
+python ml_predictor/train_nn.py
 ```
-*GNN Inference & DAG Constraint Export:*
+*GNN Inference & DAG Constraint Export (any placed DEF whose cell types match the LEF):*
 ```bash
-python run_predict.py
+python run_predict.py --def_file data/generated_defs/mgc_pci_bridge32_b/mgc_pci_bridge32_b_ar1.0_u60_d0.7.def --lef_file data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/cells.lef --output_hex data/macro_rel_constraints.hex
 # or directly:
-python ml_predictor/predict.py --def_file openroad_scripts/mockup_export.def --lef_file data/cells.lef --model_path topological_gnn_model.pth --output_hex data/macro_rel_constraints.hex
+python ml_predictor/predict.py --def_file data/generated_defs/mgc_pci_bridge32_b/mgc_pci_bridge32_b_ar1.0_u60_d0.7.def --lef_file data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/cells.lef --model_path topological_gnn_model.pth --output_hex data/macro_rel_constraints.hex
 ```
 *End-to-End Evaluation & Visualization:*
 ```bash
-python ml_predictor/evaluate.py --def_file openroad_scripts/mockup_export.def --tech_lef data/tech.lef --cells_lef data/cells.lef --output_dir evaluation_output
+python ml_predictor/evaluate.py --def_file data/generated_defs/mgc_pci_bridge32_b/mgc_pci_bridge32_b_ar1.0_u60_d0.7.def --tech_lef data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/tech.lef --cells_lef data/ispd_benchmarks/ispd2015/mgc_pci_bridge32_b/cells.lef --model_path topological_gnn_model.pth --output_dir evaluation_output
 ```
 *Verification & Auditing:*
 ```bash
-# Run the complete test suite (135 tests):
+# Run the complete test suite (136 tests):
 pytest tests/ rtl_legalizer/ -v
 
 # Audit layout hex outputs for overlaps, die containment, and size preservation:
@@ -87,7 +87,7 @@ python scripts/characterize_metropolis.py
 *Individual Stages:*
 - **LEF Parsing:** `python rtl_legalizer/lef_parser.py data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/tech.lef data/ispd_benchmarks/ispd2015/hidden/mgc_matrix_mult_2/cells.lef --verbose`
 - **DEF → HEX:** `python ml_predictor/def_parser.py`
-- **RTL Legalizer (Icarus):** `cd rtl_legalizer && iverilog -o sim.out collision_check.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v && vvp sim.out`
+- **RTL Legalizer (Icarus):** `cd rtl_legalizer && iverilog -o sim.out collision_check.v iter_div.v lfsr32.v sa_cost.v sa_engine.v legalizer_fsm.v sa_legalizer_top.v legalizer_tb.v && vvp sim.out`
 - **RTL Legalizer (Verilator):** `make -C rtl_legalizer/verilator && ./rtl_legalizer/verilator/legalizer_sim rtl_legalizer/output_layout.hex`
 - **HEX → DEF:** `python ml_predictor/hex_to_def.py`
 
@@ -116,7 +116,7 @@ RTLign/
 **Module Organization**
 - **orchestration/**: `master_run.py` (pipeline orchestrator), `data_generator.py` (multi-threaded OpenROAD placement sweeps), `generate_rtl_dataset.py` (Yosys synthesis), `rtl_to_def.py` (floorplan generation).
 - **ml_predictor/**: `dataset.py` (PyG dataset loader), `model.py` (Topological GNN), `train_nn.py` (GNN training), `predict.py` (inference & DFS DAG cycle-breaker), `evaluate.py` (OpenROAD HPWL benchmark & layout plotting), `feature_extractor.py` (Parquet extractor), `def_parser.py`, `hex_to_def.py`.
-- **rtl_legalizer/**: `sa_legalizer_top.v` (top-level SA + greedy legalizer), `sa_engine.v` (SA FSM), `sa_cost.v` (3-term hardware cost), `lfsr32.v` (32-bit Galois LFSR), `collision_check.v`, `legalizer_fsm.v` (greedy cleanup), `legalizer_tb.v`, `audit.py` (P1/P2/P3 auditor), `golden_model.py` (bit-exact Python model), `layout_gen.py` (synthetic layout generator), `VERIFICATION.md` (verification report), `tb_*.v` (directed unit testbenches), `verilator/` (C++ harness and bridge).
+- **rtl_legalizer/**: `sa_legalizer_top.v` (top-level SA + greedy legalizer), `sa_engine.v` (SA FSM with legality scan on candidate moves), `sa_cost.v` (3-term hardware cost), `lfsr32.v` (32-bit Galois LFSR), `collision_check.v`, `legalizer_fsm.v` (greedy cleanup), `legalizer_tb.v`, `audit.py` (P1/P2/P3 auditor), `golden_model.py` (bit-exact Python model), `layout_gen.py` (synthetic layout generator), `VERIFICATION.md` (verification report), `tb_*.v` (directed unit testbenches), `verilator/` (C++ harness and bridge).
 - **openroad_scripts/**: `run_placement.tcl` (batch placement), `evaluate_layout.tcl` (HPWL & legality verification), `generate_ibex_floorplan.tcl`, `mockup_export.def` (GCD design), `legalized_export.def` (Final output).
 - **scripts/**: `sweep_legalizer.py` (golden model sweep), `characterize_metropolis.py` (Metropolis LUT characterization).
 - **tests/**: `test_audit.py`, `test_golden_model.py`, `test_phase6_verification.py`, `test_unit_tbs.py`, `test_phase6_sa.py`, `test_phase5_integration.py`, `test_ispd2015_integration.py`, `test_lef_parser_cli.py`, `data/golden/` (regression fixtures).
